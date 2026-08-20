@@ -1,0 +1,60 @@
+<Project>
+  <!--
+    Shipped inside the Tesserae.Pdf NuGet package and auto-imported by referencing projects
+    (buildTransitive/, so transitive consumers get it too). On build it copies the pre-built pdf.js
+    distribution into the Transpose output folder, next to the compiled app, where the components
+    load it from at runtime (assets/js/pdf).
+
+    pdf.js is copied rather than embedded as a Transpose resource on purpose - see the note in
+    tps.json. In short: Transpose emits a <script> tag for each ".js" resource and renames them into
+    ".min.js" variants, while the worker and the scripting sandbox must keep their names and be
+    loaded by pdf.js itself rather than by the page.
+
+    The same file serves both consumption models. A package consumer resolves the payload at
+    ../pdfjs inside the restored package. Inside this repo there is no such folder, so it falls back
+    to Tesserae.Pdf/assets/js/pdf - the (gitignored) esbuild output. That lets Tesserae.Pdf.Sample
+    import this file directly and exercise exactly the copy a real consumer gets.
+  -->
+  <PropertyGroup>
+    <_PdfJsPackagedDir>$([MSBuild]::NormalizeDirectory('$(MSBuildThisFileDirectory)..', 'pdfjs'))</_PdfJsPackagedDir>
+    <_PdfJsRepoBundleDir>$([MSBuild]::NormalizeDirectory('$(MSBuildThisFileDirectory)..', 'assets', 'js', 'pdf'))</_PdfJsRepoBundleDir>
+  </PropertyGroup>
+
+  <!--
+    Runs after Build so it lands after the Transpose compiler has written (and possibly cleaned) the
+    output folder. SkipUnchangedFiles keeps the ~7 MB payload off the critical path on rebuilds.
+
+    Everything is resolved inside the target rather than in a top-level PropertyGroup, because
+    MSBuild evaluates those at import time - before any target has run. That would break two ways:
+    $(OutDir) is still empty then, so the copy would land somewhere wrong; and on a fresh clone the
+    repo bundle does not exist yet (the referenced project's BundlePdfJs target creates it later in
+    the same build), so the Exists() check would fail and the build would report pdf.js missing even
+    though it is about to appear.
+  -->
+  <Target Name="_CopyPdfJsAssets"
+          AfterTargets="Build"
+          Condition="'$(DesignTimeBuild)' != 'true'">
+
+    <PropertyGroup>
+      <_PdfJsSourceDir Condition="Exists('$(_PdfJsPackagedDir)')">$(_PdfJsPackagedDir)</_PdfJsSourceDir>
+      <_PdfJsSourceDir Condition="'$(_PdfJsSourceDir)' == '' and Exists('$(_PdfJsRepoBundleDir)')">$(_PdfJsRepoBundleDir)</_PdfJsSourceDir>
+
+      <PdfJsAssetsOutputDir Condition="'$(PdfJsAssetsOutputDir)' == ''">$([MSBuild]::NormalizeDirectory('$(MSBuildProjectDirectory)', '$(OutDir)', 'tps', 'assets', 'js', 'pdf'))</PdfJsAssetsOutputDir>
+    </PropertyGroup>
+
+    <Error Condition="'$(_PdfJsSourceDir)' == ''"
+           Text="Tesserae.Pdf: no pdf.js distribution found. Looked in '$(_PdfJsPackagedDir)' (package) and '$(_PdfJsRepoBundleDir)' (repo). If building this repo from source, run 'npm install &amp;&amp; npm run bundle' in the Tesserae.Pdf folder." />
+
+    <ItemGroup>
+      <_PdfJsFiles Include="$(_PdfJsSourceDir)**\*" />
+    </ItemGroup>
+
+    <Copy SourceFiles="@(_PdfJsFiles)"
+          DestinationFiles="@(_PdfJsFiles->'$(PdfJsAssetsOutputDir)%(RecursiveDir)%(Filename)%(Extension)')"
+          SkipUnchangedFiles="true"
+          OverwriteReadOnlyFiles="true" />
+
+    <Message Importance="normal"
+             Text="Tesserae.Pdf: copied pdf.js from $(_PdfJsSourceDir) to $(PdfJsAssetsOutputDir)" />
+  </Target>
+</Project>

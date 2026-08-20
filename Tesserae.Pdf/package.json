@@ -1,0 +1,16 @@
+{
+  "name": "tesserae-pdf-assets",
+  "private": true,
+  "version": "0.1.0",
+  "description": "Pins pdfjs-dist and bundles its ESM build into the scripts shipped by the Tesserae.Pdf package.",
+  "dependencies": {
+    "pdfjs-dist": "6.2.108"
+  },
+  "devDependencies": {
+    "esbuild": "^0.28.1"
+  },
+  "scripts": {
+    "bundle": "node build/bundle-pdfjs.mjs"
+  },
+  "type": "module"
+}

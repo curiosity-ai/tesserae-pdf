@@ -1,0 +1,77 @@
+<Project Sdk="Transpose.Build.Target/26.7.3049">
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <DefineConstants>TRANSPOSE</DefineConstants>
+    <AssemblyName>Tesserae.Pdf</AssemblyName>
+    <RootNamespace>Tesserae.Pdf</RootNamespace>
+    <LangVersion>7.2</LangVersion>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <DebugType>None</DebugType>
+    <DebugSymbols>false</DebugSymbols>
+    <SkipResourcesExtraction>true</SkipResourcesExtraction>
+    <MinifyLocalVariables>true</MinifyLocalVariables>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Transpose.BCL" Version="26.8.4156" />
+    <PackageReference Include="Transpose.Core" Version="26.8.4176" />
+    <PackageReference Include="Tesserae" Version="2026.8.69740" />
+  </ItemGroup>
+
+  <PropertyGroup>
+    <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
+    <Copyright>(c) Copyright 2026 Curiosity GmbH - all right reserved</Copyright>
+    <Company>Curiosity GmbH</Company>
+    <Authors>Curiosity GmbH</Authors>
+    <PackageProjectUrl>https://github.com/curiosity-ai/tesserae-pdf</PackageProjectUrl>
+    <PackageId>Tesserae.Pdf</PackageId>
+    <Description>Tesserae.Pdf is a Tesserae (Transpose C# to JavaScript) wrapper around Mozilla's pdf.js, providing a document viewer component, a single-page canvas renderer, and a typed API over the pdf.js display and viewer surfaces.</Description>
+    <PackageTags>transpose, HTML, UI, components, pdf, pdfjs, viewer, document, tesserae</PackageTags>
+    <NoWarn>1701;1702;1591</NoWarn>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Include="README.md" Pack="true" PackagePath="\" />
+    <None Include="buildTransitive/Tesserae.Pdf.targets" Pack="true" PackagePath="buildTransitive/" />
+  </ItemGroup>
+
+  <!--
+    pdf.js is consumed from the pinned pdfjs-dist npm package and bundled from its ESM build by
+    build/bundle-pdfjs.mjs (esbuild). Nothing pdf.js-related is committed to this repo: the bundle
+    is generated on every build and gitignored.
+
+    The bundle step is not optional. web/pdf_viewer.mjs reads globalThis.pdfjsLib while it
+    evaluates, so build/pdf.mjs has to have run first - an ordering two module scripts do not
+    guarantee - and an IIFE is what lets the C# side ask whether pdf.js has loaded without
+    import-map plumbing. See the header of build/bundle-pdfjs.mjs; it also explains why the worker
+    and the scripting sandbox are copied verbatim rather than bundled.
+
+    The output is packed and copied into the consuming app's output by Tesserae.Pdf.targets, rather
+    than embedded as a Transpose resource - see the note in tps.json.
+  -->
+  <PropertyGroup>
+    <PdfJsBundleDir>$(MSBuildProjectDirectory)/assets/js/pdf</PdfJsBundleDir>
+  </PropertyGroup>
+
+  <Target Name="BundlePdfJs" BeforeTargets="BeforeBuild" Inputs="package.json;build/bundle-pdfjs.mjs" Outputs="$(PdfJsBundleDir)/version.txt">
+    <Exec Command="npm install --no-audit --no-fund" WorkingDirectory="$(MSBuildProjectDirectory)" />
+    <Exec Command="npm run bundle" WorkingDirectory="$(MSBuildProjectDirectory)" />
+  </Target>
+
+  <!--
+    Resolved in a target rather than a static ItemGroup so the glob runs after BundlePdfJs has
+    produced the files - a static include is evaluated before any target runs and would come back
+    empty on a fresh clone.
+
+    Hooked on _GetPackageFiles, which is where NuGet collects Pack="true" items. GenerateNuspec is
+    too late: it takes _GetPackageFiles as a dependency, so items added there never reach the
+    nuspec and the package silently ships without pdf.js.
+  -->
+  <Target Name="IncludePdfJsInPackage" BeforeTargets="_GetPackageFiles" DependsOnTargets="BundlePdfJs">
+    <ItemGroup>
+      <None Include="$(PdfJsBundleDir)/**" Pack="true" PackagePath="pdfjs/" />
+    </ItemGroup>
+  </Target>
+</Project>
