@@ -13,5 +13,16 @@ namespace Tesserae.Pdf
     /// </summary>
     public static partial class PdfJs
     {
+        /// <summary>
+        /// A scrollable, searchable, linkable document viewer - pdf.js's viewer components as a
+        /// Tesserae component. The toolbar around it is yours; see <see cref="PdfViewer"/>.
+        /// </summary>
+        /// <param name="singlePage">
+        /// Show one page at a time with no scrolling between pages, using pdf.js's
+        /// <c>PDFSinglePageViewer</c>. Decided here rather than settable later, because it is a
+        /// different pdf.js class - <see cref="Pdf.ScrollMode.Page"/> on the ordinary viewer is the
+        /// closest equivalent that can be switched at runtime.
+        /// </param>
+        public static PdfViewer Viewer(bool singlePage = false) => new PdfViewer(singlePage);
     }
 }
