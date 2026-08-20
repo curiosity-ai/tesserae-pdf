@@ -59,7 +59,7 @@ namespace Tesserae.Pdf.Sample
                         viewer.H(600).WS().MT(8),
                         SampleHint("Select some text, click a link in the outline document, or scroll with the arrow keys - all of that is pdf.js's, with nothing wired up here.")
                     )).SetTitle("Usage")))
-               ;
+               .SeeAlso(typeof(ZoomAndFitSample), typeof(SearchSample), typeof(OutlineAndNavigationSample));
         }
 
         public HTMLElement Render() => _content.Render();

@@ -65,7 +65,7 @@ namespace Tesserae.Pdf.Sample
                         Raw(_host),
                         SampleHint("The encrypted document is the only one here whose permissions come back as a list - and note it opens without a prompt, because this page knows its password up front.")
                     )).SetTitle("Usage")))
-               ;
+               .SeeAlso(typeof(TextExtractionSample), typeof(OutlineAndNavigationSample), typeof(BytesAndPasswordsSample));
 
             DomObserver.WhenRemoved(_host, () => _document?.DestroyAsync().FireAndForget());
         }

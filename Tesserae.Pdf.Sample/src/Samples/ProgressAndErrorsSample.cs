@@ -67,7 +67,7 @@ namespace Tesserae.Pdf.Sample
                         SampleHint("The 404 should report Response with status 404 and missing = True. \"Not a PDF\" should report InvalidPdf. The encrypted one reports Password, because this page has no OnPassword handler."),
                         SampleHint("\"Not a PDF at all\" hands pdf.js this page's own index.html, so it logs a run of \"getHexString - ignoring invalid character\" warnings while trying to make sense of it before giving up. That noise is the test working.")
                     )).SetTitle("Usage")))
-               ;
+               .SeeAlso(typeof(BytesAndPasswordsSample), typeof(SeveralDocumentsSample), typeof(LoadingAndAssetsSample));
         }
 
         public HTMLElement Render() => _content.Render();

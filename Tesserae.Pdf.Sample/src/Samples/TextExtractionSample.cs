@@ -61,7 +61,7 @@ namespace Tesserae.Pdf.Sample
                         Raw(_host),
                         SampleHint("Pages 3, 7 and 11 mention \"tesserae\" once each - which is what the Search page counts.")
                     )).SetTitle("Usage")))
-               ;
+               .SeeAlso(typeof(SearchSample), typeof(PageRenderSample), typeof(MetadataSample));
 
             DomObserver.WhenRemoved(_host, () => _document?.DestroyAsync().FireAndForget());
         }

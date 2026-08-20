@@ -65,7 +65,7 @@ namespace Tesserae.Pdf.Sample
                         values,
                         SampleHint("Type into the name field, then read the values back: what you typed is there. The document starts with \"Ada Lovelace\" in it and \"Team\" selected.")
                     )).SetTitle("Usage")))
-               ;
+               .SeeAlso(typeof(DownloadAndSaveSample), typeof(ScriptingSample), typeof(MetadataSample));
         }
 
         private static async Task ReadFieldsAsync(PdfViewer viewer, Stack values)

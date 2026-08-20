@@ -76,7 +76,7 @@ namespace Tesserae.Pdf.Sample
                         log,
                         SampleHint("Scroll to page 4 and zoom in, then detach and re-attach: the page comes back, and so does the zoom mode.")
                     )).SetTitle("Usage")))
-               ;
+               .SeeAlso(typeof(ModalSample), typeof(SeveralDocumentsSample), typeof(ZoomAndFitSample));
         }
 
         public HTMLElement Render() => _content.Render();

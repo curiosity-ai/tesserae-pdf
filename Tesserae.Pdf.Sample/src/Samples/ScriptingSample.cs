@@ -74,7 +74,7 @@ namespace Tesserae.Pdf.Sample
                         noScripts.H(280).WS().MT(4),
                         SampleHint("Change the subtotal to 200: the total should become 212.5 on its own. The console also carries a line printed by the document's own open script.")
                     )).SetTitle("Usage")))
-               ;
+               .SeeAlso(typeof(FormsAndAnnotationsSample), typeof(DownloadAndSaveSample), typeof(LoadingAndAssetsSample));
         }
 
         private static async Task ReportAsync(PdfDocument document, TextBlock status)

@@ -44,7 +44,7 @@ namespace Tesserae.Pdf.Sample
                         report.MT(8),
                         SampleHint("Open the network tab and reload: pdf.js is one request, and the worker is a second one that only happens once a document is opened.")
                     )).SetTitle("Usage")))
-               ;
+               .SeeAlso(typeof(DocumentViewerSample), typeof(CjkAndFontsSample), typeof(ProgressAndErrorsSample));
         }
 
         private static async Task LoadAndReportAsync(Stack report)

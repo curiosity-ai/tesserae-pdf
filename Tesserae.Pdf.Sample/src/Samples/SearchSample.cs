@@ -81,7 +81,7 @@ namespace Tesserae.Pdf.Sample
                         viewer.H(520).WS().MT(8),
                         SampleHint("\"tesserae\" appears on exactly three pages of this document - 3, 7 and 11 - so the count should settle on 3.")
                     )).SetTitle("Usage")))
-               .SeeAlso(typeof(DocumentViewerSample), typeof(TextExtractionSample));
+               .SeeAlso(typeof(DocumentViewerSample), typeof(TextSelectionSample), typeof(TextExtractionSample));
         }
 
         public HTMLElement Render() => _content.Render();

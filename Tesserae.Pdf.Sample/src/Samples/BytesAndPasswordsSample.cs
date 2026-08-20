@@ -97,7 +97,7 @@ namespace Tesserae.Pdf.Sample
                         viewer.H(460).WS().MT(8),
                         SampleHint("Type a wrong password first: the prompt comes back with IncorrectPassword. Leave it empty and press the button again to see the load give up cleanly.")
                     )).SetTitle("Usage")))
-               ;
+               .SeeAlso(typeof(ProgressAndErrorsSample), typeof(MetadataSample), typeof(DownloadAndSaveSample));
         }
 
         /// <summary>

@@ -76,7 +76,7 @@ namespace Tesserae.Pdf.Sample
                         Raw(_canvasHost).MT(8),
                         SampleHint("Every change cancels the render in flight and starts another. The canvas is this page's own element - the package never created one.")
                     )).SetTitle("Usage")))
-               ;
+               .SeeAlso(typeof(ThumbnailsSample), typeof(TextExtractionSample), typeof(DocumentViewerSample));
 
             // The document is this page's to release: the gallery tears a page down when you navigate
             // away, and a worker-side copy of the file would otherwise outlive every visit.

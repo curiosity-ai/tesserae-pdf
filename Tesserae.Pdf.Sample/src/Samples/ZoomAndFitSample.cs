@@ -62,7 +62,7 @@ namespace Tesserae.Pdf.Sample
                         frame.MT(8),
                         SampleHint("Pick \"Fit width\", then drag the width slider: the scale follows. Pick \"140%\" and drag it again: the scale stays put, because you asked for that number.")
                     )).SetTitle("Usage")))
-               ;
+               .SeeAlso(typeof(DocumentViewerSample), typeof(ScrollAndSpreadSample), typeof(RemountSample));
         }
 
         public HTMLElement Render() => _content.Render();

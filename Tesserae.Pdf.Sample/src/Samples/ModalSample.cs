@@ -51,7 +51,7 @@ namespace Tesserae.Pdf.Sample
                         status.MT(8),
                         SampleHint("Open it, scroll it, select some text, close it, and open it again. The page should stay responsive throughout, and the console should stay clean.")
                     )).SetTitle("Usage")))
-               ;
+               .SeeAlso(typeof(RemountSample), typeof(DocumentViewerSample), typeof(ZoomAndFitSample));
         }
 
         public HTMLElement Render() => _content.Render();

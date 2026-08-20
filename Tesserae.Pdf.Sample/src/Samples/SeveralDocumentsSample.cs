@@ -95,7 +95,7 @@ namespace Tesserae.Pdf.Sample
                         log,
                         SampleHint("\"Swap all four, fast\" asks for four documents without waiting. The log should show exactly one load - the AcroForm - and no failures.")
                     )).SetTitle("Usage")))
-               ;
+               .SeeAlso(typeof(RemountSample), typeof(ProgressAndErrorsSample), typeof(DownloadAndSaveSample));
         }
 
         public HTMLElement Render() => _content.Render();

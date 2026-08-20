@@ -57,7 +57,7 @@ namespace Tesserae.Pdf.Sample
                         withoutText.H(360).WS().MT(4),
                         SampleHint("Drag across a line in each. The first selects; the second cannot, because there is no text over the pixels.")
                     )).SetTitle("Usage")))
-               ;
+               .SeeAlso(typeof(SearchSample), typeof(TextExtractionSample), typeof(LocalizationSample));
         }
 
         public HTMLElement Render() => _content.Render();

@@ -63,7 +63,7 @@ namespace Tesserae.Pdf.Sample
                         SampleHint("The Chinese lines should render as characters and come out of extraction as characters. Watch the network tab: UniGB-UCS2-H.bcmap and Adobe-GB1-UCS2.bcmap are both fetched."),
                         SampleHint("Expected console noise: \"Cannot load system font: STSong-Light\". The document names a font it does not embed and this machine does not have, so pdf.js substitutes one - which is the whole point of the standard-font directory, and is not a failure.")
                     )).SetTitle("Usage")))
-               ;
+               .SeeAlso(typeof(LoadingAndAssetsSample), typeof(TextExtractionSample), typeof(PageRenderSample));
         }
 
         private static async Task ExtractAsync(PdfDocument document, TextBlock extracted)

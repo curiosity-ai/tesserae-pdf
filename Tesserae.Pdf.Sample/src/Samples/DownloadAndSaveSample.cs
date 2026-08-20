@@ -65,7 +65,7 @@ namespace Tesserae.Pdf.Sample
                         reopened.H(320).WS(),
                         SampleHint("Type a name into the first field, then \"Save, then reopen\": the lower viewer shows the saved document with your text in it.")
                     )).SetTitle("Usage")))
-               ;
+               .SeeAlso(typeof(FormsAndAnnotationsSample), typeof(ScriptingSample), typeof(BytesAndPasswordsSample));
         }
 
         private static async Task ShowAsync(PdfViewer viewer, TextBlock status, bool save, PdfViewer into)
