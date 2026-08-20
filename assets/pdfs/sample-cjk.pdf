@@ -1,0 +1,45 @@
+%PDF-1.7
+%‚„œ”
+1 0 obj
+<< /Type /Pages /Count 1 /Kids [7 0 R] >>
+endobj
+2 0 obj
+<< /Type /Catalog /Pages 1 0 R /Lang (zh-CN) >>
+endobj
+3 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>
+endobj
+4 0 obj
+<< /Type /Font /Subtype /CIDFontType0 /BaseFont /STSong-Light /CIDSystemInfo << /Registry (Adobe) /Ordering (GB1) /Supplement 2 >> /FontDescriptor << /Type /FontDescriptor /FontName /STSong-Light /Flags 4 /FontBBox [-25 -254 1000 880] /ItalicAngle 0 /Ascent 880 /Descent -254 /CapHeight 626 /StemV 58 >> /DW 1000 >>
+endobj
+5 0 obj
+<< /Type /Font /Subtype /Type0 /BaseFont /STSong-Light-UniGB-UCS2-H /Encoding /UniGB-UCS2-H /DescendantFonts [4 0 R] >>
+endobj
+6 0 obj
+<<  /Length 430 >>
+stream
+BT /FR 18 Tf 72 740 Td (CJK text in a non-embedded CID font) Tj ET
+BT /FC 28 Tf 72 690 Td <4f60597dff0c4e16754cff01> Tj ET
+BT /FC 20 Tf 72 640 Td <8fd9662f4e004e2a75284e8e6d4b8bd55b577b2666205c047684793a4f8b658768633002> Tj ET
+BT /FR 10 Tf 72 600 Td (Rendering the two lines above requires cmaps/UniGB-UCS2-H.bcmap and a) Tj ET
+BT /FR 10 Tf 72 586 Td (substitute font, both fetched by the worker from the asset directories.) Tj ET
+endstream
+endobj
+7 0 obj
+<< /Type /Page /Parent 1 0 R /MediaBox [0 0 612 792] /Resources << /Font << /FR 3 0 R /FC 5 0 R >> >> /Contents 6 0 R >>
+endobj
+xref
+0 8
+0000000000 65535 f 
+0000000015 00000 n 
+0000000072 00000 n 
+0000000135 00000 n 
+0000000205 00000 n 
+0000000536 00000 n 
+0000000671 00000 n 
+0000001153 00000 n 
+trailer
+<< /Size 8 /Root 2 0 R /ID [<5465737365726165434a4b31> <5465737365726165434a4b31>] >>
+startxref
+1289
+%%EOF
