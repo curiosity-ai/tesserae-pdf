@@ -32,6 +32,31 @@ namespace Tesserae.Pdf
         /// epilogue fills <c>workerSrc</c> in from its own script URL.
         /// </summary>
         public static extern IGlobalWorkerOptions GlobalWorkerOptions { get; }
+
+        /// <summary>
+        /// Starts loading a document. Returns immediately with the loading task; the document itself
+        /// arrives on its <c>promise</c>.
+        ///
+        /// In pdf.js 6 the parameter object is mandatory - the older "pass a URL string" form was
+        /// removed - which is why <see cref="PdfSource"/> always builds one.
+        /// </summary>
+        public static extern IPdfDocumentLoadingTask getDocument(DocumentInitParameters parameters);
+
+        /// <summary>
+        /// <c>pdfjsLib.PixelsPerInch</c> - the CSS-to-PDF unit conversion. A PDF point is 1/72 inch
+        /// and a CSS pixel 1/96, so scale 1 is not 1:1 on screen.
+        /// </summary>
+        public static extern IPixelsPerInch PixelsPerInch { get; }
+    }
+
+    /// <summary>pdf.js's unit constants, for turning a zoom percentage into a viewport scale.</summary>
+    [External]
+    [Convention(Notation.None)]
+    public interface IPixelsPerInch
+    {
+        double CSS { get; }
+        double PDF { get; }
+        double PDF_TO_CSS_UNITS { get; }
     }
 
     /// <summary>
@@ -40,7 +65,7 @@ namespace Tesserae.Pdf
     /// </summary>
     [External]
     [Convention(Notation.None)]
-    internal interface IGlobalWorkerOptions
+    public interface IGlobalWorkerOptions
     {
         /// <summary>
         /// The URL of the worker script. Must name a real ES module: pdf.js constructs it with

@@ -8,13 +8,24 @@
  * top-level await: two files have to be evaluated in a fixed order, and one of them is only
  * reachable as a module.
  *
- *   - `web/pdf_viewer.mjs` has zero imports. It destructures `globalThis.pdfjsLib` at its top
- *     level, so `build/pdf.mjs` MUST have evaluated first. Two <script type="module"> tags do not
- *     guarantee that ordering across a cold cache; one bundle does, because ESM evaluation order
- *     inside it is the import order of the entry below.
+ *   - `pdf_viewer.mjs` has zero imports. It destructures `globalThis.pdfjsLib` at its top level, so
+ *     `pdf.mjs` MUST have evaluated first. Two <script type="module"> tags do not guarantee that
+ *     ordering across a cold cache; one bundle does, because ESM evaluation order inside it is the
+ *     import order of the entry below.
  *   - Loading them as modules also means the page cannot ask "has pdf.js loaded yet" without
  *     import-map plumbing. An IIFE sets `globalThis.pdfjsLib` / `globalThis.pdfjsViewer`
  *     synchronously, which is exactly what PdfJs.IsLoaded reads.
+ *
+ * WHY THE `legacy/` BUILD, and not the modern one: pdf.js 6.2's modern build calls
+ * `Map.prototype.getOrInsertComputed` - a stage-3 proposal - unconditionally, in 35 places across
+ * the display API, the worker and the viewer. Chromium 141 does not have it, and neither does any
+ * other browser at the time of writing, so the modern build fails on the first document with
+ * `TypeError: this[#e].getOrInsertComputed is not a function` - thrown from inside the worker, so it
+ * surfaces as an `UnknownErrorException` that names nothing. `legacy/` is the same code through
+ * Babel with core-js polyfills bundled in, including that one. The tax is 512 KB of display code
+ * instead of 455 and a 1.31 MB worker instead of 1.26; the alternative is a package that does not
+ * work. Re-check this when the pin moves: if the modern build stops needing an unshipped proposal,
+ * switch back and drop ~110 KB.
  *
  * pdf.js source is never modified. The bundle is esbuild's output with a prelude and an epilogue
  * concatenated around it, both of which only add things (a <style>, a default workerSrc).
@@ -57,6 +68,10 @@ const pkgRoot  = resolve(here, '..');
 const distRoot = resolve(pkgRoot, 'node_modules/pdfjs-dist');
 const outDir   = resolve(pkgRoot, 'assets/js/pdf');
 
+// Everything pdf.js-code-shaped comes from legacy/; the asset directories are shared and live at
+// the package root.
+const legacy   = 'pdfjs-dist/legacy';
+
 await rm(outDir, { recursive: true, force: true });
 await mkdir(outDir, { recursive: true });
 
@@ -71,7 +86,7 @@ await mkdir(outDir, { recursive: true });
  * `url(#fragment)` references, which point at SVG masks in the document and must stay as they are.
  */
 const cssBuild = await build({
-  entryPoints: [join(distRoot, 'web/pdf_viewer.css')],
+  entryPoints: [join(distRoot, 'legacy/web/pdf_viewer.css')],
   outfile:     join(outDir, 'pdf_viewer.css'),
   bundle:      true,
   minify:      true,
@@ -99,7 +114,7 @@ const viewerCss = cssBuild.outputFiles.find((f) => f.path.endsWith('.css')).text
  */
 const jsBuild = await build({
   stdin: {
-    contents: "import 'pdfjs-dist/build/pdf.mjs';\nimport 'pdfjs-dist/web/pdf_viewer.mjs';\n",
+    contents: `import '${legacy}/build/pdf.mjs';\nimport '${legacy}/web/pdf_viewer.mjs';\n`,
     resolveDir: pkgRoot,
     sourcefile: 'tesserae-pdf-entry.mjs',
     loader: 'js',
@@ -112,6 +127,10 @@ const jsBuild = await build({
   legalComments: 'none',
   write:         false,
   logLevel:      'warning',
+  // The only import.meta in the legacy build is inside a `process.getBuiltinModule` branch that no
+  // browser reaches. Defining it away is what lets an IIFE be emitted at all; without it esbuild
+  // refuses, because import.meta has no meaning outside a module.
+  define: { 'import.meta.url': 'undefined' },
 });
 
 const pdfJs = jsBuild.outputFiles.find((f) => f.path.endsWith('.js')).text;
@@ -160,8 +179,8 @@ const epilogue = `
 await writeFile(join(outDir, 'pdf.js'), prelude + pdfJs + epilogue);
 
 // Verbatim copies - see the header for why each one cannot be bundled.
-await cp(join(distRoot, 'build/pdf.worker.min.mjs'),  join(outDir, 'pdf.worker.min.mjs'));
-await cp(join(distRoot, 'build/pdf.sandbox.min.mjs'), join(outDir, 'pdf.sandbox.min.mjs'));
+await cp(join(distRoot, 'legacy/build/pdf.worker.min.mjs'),  join(outDir, 'pdf.worker.min.mjs'));
+await cp(join(distRoot, 'legacy/build/pdf.sandbox.min.mjs'), join(outDir, 'pdf.sandbox.min.mjs'));
 
 /**
  * The asset directories pdf.js fetches at runtime, each addressed by one DocumentInitParameters
@@ -174,13 +193,14 @@ await cp(join(distRoot, 'build/pdf.sandbox.min.mjs'), join(outDir, 'pdf.sandbox.
  * pdf.js dynamic-imports when a .wasm fails to instantiate, plus `quickjs-eval.js` - the
  * Emscripten glue the scripting sandbox loads, which is mandatory rather than a fallback.
  */
+// These four are shared between the modern and legacy builds and live at the package root.
 for (const dir of ['cmaps', 'standard_fonts', 'wasm', 'iccs']) {
   await cp(join(distRoot, dir), join(outDir, dir), { recursive: true });
 }
 
 // The annotation and editor icons the viewer builds <img src> for at runtime, from
 // imageResourcesPath. Separate from the ones the stylesheet inlines above.
-await cp(join(distRoot, 'web/images'), join(outDir, 'images'), { recursive: true });
+await cp(join(distRoot, 'legacy/web/images'), join(outDir, 'images'), { recursive: true });
 
 // pdf.js is Apache-2.0; ship its license text alongside the code it covers, and point at the
 // sidecar licenses that travel inside the asset directories.
@@ -234,6 +254,6 @@ for (const file of files) {
 }
 
 console.log(
-  `pdfjs-dist ${version} bundled (ESM -> IIFE): ${files.length} files, ` +
+  `pdfjs-dist ${version} legacy build bundled (ESM -> IIFE): ${files.length} files, ` +
   `${(total / 1024 / 1024).toFixed(1)} MB -> assets/js/pdf/`
 );
