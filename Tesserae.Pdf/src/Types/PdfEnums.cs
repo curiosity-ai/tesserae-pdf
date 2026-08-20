@@ -5,9 +5,22 @@ namespace Tesserae.Pdf
     /// <summary>
     /// How much of a page's annotation layer to build.
     ///
-    /// The default across this package is <see cref="Enable"/> for a bare page render and
-    /// <see cref="EnableForms"/> for the viewer, matching pdf.js: links work everywhere, and form
-    /// fields are only interactive where there is a viewer to hold their state.
+    /// <b>The last two do not mean what their order suggests, and they mean different things in a
+    /// viewer and in a page render.</b> pdf.js decides whether to build interactive form controls
+    /// with an exact equality test against <see cref="EnableForms"/> - so in a viewer,
+    /// <see cref="EnableStorage"/> is not "forms, plus storage": it is a mode in which the form is
+    /// <i>not</i> interactive, and it fails silently, leaving an empty annotation layer and no error
+    /// anywhere.
+    ///
+    /// The right choice by surface:
+    /// <list type="bullet">
+    /// <item><b>A viewer</b> wants <see cref="EnableForms"/>. Its fields are interactive, and what
+    /// the user types is written into the document's annotation storage anyway - which is what makes
+    /// it survive a re-render and reach <c>SaveAsync</c>. This is the package's default.</item>
+    /// <item><b>A page render</b> wants <see cref="EnableStorage"/> when it should include values
+    /// the user has already entered, and <see cref="Enable"/> otherwise. A canvas has no inputs to
+    /// make interactive, so <see cref="EnableForms"/> buys it nothing.</item>
+    /// </list>
     /// </summary>
     [Enum(Emit.Value)]
     public enum AnnotationMode
@@ -18,13 +31,20 @@ namespace Tesserae.Pdf
         /// <summary>Annotations are drawn and links work; form fields are painted, not editable.</summary>
         Enable = 1,
 
-        /// <summary>Form fields become real inputs the user can type into.</summary>
+        /// <summary>
+        /// Form fields become real inputs the user can type into, and what they type is kept in the
+        /// document's annotation storage. <b>The mode a viewer wants</b>, and the one pdf.js's own
+        /// viewer uses.
+        /// </summary>
         EnableForms = 2,
 
         /// <summary>
-        /// As <see cref="EnableForms"/>, and field values are read from and written back to the
-        /// document's annotation storage - which is what makes them survive a re-render and reach
-        /// <c>SaveAsync</c>.
+        /// A page render includes whatever is in the document's annotation storage - i.e. the values
+        /// a user has already typed into a viewer.
+        ///
+        /// <b>Not a superset of <see cref="EnableForms"/>, and wrong for a viewer</b>: pdf.js builds
+        /// interactive controls only for exactly <see cref="EnableForms"/>, so a viewer set to this
+        /// renders an annotation layer with nothing in it.
         /// </summary>
         EnableStorage = 3,
     }
@@ -34,7 +54,15 @@ namespace Tesserae.Pdf
     ///
     /// <see cref="Disable"/> is not "no tool selected" - it takes the editor layer out entirely, and
     /// is the package default. <see cref="None"/> builds the layer with no tool active, which is what
-    /// a host wants before the user has picked one.
+    /// a host wants before the user has picked one, and is also how you turn editing off again once
+    /// it is on.
+    ///
+    /// <b><see cref="Disable"/> is decided once, before the viewer is built, and cannot be set
+    /// afterwards.</b> pdf.js only creates its editor machinery when the viewer is constructed with
+    /// something other than <see cref="Disable"/>, and its own mode setter rejects
+    /// <see cref="Disable"/> outright - so a viewer built without the editor throws when asked for a
+    /// tool later, and one built with it can never go back to having no editor layer at all. Enable
+    /// it with <see cref="None"/> up front if the user might ever want to annotate.
     /// </summary>
     [Enum(Emit.Value)]
     public enum AnnotationEditorMode

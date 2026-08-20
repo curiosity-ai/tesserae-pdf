@@ -75,8 +75,12 @@ namespace Tesserae.Pdf
         /// </summary>
         public async Task<IReadOnlyList<PdfOutlineItem>> GetOutlineAsync()
         {
-            var nodes = await PromiseHelper.ToTask<IOutlineNode[]>(_document.getOutline());
-            var items = new List<PdfOutlineItem>();
+            // Awaited as object and cast, not as IOutlineNode[]: an array type argument is
+            // materialised at runtime by System.Array.type(element), which needs metadata an
+            // [External] interface has none of. See PromiseHelper.ToTask.
+            var resolved = await PromiseHelper.ToTask<object>(_document.getOutline());
+            var nodes    = (IOutlineNode[])resolved;
+            var items    = new List<PdfOutlineItem>();
 
             if (nodes is null) return items;
 
@@ -154,6 +158,10 @@ namespace Tesserae.Pdf
         {
             var map         = await PromiseHelper.ToTask<es5.Map<string, IPdfAttachment>>(_document.getAttachments());
             var attachments = new List<PdfAttachment>();
+
+            // es5.Map is safe as a type argument where an external-interface array is not: it is
+            // emitted as the global `Map`, which exists, and its own type arguments are not
+            // materialised.
 
             if (map is null) return attachments;
 

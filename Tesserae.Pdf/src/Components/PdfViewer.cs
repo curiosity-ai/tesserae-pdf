@@ -77,6 +77,10 @@ namespace Tesserae.Pdf
         private bool   _useOwnL10n = true;
         private object _customL10n;
 
+        // Whether the viewer was constructed with the editor layer. pdf.js only builds its editor
+        // machinery then, so this decides whether a runtime mode change is possible at all.
+        private bool _annotationEditorEnabled;
+
         private TextLayerMode        _textLayerMode        = TextLayerMode.Enable;
         private AnnotationMode       _annotationMode       = AnnotationMode.EnableForms;
         private AnnotationEditorMode _annotationEditorMode = AnnotationEditorMode.Disable;
@@ -367,7 +371,17 @@ namespace Tesserae.Pdf
             return this;
         }
 
-        /// <summary>How much of the annotation layer to build. Read when the viewer is built.</summary>
+        /// <summary>
+        /// How much of the annotation layer to build. Read when the viewer is built.
+        ///
+        /// Leave this alone unless you want links without form fields
+        /// (<see cref="AnnotationMode.Enable"/>) or nothing at all
+        /// (<see cref="AnnotationMode.Disable"/>). In particular <b>do not reach for
+        /// <see cref="AnnotationMode.EnableStorage"/> here</b>: despite its name it makes a viewer's
+        /// form non-interactive, silently - see the remarks on <see cref="AnnotationMode"/>. The
+        /// default, <see cref="AnnotationMode.EnableForms"/>, is the one that both makes fields
+        /// editable and keeps what is typed into them.
+        /// </summary>
         public PdfViewer Annotations(AnnotationMode mode)
         {
             _annotationMode = mode;
@@ -376,19 +390,56 @@ namespace Tesserae.Pdf
         }
 
         /// <summary>
-        /// Which annotation-editing tool is active. Unlike the two above, this can be changed at any
-        /// time - it is what a "highlight" or "add note" button in a toolbar sets.
+        /// Which annotation-editing tool is active - what a "highlight" or "add note" button in a
+        /// toolbar sets.
+        ///
+        /// <b>Whether there is an editor at all is decided before the viewer is built.</b> Call this
+        /// with anything other than <see cref="AnnotationEditorMode.Disable"/> while configuring the
+        /// component to build the editor layer; afterwards, tools can be switched freely but
+        /// <see cref="AnnotationEditorMode.Disable"/> cannot be set and neither can any tool on a
+        /// viewer that was built without the editor. <see cref="AnnotationEditorMode.None"/> is the
+        /// runtime way to mean "no tool active".
+        ///
+        /// Both limits are pdf.js's: it creates its editor machinery only when constructed with the
+        /// editor enabled, and its own setter rejects Disable outright. Attempting either here throws
+        /// a message that says so, rather than pdf.js's "The AnnotationEditor is not enabled."
         /// </summary>
         public PdfViewer AnnotationEditor(AnnotationEditorMode mode)
         {
+            if (!IsCreated)
+            {
+                // Before the viewer exists this is the construction option, and Disable is a valid
+                // value for it - it is what leaves the editor layer out.
+                _annotationEditorMode = mode;
+
+                return this;
+            }
+
+            if (!_annotationEditorEnabled)
+            {
+                throw new InvalidOperationException(
+                    "This viewer was built without the annotation editor, so its mode cannot be changed. " +
+                    "Call AnnotationEditor(AnnotationEditorMode.None) before the component is mounted to build the editor layer.");
+            }
+
+            if (mode == AnnotationEditorMode.Disable)
+            {
+                throw new InvalidOperationException(
+                    "AnnotationEditorMode.Disable removes the editor layer and can only be set before the viewer is built. " +
+                    "Use AnnotationEditorMode.None to deactivate the current tool.");
+            }
+
             _annotationEditorMode = mode;
 
             // Asymmetric on the pdf.js side: the getter answers with an object carrying a mode, the
             // setter takes one.
-            if (_viewer is object) _viewer.annotationEditorMode = new AnnotationEditorModeChange { mode = (int)mode };
+            _viewer.annotationEditorMode = new AnnotationEditorModeChange { mode = (int)mode };
 
             return this;
         }
+
+        /// <summary>Whether this viewer was built with pdf.js's annotation editor layer.</summary>
+        public bool IsAnnotationEditorEnabled => _annotationEditorEnabled;
 
         /// <summary>The annotation editor's active tool.</summary>
         public AnnotationEditorMode CurrentAnnotationEditorMode
@@ -436,7 +487,8 @@ namespace Tesserae.Pdf
         /// <summary>Drops the highlights and forgets the search.</summary>
         public PdfViewer ClearSearch()
         {
-            _lastQuery = null;
+            _lastQuery     = null;
+            _lastFindState = FindState.Pending;
 
             _events?.dispatch(PdfViewerEvents.FindBarClose, new FindEventPayload());
 
@@ -445,6 +497,7 @@ namespace Tesserae.Pdf
 
         private object      _lastQuery;
         private FindOptions _lastOptions;
+        private FindState   _lastFindState = FindState.Pending;
 
         private PdfViewer Find(object query, FindOptions options, string type, bool findPrevious = false)
         {
@@ -452,6 +505,10 @@ namespace Tesserae.Pdf
 
             _lastQuery   = query;
             _lastOptions = options;
+
+            // A fresh search has no outcome yet; without this a second search reports the first
+            // one's result while it is still running.
+            if (type != "again") _lastFindState = FindState.Pending;
 
             var effective = options ?? new FindOptions();
 
@@ -784,6 +841,10 @@ namespace Tesserae.Pdf
                 set(options);
             }
 
+            // Read back off the options rather than off the field, so an Options(...) mutator that
+            // changed it is accounted for.
+            _annotationEditorEnabled = options.annotationEditorMode != AnnotationEditorMode.Disable;
+
             _viewer = _singlePage
                 ? (IPdfViewerInstance)(object)new PdfSinglePageViewerJs(options)
                 : (IPdfViewerInstance)(object)new PdfViewerJs(options);
@@ -853,22 +914,29 @@ namespace Tesserae.Pdf
             // scanned and carries no state, the control-state one arrives with the outcome. A host
             // that only listened to the second would show no progress on a long document; one that
             // only listened to the first would never learn that nothing was found.
+            // A running count carries no state of its own, so it reports the last state seen rather
+            // than assuming Pending. pdf.js raises a control-state event for Pending when a search
+            // starts and another for the outcome when it ends, with count events in between and
+            // sometimes after - so forcing Pending here would overwrite "found" with "searching" a
+            // moment after the search succeeded.
             On(PdfViewerEvents.UpdateFindMatchesCount, data =>
             {
                 if (_onSearchResults is null) return;
 
                 var counted = (IUpdateFindMatchesCountEvent)data;
 
-                _onSearchResults(new PdfSearchResult(FindState.Pending, counted.matchesCount, _lastQuery));
+                _onSearchResults(new PdfSearchResult(_lastFindState, counted.matchesCount, _lastQuery));
             });
 
             On(PdfViewerEvents.UpdateFindControlState, data =>
             {
-                if (_onSearchResults is null) return;
-
                 var state = (IUpdateFindControlStateEvent)data;
 
-                _onSearchResults(new PdfSearchResult((FindState)state.state, state.matchesCount, state.rawQuery ?? _lastQuery));
+                _lastFindState = (FindState)state.state;
+
+                if (_onSearchResults is null) return;
+
+                _onSearchResults(new PdfSearchResult(_lastFindState, state.matchesCount, state.rawQuery ?? _lastQuery));
             });
 
             On(PdfViewerEvents.AnnotationEditorModeChanged, data =>
@@ -1042,6 +1110,43 @@ namespace Tesserae.Pdf
             _linkService.setDocument(document, null);
 
             _onDocumentLoaded?.Invoke(_document);
+
+            // pdf.js does not fetch these itself: currentPageLabel and pageLabelToPageNumber both
+            // answer against labels the host passes in, and answer nothing until it has. Fetched
+            // after the callback above so a slow round trip does not delay the document being
+            // reported as loaded, and generation-checked because it is another await.
+            await ApplyPageLabelsAsync(generation);
+        }
+
+        /// <summary>
+        /// Fetches the document's page labels and hands them to the viewer, so a document that
+        /// numbers its front matter i, ii reports those instead of 1, 2.
+        /// </summary>
+        private async Task ApplyPageLabelsAsync(int generation)
+        {
+            if (_document is null) return;
+
+            string[] labels;
+
+            try
+            {
+                labels = await _document.GetPageLabelsAsync();
+            }
+            catch (Exception exception)
+            {
+                // Labels are cosmetic: a document whose label array is malformed should still be
+                // readable, so this is the one failure here that is logged rather than reported.
+                console.error("Tesserae.Pdf: could not read the document's page labels", exception);
+
+                return;
+            }
+
+            // Superseded, or torn down, while the labels were being fetched.
+            if (generation != _generation || _viewer is null) return;
+
+            // null is the normal answer - most documents just use their page numbers - and passing it
+            // is how pdf.js is told to do the same.
+            _viewer.setPageLabels(labels);
         }
 
         private async Task AnswerPasswordAsync(IPdfDocumentLoadingTask loadingTask, Action<string> updatePassword, PasswordReason reason)

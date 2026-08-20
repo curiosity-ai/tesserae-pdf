@@ -113,6 +113,17 @@ namespace Tesserae.Pdf
         /// <summary>The page number carrying a label, or null when no page does.</summary>
         int pageLabelToPageNumber(string label);
 
+        /// <summary>
+        /// Tells the viewer the labels the document wants its pages called.
+        ///
+        /// pdf.js does not read these itself - <c>currentPageLabel</c> and
+        /// <c>pageLabelToPageNumber</c> both answer against whatever was passed here, and answer
+        /// nothing at all until it has been. <see cref="PdfViewer"/> fetches them from the document
+        /// and hands them over, which is what makes a document whose front matter is numbered i, ii
+        /// report those rather than 1, 2.
+        /// </summary>
+        void setPageLabels(string[] labels);
+
         /// <summary>The scrollable element the viewer was given.</summary>
         HTMLElement container { get; }
     }

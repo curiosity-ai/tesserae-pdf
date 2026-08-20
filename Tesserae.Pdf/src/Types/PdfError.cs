@@ -1,7 +1,26 @@
 using System;
+using Transpose;
 
 namespace Tesserae.Pdf
 {
+    /// <summary>
+    /// The runtime's wrapper around a rejected JavaScript promise.
+    ///
+    /// A faulted <see cref="System.Threading.Tasks.Task"/> that came from a promise does not carry
+    /// the value the promise rejected with: the runtime wraps it in a <c>PromiseException</c> whose
+    /// <c>arguments</c> array holds the real rejection. Without unwrapping that, every pdf.js failure
+    /// reads as the same generic exception and a 404 cannot be told from a corrupt file.
+    ///
+    /// Declared by shape rather than named as a type, because the cast is erased - so reading
+    /// <c>arguments</c> off something that is not a wrapper simply gives <c>undefined</c>.
+    /// </summary>
+    [External]
+    [Convention(Notation.None)]
+    internal interface IPromiseRejection
+    {
+        object[] arguments { get; }
+    }
+
     /// <summary>What went wrong, in the terms a host actually branches on.</summary>
     public enum PdfErrorKind
     {
@@ -84,6 +103,17 @@ namespace Tesserae.Pdf
         internal static PdfError FromJs(object error)
         {
             if (error is PdfError already) return already;
+
+            // A rejected JavaScript promise does not arrive as the value it rejected with: the
+            // runtime wraps it in a Transpose.PromiseException whose Arguments carry the real
+            // rejection, and whose own name is "PromiseException". Reading the discriminator off the
+            // wrapper classifies every pdf.js failure as Unknown - a 404 and a corrupt file become
+            // indistinguishable - so the wrapper is peeled off first.
+            // Read by shape rather than by type: the wrapper is reached through a cast that emits
+            // nothing, so `arguments` is simply undefined on anything that is not one.
+            var rejection = ((IPromiseRejection)error)?.arguments;
+
+            if (rejection is object && rejection.Length > 0) return FromJs(rejection[0]);
 
             // A direct cast, never `as`: a type test against an [External] interface has no runtime
             // metadata to test against and throws instead of answering false. The cast is erased, so

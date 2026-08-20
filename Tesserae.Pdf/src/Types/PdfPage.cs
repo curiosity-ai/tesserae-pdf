@@ -145,14 +145,38 @@ namespace Tesserae.Pdf
             return text.ToString();
         }
 
-        /// <summary>The page's annotations - links, form widgets, popups, stamps - as pdf.js reports them.</summary>
-        public Task<object[]> GetAnnotationsAsync(string intent = null)
+        /// <summary>
+        /// The page's annotations - links, form widgets, popups, stamps.
+        ///
+        /// A form field's current value is here, which makes this the way to read a filled form
+        /// without saving it. There is one entry per widget, so a field drawn on two pages appears
+        /// twice.
+        /// </summary>
+        /// <param name="intent">
+        /// <c>"display"</c> (the default) or <c>"print"</c>. A PDF can hide an annotation from one of
+        /// them, so the two answers legitimately differ.
+        /// </param>
+        public async Task<PdfAnnotation[]> GetAnnotationsAsync(string intent = null)
         {
             var parameters = new GetAnnotationsParameters();
 
             if (!string.IsNullOrWhiteSpace(intent)) parameters.intent = intent;
 
-            return PromiseHelper.ToTask<object[]>(_page.getAnnotations(parameters));
+            // Awaited as object and cast: see the warning on PromiseHelper.ToTask about arrays of
+            // [External] types as type arguments.
+            var resolved = await PromiseHelper.ToTask<object>(_page.getAnnotations(parameters));
+            var raw      = (IPdfAnnotation[])resolved;
+
+            if (raw is null) return new PdfAnnotation[0];
+
+            var annotations = new PdfAnnotation[raw.Length];
+
+            for (var i = 0; i < raw.Length; i++)
+            {
+                annotations[i] = new PdfAnnotation(raw[i]);
+            }
+
+            return annotations;
         }
 
         /// <summary>

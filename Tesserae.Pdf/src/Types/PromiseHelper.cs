@@ -29,7 +29,19 @@ namespace Tesserae.Pdf
     /// </summary>
     internal static class PromiseHelper
     {
-        /// <summary>Awaits <paramref name="promise"/> and hands its resolved value back as <typeparamref name="T"/>.</summary>
+        /// <summary>
+        /// Awaits <paramref name="promise"/> and hands its resolved value back as
+        /// <typeparamref name="T"/>.
+        ///
+        /// <b>Do not pass an array of an <c>[External]</c> type as <typeparamref name="T"/>.</b> The
+        /// compiler materialises an array type argument by calling <c>System.Array.type(element)</c>,
+        /// which reads <c>$$fullname</c> off the element type - and an <c>[External]</c> declaration
+        /// has no runtime metadata, so it throws
+        /// <c>Cannot read properties of undefined (reading '$$fullname')</c> before the promise is
+        /// even awaited. A bare external interface is fine (nothing materialises it, and the cast is
+        /// erased); an array of one is not. Await as <c>object</c> and cast the result instead - see
+        /// <c>PdfDocument.GetOutlineAsync</c>.
+        /// </summary>
         internal static Task<T> ToTask<T>(IPromise promise)
         {
             return Task.FromPromise<T>(promise, new Func<object, T>(resolved => (T)resolved));
