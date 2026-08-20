@@ -151,7 +151,13 @@ namespace Tesserae.Pdf
             // One script, and everything else is already inside it: the bundle injects pdf.js's
             // stylesheet, publishes both globals, and points GlobalWorkerOptions.workerSrc at the
             // worker beside it, resolved from its own script URL. See build/bundle-pdfjs.mjs.
-            await Require.LoadScriptAsync(baseUrl + "/pdf.js");
+            //
+            // Transpose.Require is the runtime's own loader - fully qualified, because the enclosing
+            // Tesserae namespace has a Require of its own. It resolves the URL against the document's
+            // base, shares one fetch between concurrent callers, waits on a bundle index.html already
+            // carries rather than fetching it twice, and forgets a failed load so a later mount
+            // retries instead of inheriting the failure.
+            await Transpose.Require.RequireAsync(baseUrl + "/pdf.js");
 
             if (!IsLoaded)
             {

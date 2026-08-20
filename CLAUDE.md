@@ -68,6 +68,19 @@ them is only reachable as a module:
 - Loading them as modules also means the page cannot ask "has pdf.js loaded" without import-map
   plumbing. An IIFE sets both globals synchronously, which is what `PdfJs.IsLoaded` reads.
 
+### The bundle is fetched with `Transpose.Require`
+
+`PdfJs.LoadCoreAsync` asks for the one script through **`Transpose.Require.RequireAsync`**, the
+runtime's own loader, rather than injecting a `<script>` or going through Tesserae's `Require`. It
+resolves the URL against `document.baseURI` (so the Pages sub-path and a `<base href>` both work),
+shares one fetch between concurrent mounts, waits on the element instead of adding a second one if a
+host scripted `pdf.js` from `index.html`, and forgets a failed load so a later mount retries rather
+than inheriting the failure.
+
+Write it **fully qualified**. `Tesserae.Pdf` is nested inside `Tesserae`, so a bare `Require` binds to
+`Tesserae.Require` - the enclosing namespace beats the `using Transpose;` - and compiles silently
+against the old loader. It needs `Transpose.BCL` >= 26.8.4275, the first release carrying `Require`.
+
 ### Use the `legacy/` build. This is load-bearing.
 
 pdf.js 6.2's **modern** build calls `Map.prototype.getOrInsertComputed` - a stage-3 proposal -
