@@ -24,5 +24,12 @@ namespace Tesserae.Pdf
         /// closest equivalent that can be switched at runtime.
         /// </param>
         public static PdfViewer Viewer(bool singlePage = false) => new PdfViewer(singlePage);
+
+        /// <summary>
+        /// One page of a document, painted into a canvas - a thumbnail, a preview tile, a page in a
+        /// contact sheet. No scrolling and no text layer: the cheapest way to put a page on screen.
+        /// See <see cref="PdfPageCanvas"/>.
+        /// </summary>
+        public static PdfPageCanvas PageCanvas() => new PdfPageCanvas();
     }
 }

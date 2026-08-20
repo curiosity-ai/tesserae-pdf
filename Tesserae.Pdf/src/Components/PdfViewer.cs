@@ -713,10 +713,12 @@ namespace Tesserae.Pdf
         /// Runs the document's own embedded JavaScript - the calculate, format and validate actions
         /// an AcroForm carries.
         ///
-        /// Read when the viewer is built. A document with no scripts costs nothing: pdf.js starts no
-        /// sandbox for one. See <see cref="OnSandboxCreated"/> for the readiness signal, and note that
-        /// interactive form fields also need an annotation mode of
-        /// <see cref="AnnotationMode.EnableForms"/> or above, which is the default.
+        /// Read when the viewer is built. Safe to leave on for a viewer that shows arbitrary
+        /// documents: pdf.js starts no sandbox at all for a document with neither form fields nor
+        /// document-level actions, which is most of them.
+        ///
+        /// See <see cref="OnSandboxCreated"/> for the readiness signal, and note that interactive
+        /// form fields also need <see cref="AnnotationMode.EnableForms"/>, which is the default.
         /// </summary>
         public PdfViewer EnableScripting(bool enable = true)
         {
@@ -727,8 +729,13 @@ namespace Tesserae.Pdf
 
         /// <summary>
         /// Called when the scripting sandbox has come up for a document. The one reliable signal that
-        /// embedded JavaScript is actually running - a sandbox that fails to start reports itself to
-        /// the console and leaves the form inert rather than throwing.
+        /// it did - a sandbox that fails to start reports itself to the console and leaves the form
+        /// inert rather than throwing.
+        ///
+        /// Note pdf.js starts a sandbox for any document with <b>form fields or document-level
+        /// actions</b>, not only for one carrying scripts - so this fires for an ordinary AcroForm
+        /// too. It says the sandbox is running, not that anything in the document will use it;
+        /// <c>PdfDocument.HasEmbeddedJavaScriptAsync</c> is the question to ask for that.
         /// </summary>
         public PdfViewer OnSandboxCreated(Action handler)
         {
@@ -851,6 +858,11 @@ namespace Tesserae.Pdf
 
             _linkService.setViewer(_viewer);
 
+            // pdf.js calls translate() itself only when it built the l10n implementation. Given one,
+            // it assumes the object is watching the document - so the first call, which is also what
+            // tells the bridge which element to observe, has to come from here.
+            if (_l10nObject is object) _l10nObject.translate(_scrollHost);
+
             // Before any setDocument: pdf.js wires the manager to the viewer inside setDocument, and
             // one that has not been given a viewer by then never runs anything.
             _scriptingManager?.setViewer(_viewer);
@@ -858,8 +870,20 @@ namespace Tesserae.Pdf
             Subscribe();
         }
 
-        /// <summary>Built here rather than in a field initialiser so a null is possible in Debug builds without one.</summary>
-        private object BuildOwnL10n() => null;
+        /// <summary>
+        /// The package's own localization bridge, which answers pdf.js's message ids through
+        /// Tesserae's TNT translation table. Held so its observer can be released on teardown.
+        /// </summary>
+        private object BuildOwnL10n()
+        {
+            _l10n       = new PdfL10n();
+            _l10nObject = _l10n.Build();
+
+            return _l10nObject;
+        }
+
+        private PdfL10n       _l10n;
+        private PdfL10nObject _l10nObject;
 
         private void Subscribe()
         {
@@ -1021,6 +1045,17 @@ namespace Tesserae.Pdf
         protected override void DisposeCore()
         {
             ReleaseDocument();
+
+            // Releases the bridge's MutationObserver, which is watching the scroll host about to be
+            // removed below.
+            //
+            // Written out rather than as `_l10nObject?.destroy()`: the compiler emits a
+            // null-conditional call on a *delegate field* as an invocation of the object itself -
+            // `($nc) => $nc == null ? null : $nc()` - dropping the member name, and the page dies on
+            // "$nc25 is not a function" at teardown. A plain null check emits correctly.
+            if (_l10nObject is object) _l10nObject.destroy();
+            _l10nObject = null;
+            _l10n       = null;
 
             _viewer           = null;
             _events           = null;
