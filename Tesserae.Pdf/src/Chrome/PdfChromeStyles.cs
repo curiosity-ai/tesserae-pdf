@@ -146,10 +146,10 @@ namespace Tesserae.Pdf
   text-align:center;border-radius:6px;box-shadow:var(--tsspdf-shadow-sm)}
 .tsspdf-chrome .tsspdf-pagebox .tss-textbox-error{display:none}
 /* A reserved width, because this text changes as the reader moves through the document - of 9 to
-   of 10, (1 of 12) to (12 of 12) - and everything after it would move with it. */
+   of 10, 1 of 12 to 12 of 12 - and everything after it would move with it. */
 .tsspdf-pagetotal{font-size:12px;color:var(--tsspdf-fg-muted);white-space:nowrap;flex-shrink:0;
   min-width:52px}
-.tsspdf-chrome.tsspdf-labelled .tsspdf-pagetotal{min-width:74px}
+.tsspdf-chrome.tsspdf-labelled .tsspdf-pagetotal{min-width:64px}
 
 /* --------------------------------------------------------- segmented control */
 

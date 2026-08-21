@@ -388,8 +388,8 @@ Things that cost a debugging round each, and are worth not rediscovering:
   answers null even for a document that has them - so a toolbar reading it at `pagesinit` shows "1"
   for a page the document calls "i" and never learns otherwise. `PdfViewerEvents.PageLabelsApplied` is
   this package's own event, dispatched by `PdfViewer` for that. With labels in play the page box holds
-  a label, so the total reads `(11 of 12)` rather than `of 12` - pdf.js's own viewer does the same,
-  and "9 of 12" beside a box reading 9 would be a lie about both halves.
+  a label, so the total reads `11 of 12` rather than `of 12`, because "9 of 12" beside a box reading
+  9 would be a lie about both halves.
 - **`PdfFindControllerJs.pageMatches` is the only way to learn *which* pages a search hit** - the
   events carry totals. It is sparse while a search runs (a page pdf.js has not read has no entry,
   which is not the same as no matches), so read it per report rather than accumulating. Typed through
