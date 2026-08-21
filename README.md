@@ -30,7 +30,7 @@ and [`TODO.md`](TODO.md) for what is deliberately not in it.
 | | |
 | --- | --- |
 | `Tesserae.Pdf/` | the package |
-| `Tesserae.Pdf.Sample/` | the sample gallery — 21 pages, one per feature |
+| `Tesserae.Pdf.Sample/` | the sample gallery — 22 pages, one per feature |
 | `scripts/make-sample-pdfs.mjs` | generates the gallery's PDF fixtures |
 | `scripts/stage-samples.mjs` | stages a Release build for GitHub Pages |
 

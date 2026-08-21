@@ -39,7 +39,7 @@ namespace Tesserae.Pdf.Sample
             {
                 var captured = item;
 
-                picker.Items(DropdownItem(captured.Label).SelectedIf(captured.Source == OUTLINE_PDF)
+                picker.AddItems(DropdownItem(captured.Label).SelectedIf(captured.Source == OUTLINE_PDF)
                    .OnSelected(_ => ShowAsync(captured.Source, captured.Password).FireAndForget()));
             }
 

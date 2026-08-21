@@ -444,9 +444,9 @@ Two things this depends on, both easy to break:
   so one visit creates one page's viewers rather than every page's at startup - and leaving a page
   unmounts them. That is a feature: it exercises the components' teardown on every click.
 
-There are 21 pages in three groups: **Viewer** (the component and everything it does), **Pages** (the
+There are 22 pages in three groups: **Viewer** (the component and everything it does), **Pages** (the
 headless half - render, thumbnails, text, metadata, character maps) and **Runtime and hosting**
-(loading, modals, remount, several documents, save, scripting, localization).
+(loading, modals, remount, several documents, save, scripting, localization and the translation pipeline).
 
 ## Verifying changes
 
