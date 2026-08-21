@@ -35,6 +35,7 @@ namespace Tesserae.Pdf
     internal static class PdfChromeStyles
     {
         internal const string ROOT       = "tsspdf-chrome";
+        internal const string BORDERED   = "tsspdf-bordered";
         internal const string ON         = "tsspdf-on";
         internal const string OPEN       = "tsspdf-open";
         internal const string NO_MATCHES = "tsspdf-nomatches";
@@ -90,10 +91,22 @@ namespace Tesserae.Pdf
   --tsspdf-shadow-lift:0 4px 6px -1px rgba(0,0,0,.1);
   --tsspdf-panel-width:264px;
   --tsspdf-search-width:430px;
+  --tsspdf-radius:6px;
   display:flex;flex-direction:column;width:100%;height:100%;position:relative;overflow:hidden;
   background:var(--tsspdf-canvas);color:var(--tsspdf-fg);
 }
 .tsspdf-chrome,.tsspdf-chrome *,.tsspdf-chrome *::before,.tsspdf-chrome *::after{box-sizing:border-box}
+
+/* The optional frame - PdfViewerChrome.Border(). Off by default, because the common case has an edge
+   already: a chrome filling a window, a modal or a Tesserae Card is inside something that draws its
+   own line, and a second one just inside it is a seam. It earns its keep when the chrome sits on a
+   page's own background with nothing to say where the reader's document ends.
+
+   No rule for the corners of what is inside it: the root already clips (overflow:hidden), so the
+   toolbar's square top corners and the panel's bottom-left one are rounded by the radius here rather
+   than by a rule each. */
+.tsspdf-chrome.tsspdf-bordered{border:1px solid var(--tsspdf-border);
+  border-radius:var(--tsspdf-radius)}
 
 .tss-dark-mode .tsspdf-chrome{
   --tsspdf-accent-soft:rgba(var(--tss-link-color-root),.16);

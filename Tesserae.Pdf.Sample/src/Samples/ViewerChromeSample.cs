@@ -42,6 +42,9 @@ namespace Tesserae.Pdf.Sample
             // controls and no spread. Each of those is one setter rather than a second component.
             var compact = PdfJs.ViewerChrome()
                .Url(IMAGES_PDF)
+               // A fixed-size box sitting on its container's surface rather than filling it, so the
+               // only thing that says where the document ends is the frame it draws itself.
+               .Border()
                .ShowZoom(false)
                .ShowSpread(false)
                .ShowRotate(false)
@@ -50,6 +53,11 @@ namespace Tesserae.Pdf.Sample
                .PanelWidth(200);
 
             compact.Viewer.FitWidth();
+
+            var borderChoice = ChoiceGroup("Frame").Horizontal().Choices(
+                Choice("No border").Selected().OnSelected(_ => chrome.Border(false)),
+                Choice("Border").OnSelected(_ => chrome.Border().CornerRadius(6)),
+                Choice("Border, square").OnSelected(_ => chrome.Border().CornerRadius(0)));
 
             var layoutChoice = ChoiceGroup("Layout").Horizontal().Choices(
                 Choice("Single toolbar").Selected().OnSelected(_ => chrome.Layout(PdfChromeLayout.SingleToolbar)),
@@ -69,11 +77,12 @@ namespace Tesserae.Pdf.Sample
                         TextBlock("Search is two modes rather than three checkboxes. Fuzzy is pdf.js's defaults - case, accents and word boundaries all ignored - and Precise turns all three on at once, because a reader who wants one of them wants all of them. FindOptions is still there on the viewer for a host that needs them separately.").MT(8),
                         TextBlock("The panel earns its keep on long documents. Thumbnails are built as they scroll into view, so a 248-page document costs 248 empty frames and about a dozen renders; and the outline resolves each entry to a page number, which is what lets it show which section the reader is currently inside.").MT(8),
                         TextBlock("The panel has no tab strip. The two toolbar toggles already say which pane is open and are what a reader reaches for, so a strip under them was the same answer twice - and the width it took is the outline\u0027s now. Panel() and TogglePanel() are the same switch from code.").MT(8),
+                        TextBlock("Border() when nothing else draws the edge. The chrome\u0027s own lines are internal - under the toolbar, beside the panel - because a viewer filling a window has nothing to frame, and inside a modal or a Card a second line just inside the container\u0027s own reads as a seam. On a page\u0027s bare background it is the other way round, and the frame is what says where the document ends. CornerRadius() squares it off or rounds it further.").MT(8),
                         TextBlock("Turn off what you do not want rather than rebuilding. ShowZoom(false), ShowSpread(false), Tabs(thumbnails: false) and their siblings each drop a control and re-close the gap, which is usually what a preview pane wants instead of a second component.").MT(8))).SetTitle("Best Practices")))
                .FlatSection(VStack().Children(
                     Card(VStack().WS().Children(
                         SampleSubTitle("Try it"),
-                        layoutChoice,
+                        HStack().WS().Children(layoutChoice, borderChoice.ML(24)),
                         status.MT(8),
                         chrome.H(620).WS().MT(8),
                         SampleHint("Type \"tesserae\" into the search box - it is on three pages of this document, so the count should settle on 3 / 3. Switch to Precise and it still finds them; search \"Tesserae\" in Precise and it goes red. Click an entry in the outline to jump to its section, and watch the entry you are inside stay marked as the document scrolls.")
@@ -90,6 +99,7 @@ namespace Tesserae.Pdf.Sample
                         SampleSubTitle("Pared back for a narrow pane"),
                         TextBlock("The same chrome with ShowZoom(false), ShowRotate(false), ShowSpread(false) and Tabs(thumbnails: false). Dropping a control re-closes the gap it left, so the result reads as a smaller toolbar rather than a toolbar with holes in it - which is usually what a preview pane wants instead of a second component.").Small().Secondary(),
                         TextBlock("Everything the fuller toolbar can do is still reachable, because it was never the toolbar doing it: compact.Viewer is the same component, and the chrome is only the buttons.").Small().Secondary().MT(8),
+                        TextBlock("This one also has Border(). It is 760x420 on a surface rather than filling its container, so nothing around it draws the edge and the frame is what says where the document ends - where the chrome above fills its own box and does not need one. Try the Frame switch on it to see the difference.").Small().Secondary().MT(8),
                         // Its own row rather than beside anything: as a flex item next to a growing
                         // sibling the width would be a starting point rather than a width, and the
                         // toolbar would be squeezed by whatever it was sharing the row with.
