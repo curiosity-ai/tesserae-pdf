@@ -88,10 +88,11 @@ namespace Tesserae.Pdf.Sample
                     Card(VStack().WS().Children(
                         SampleSubTitle("Pared back for a narrow pane"),
                         TextBlock("The same chrome with ShowZoom(false), ShowRotate(false), ShowSpread(false) and Tabs(thumbnails: false). Dropping a control re-closes the gap it left, so the result reads as a smaller toolbar rather than a toolbar with holes in it - which is usually what a preview pane wants instead of a second component.").Small().Secondary(),
-                        HStack().WS().H(420).Gap(12.px()).MT(8).Children(
-                            compact.W(520).HS(),
-                            VStack().Grow().HS().Children(
-                                TextBlock("Everything the fuller toolbar can do is still reachable, because it was never the toolbar doing it: compact.Viewer is the same component, and the chrome is only the buttons.").Small().Secondary())),
+                        TextBlock("Everything the fuller toolbar can do is still reachable, because it was never the toolbar doing it: compact.Viewer is the same component, and the chrome is only the buttons.").Small().Secondary().MT(8),
+                        // Its own row rather than beside anything: as a flex item next to a growing
+                        // sibling the width would be a starting point rather than a width, and the
+                        // toolbar would be squeezed by whatever it was sharing the row with.
+                        compact.W(760).H(420).MT(8),
                         SampleHint("The search box shrinks before anything else in the toolbar does, so the controls survive a narrow container and the search field gives up width for them.")
                     )).SetTitle("Paring it back")))
                .SeeAlso(typeof(DocumentViewerSample), typeof(SearchSample), typeof(OutlineAndNavigationSample));

@@ -299,8 +299,12 @@ namespace Tesserae.Pdf
 .tsspdf-thumb-num{font-size:10px;color:var(--tsspdf-fg-muted);
   font-family:var(--tss-monospace-font-family)}
 .tsspdf-thumb.tsspdf-on .tsspdf-thumb-num{color:var(--tsspdf-accent);font-weight:600}
-.tsspdf-thumb-match{position:absolute;top:3px;right:3px;width:7px;height:7px;border-radius:50%;
-  background:var(--tsspdf-accent);box-shadow:0 0 0 1.5px #fff}
+/* z-index, because the page that lands in this frame arrives inside a positioned container of its
+   own (PdfComponent makes it relative for pdf.js's sake) and is a later sibling - so with both at
+   z-index auto the canvas paints over the dot, and the mark saying a page has a match on it is
+   invisible on exactly the tiles that have one. */
+.tsspdf-thumb-match{position:absolute;top:3px;right:3px;z-index:1;width:7px;height:7px;
+  border-radius:50%;background:var(--tsspdf-accent);box-shadow:0 0 0 1.5px #fff}
 .tsspdf-thumb:focus-visible .tsspdf-thumb-frame{box-shadow:0 0 0 2px var(--tsspdf-accent-ring)}
 ";
     }
