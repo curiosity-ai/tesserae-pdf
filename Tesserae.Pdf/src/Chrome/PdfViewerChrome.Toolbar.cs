@@ -606,15 +606,14 @@ namespace Tesserae.Pdf
             if (_pageTotal is object)
             {
                 // With page labels the box holds a label, not a number, so "9 of 12" would be a lie
-                // about both halves. The parenthesised form is pdf.js's own answer to that, and it is
-                // the right one: the box says what is printed on the page, and this says where in the
-                // document that is. A document with no labels - most of them - reads "of 12".
+                // about both halves: the box says what is printed on the page, and this says where in
+                // the document that is. A document with no labels - most of them - reads "of 12".
                 //
                 // Which form it is, is decided by the document rather than by the page: asking per
                 // page whether the label differs from the number makes the text - and so the width of
                 // everything after it - flip as the reader scrolls.
                 _pageTotal.Text = _pageCount == 0   ? ""
-                                : _documentHasLabels ? $"({_page} of {_pageCount})".t()
+                                : _documentHasLabels ? $"{_page} of {_pageCount}".t()
                                                      : $"of {_pageCount}".t();
             }
 
@@ -641,7 +640,7 @@ namespace Tesserae.Pdf
         /// per document, from the labels themselves.
         ///
         /// A document whose labels happen to be "1", "2", ... counts as having none: the labels are
-        /// real, but "(3 of 12)" beside a box reading 3 tells the reader nothing. Asking that question
+        /// real, but "3 of 12" beside a box reading 3 tells the reader nothing. Asking that question
         /// of the whole array rather than of the current page is what keeps the answer - and the width
         /// of the text - the same on every page of the document.
         /// </summary>
