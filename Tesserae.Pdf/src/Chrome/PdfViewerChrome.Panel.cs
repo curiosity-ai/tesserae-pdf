@@ -5,14 +5,21 @@ using Transpose;
 using Transpose.Core;
 using Tesserae;
 using static Transpose.Core.dom;
+using static Tesserae.UI;
 using static Tesserae.Pdf.PdfChromeElements;
 using static TNT.T;
 
 namespace Tesserae.Pdf
 {
     /// <summary>
-    /// The side panel: the tab strip, the outline tree, the thumbnail grid, and the footer that says
-    /// what a search found.
+    /// The side panel: a Tesserae <see cref="Pivot"/> holding a <see cref="Tesserae.Tree"/> of the
+    /// document's outline and a <see cref="Grid"/> of page thumbnails, over a footer that says what a
+    /// search found.
+    ///
+    /// The Pivot earns its place twice over: it is the tab strip <i>and</i> the thing that swaps the
+    /// two panes, so the chrome no longer tracks which pane is mounted. The Tree brings the twisties,
+    /// the indentation, the selection and <c>role="tree"</c> with it, and has a commands slot on every
+    /// row - which is where the page number goes.
     ///
     /// Two things here are more than they look.
     ///
@@ -30,13 +37,34 @@ namespace Tesserae.Pdf
     /// </summary>
     public sealed partial class PdfViewerChrome
     {
-        private HTMLElement _panelElement;
-        private HTMLElement _panelBody;
-        private HTMLElement _outlineTab;
-        private HTMLElement _thumbnailTab;
-        private HTMLElement _panelSummary;
+        private Stack       _panelElement;
+        private HTMLElement _panelRendered;
+        private Pivot     _panelPivot;
+        private Stack       _outlineHost;
+        private Stack       _thumbnailHost;
+        private HTMLElement _outlineElement;
+        private HTMLElement _thumbnailElement;
+        private TextBlock _panelSummary;
+        private Button    _panelAction;
 
-        private HTMLButtonElement _panelAction;
+        private const string OUTLINE_TAB    = "outline";
+        private const string THUMBNAIL_TAB  = "thumbnails";
+
+        /// <summary>
+        /// Whether the panel has finished settling, and a navigation from the Pivot can be believed.
+        ///
+        /// <b>A Pivot reports its own initial selection as a navigation</b>, and reports it a frame or
+        /// two after it was built - so a chrome asked to open on Thumbnails is told, by its own panel
+        /// and after the fact, that the reader just chose Outline. A scope guard around the build
+        /// cannot catch that, because it has been released by the time the event arrives.
+        ///
+        /// So the panel ignores navigations until it has settled, which is a couple of frames. The
+        /// cost is a tab click in the first few milliseconds of opening the panel; the alternative
+        /// costs the host's choice of tab, every time.
+        /// </summary>
+        private bool _panelSettled;
+
+        private int _panelGeneration;
 
         /* -------------------------------------------------------------- assembly */
 
@@ -52,73 +80,151 @@ namespace Tesserae.Pdf
             {
                 ResetThumbnails();
 
-                _body.removeChild(_panelElement);
+                // The element that was inserted, not a fresh Render(): see _toolbarElement.
+                if (_panelRendered is object && _panelRendered.parentElement is object)
+                {
+                    _panelRendered.parentElement.removeChild(_panelRendered);
+                }
 
-                _panelElement = null;
-                _panelBody    = null;
-                _outlineTab   = null;
-                _thumbnailTab = null;
-                _panelSummary = null;
-                _panelAction  = null;
+                _panelSettled     = false;
+                _panelElement     = null;
+                _panelRendered    = null;
+                _outlineHost      = null;
+                _thumbnailHost    = null;
+                _outlineElement   = null;
+                _thumbnailElement = null;
+                _panelPivot    = null;
+                _outlineHost   = null;
+                _thumbnailHost = null;
+                _panelSummary  = null;
+                _panelAction   = null;
             }
 
             if (_panel == PdfChromePanel.None) return;
 
-            _panelElement = Box("tsspdf-panel");
+            _panelPivot = Pivot().HideIfSingle();
 
-            var tabs = Box("tsspdf-panel-tabs");
+            // <b>The panes are built by the factories, not before them.</b> A Pivot renders a pane
+            // when that tab is first shown, so a host stack filled in ahead of time is filled while
+            // it is still detached - which is a panel of nothing, and was: thumbnails declared before
+            // the document loaded never appeared. Building inside the factory means the pane is
+            // populated exactly when the Pivot is about to show it, and the ordering cannot be wrong.
+            //
+            // Outline first, always: the tab order is the design's and is not a place to encode which
+            // one is selected. Which one that is, is Select's job - and the reason it needs help is
+            // below, on _panelSettled.
+            if (_showOutlineTab)   AppendOutlineTab();
+            if (_showThumbnailTab) AppendThumbnailTab();
 
-            if (_showOutlineTab)
+            // The toolbar's toggles and the panel's tabs are two faces of one piece of state, so a tab
+            // click goes through the same setter the toggles do.
+            _panelPivot.OnNavigate((_, e) =>
             {
-                _outlineTab = Button("tsspdf-tab", null, () => Panel(PdfChromePanel.Outline));
+                if (!_panelSettled) return;
 
-                _outlineTab.textContent = "Outline".t();
+                Panel(e.TargetPivot == THUMBNAIL_TAB ? PdfChromePanel.Thumbnails : PdfChromePanel.Outline);
+            });
 
-                tabs.appendChild(_outlineTab);
+            _panelSummary = TextBlock("").Class("tsspdf-panel-count");
+
+            _panelAction = Button("Show in outline".t())
+               .NoMargin()
+               .NoMinSize()
+               .NoPadding()
+               .NoBorder()
+               .NoBackground()
+               .Class("tsspdf-panel-action")
+               .OnClick(RevealCurrentPage);
+
+            var footer = HStack().WS().Class("tsspdf-panel-foot").AlignItems(ItemAlign.Center).Gap(8.px())
+               .Children(_panelSummary, VStack().Grow(), _panelAction);
+
+            _panelElement = VStack().HS().Class("tsspdf-panel").Children(_panelPivot.Grow(), footer);
+
+            _panelRendered = _panelElement.Render();
+
+            _body.insertBefore(_panelRendered, _view);
+
+            SelectPanelTab();
+
+            SettlePanelAsync(++_panelGeneration).FireAndForget();
+        }
+
+        /// <summary>
+        /// Lets the Pivot finish announcing its own initial selection, then starts believing it.
+        ///
+        /// Generation-checked, so a panel rebuilt while this was waiting does not have an older
+        /// panel's settling applied to it.
+        /// </summary>
+        private async Task SettlePanelAsync(int generation)
+        {
+            for (var frames = 0; frames < PANEL_SETTLE_FRAMES; frames++)
+            {
+                await Task.Delay(PANEL_SETTLE_MS);
+
+                if (generation != _panelGeneration) return;
             }
 
-            if (_showThumbnailTab)
+            _panelSettled = true;
+        }
+
+        private const int PANEL_SETTLE_FRAMES = 3;
+        private const int PANEL_SETTLE_MS     = 16;
+
+        private void AppendOutlineTab()
+            => _panelPivot.Pivot(OUTLINE_TAB, () => TextBlock("Outline".t()), () => BuildOutlinePane());
+
+        private void AppendThumbnailTab()
+            => _panelPivot.Pivot(THUMBNAIL_TAB, () => TextBlock("Thumbnails".t()), () => BuildThumbnailPane());
+
+        /// <summary>
+        /// Points the Pivot at the tab the chrome is showing. The pane itself is built by the Pivot's
+        /// content factory, the first time it shows that tab.
+        /// </summary>
+        private void SelectPanelTab()
+        {
+            if (_panelPivot is null) return;
+
+            var thumbnails = _panel == PdfChromePanel.Thumbnails;
+
+            _panelPivot.Select(thumbnails ? THUMBNAIL_TAB : OUTLINE_TAB, true);
+
+            // The factory builds a pane the first time the Pivot shows it. A pane it has already
+            // shown is not built again - and the document may have arrived since - so a pane that is
+            // up gets refilled here. Checked by mounted-ness rather than by a flag, because the Pivot
+            // decides when a pane is in the DOM and this is the question that actually matters.
+            if (thumbnails)
             {
-                _thumbnailTab = Button("tsspdf-tab", null, () => Panel(PdfChromePanel.Thumbnails));
-
-                _thumbnailTab.textContent = "Thumbnails".t();
-
-                tabs.appendChild(_thumbnailTab);
-            }
-
-            Toggle(_outlineTab,   PdfChromeStyles.ON, _panel == PdfChromePanel.Outline);
-            Toggle(_thumbnailTab, PdfChromeStyles.ON, _panel == PdfChromePanel.Thumbnails);
-
-            _panelBody = Box("tsspdf-panel-body");
-
-            var footer = Box("tsspdf-panel-foot");
-
-            _panelSummary = Text("tsspdf-panel-count", "");
-
-            footer.appendChild(_panelSummary);
-
-            _panelAction = Button("tsspdf-panel-action", null, RevealCurrentPage);
-
-            _panelAction.textContent = "Show in outline".t();
-
-            footer.appendChild(_panelAction);
-
-            _panelElement.appendChild(tabs);
-            _panelElement.appendChild(_panelBody);
-            _panelElement.appendChild(footer);
-
-            _body.insertBefore(_panelElement, _view);
-
-            if (_panel == PdfChromePanel.Outline)
-            {
-                BuildOutlineTree();
+                if (_thumbnailElement is object && _thumbnailElement.IsMounted()) BuildThumbnails();
             }
             else
             {
-                BuildThumbnails();
+                if (_outlineElement is object && _outlineElement.IsMounted()) BuildOutlineTree();
             }
 
             UpdatePanelFooter();
+        }
+
+        /// <summary>The outline pane, built and filled on the Pivot's first show of that tab.</summary>
+        private IComponent BuildOutlinePane()
+        {
+            _outlineHost    = VStack().WS().Class("tsspdf-outline");
+            _outlineElement = _outlineHost.Render();
+
+            BuildOutlineTree();
+
+            return _outlineHost;
+        }
+
+        /// <summary>The thumbnail pane, built and filled on the Pivot's first show of that tab.</summary>
+        private IComponent BuildThumbnailPane()
+        {
+            _thumbnailHost    = VStack().WS().Class("tsspdf-thumbs");
+            _thumbnailElement = _thumbnailHost.Render();
+
+            BuildThumbnails();
+
+            return _thumbnailHost;
         }
 
         /// <summary>
@@ -137,7 +243,7 @@ namespace Tesserae.Pdf
 
             if (!searching)
             {
-                _panelSummary.textContent = _pageCount > 0 ? $"{_pageCount} pages".t() : "";
+                _panelSummary.Text = _pageCount > 0 ? $"{_pageCount} pages".t() : "";
             }
             else if (_matchTotal > 0)
             {
@@ -150,16 +256,16 @@ namespace Tesserae.Pdf
                     if (pages is object) summary = summary + " · " + pages;
                 }
 
-                _panelSummary.textContent = summary;
+                _panelSummary.Text = summary;
             }
             else
             {
-                _panelSummary.textContent = _searchSettled ? "No matches".t() : "Searching...".t();
+                _panelSummary.Text = _searchSettled ? "No matches".t() : "Searching...".t();
             }
 
             Show(_panelAction, _panel == PdfChromePanel.Outline && _outlineRows.Count > 0);
 
-            if (_panelAction is object) _panelAction.disabled = _pageCount == 0;
+            if (_panelAction is object) _panelAction.Disabled(_pageCount == 0);
         }
 
         /// <summary>
@@ -197,10 +303,9 @@ namespace Tesserae.Pdf
         private sealed class OutlineRow
         {
             internal PdfOutlineItem Item;
-            internal HTMLElement    Row;
+            internal Tree.Item      Node;
+            internal HTMLElement    Element;
             internal HTMLElement    PageText;
-            internal HTMLElement    Children;
-            internal HTMLElement    Twisty;
             internal OutlineRow     Parent;
             internal int            Ordinal;
             internal int            Page;
@@ -212,7 +317,7 @@ namespace Tesserae.Pdf
         /// The outline flattened in the order the tree is walked, and beside it the page each entry
         /// resolved to and whether its branch is open.
         ///
-        /// <b>Why any of this is kept outside the DOM.</b> The tree gets rebuilt - by closing and
+        /// <b>Why any of this is kept outside the tree.</b> The tree gets rebuilt - by closing and
         /// reopening the panel, by switching layout - and page numbers that lived on the row objects
         /// would go with it: a rebuilt tree would show no page numbers at all and would not know which
         /// section the reader is in, because the resolution has already happened and does not run
@@ -343,38 +448,41 @@ namespace Tesserae.Pdf
 
         private void BuildOutlineTree()
         {
-            if (_panelBody is null) return;
+            if (_outlineHost is null) return;
 
-            Empty(_panelBody);
-
+            _outlineHost.Clear();
             _outlineRows.Clear();
 
             if (_outline is null || _outline.Count == 0)
             {
-                var message = Box("tsspdf-panel-empty");
-
-                message.textContent = _pageCount == 0
-                    ? "No document.".t()
-                    : "This document has no outline.".t();
-
-                _panelBody.appendChild(message);
+                _outlineHost.Add(TextBlock(_pageCount == 0
+                        ? "No document.".t()
+                        : "This document has no outline.".t())
+                   .Class("tsspdf-panel-empty").Small().Secondary());
 
                 UpdatePanelFooter();
 
                 return;
             }
 
-            var host = Box("tsspdf-outline");
+            var tree = new Tree().Compact(true);
 
-            AppendOutlineLevel(host, _outline, null);
+            AppendOutlineLevel(node => tree.Add(node), _outline, null);
 
-            _panelBody.appendChild(host);
+            _outlineHost.Add(tree);
 
             HighlightCurrentPage();
             UpdatePanelFooter();
         }
 
-        private void AppendOutlineLevel(HTMLElement host, IReadOnlyList<PdfOutlineItem> items, OutlineRow parent)
+        /// <summary>
+        /// Builds one level of the tree.
+        ///
+        /// <paramref name="attach"/> rather than a parent parameter, because a <see cref="Tree"/> and a
+        /// <see cref="Tree.Item"/> take children through different methods and this way the recursion
+        /// does not have to know which it is talking to.
+        /// </summary>
+        private void AppendOutlineLevel(Action<Tree.Item> attach, IReadOnlyList<PdfOutlineItem> items, OutlineRow parent)
         {
             foreach (var item in items)
             {
@@ -391,57 +499,76 @@ namespace Tesserae.Pdf
                     Page    = ordinal < _outlinePages.Count ? _outlinePages[ordinal] : 0,
                 };
 
-                var button = Button("tsspdf-outline-item", null, () => OpenOutlineEntry(row));
+                // The page number lives in the tree's commands slot, and a command is a hover
+                // affordance by default - which for a number is wrong: it is information, not an
+                // action, and a column that appears under the pointer is a column that shifts.
+                var node = new Tree.Item(item.Title ?? "").CommandsAlwaysVisible(true);
 
-                row.Row    = button;
-                row.Twisty = Glyph("tsspdf-outline-twisty", item.Children.Count > 0 ? PdfChromeIcons.TWISTY : "");
-
-                button.appendChild(row.Twisty);
-
-                var title = Text("tsspdf-outline-title", item.Title ?? "");
-
-                title.title = item.Title ?? "";
-
-                // The document decides how its own entries look. Colour is deliberately left alone
-                // when the PDF names none - PdfOutlineItem reports null rather than black for that
-                // exactly so the row can inherit a theme's foreground instead.
-                if (item.Bold)              title.style.fontWeight = "600";
-                if (item.Italic)            title.style.fontStyle  = "italic";
-                if (item.Color is object)   title.style.color      = item.Color;
-
-                button.appendChild(title);
-
-                row.PageText = Text("tsspdf-outline-page", row.Page > 0 ? row.Page.ToString() : "");
-
-                button.appendChild(row.PageText);
-
-                host.appendChild(button);
+                row.Node    = node;
+                row.Element = node.Render();
 
                 _outlineRows.Add(row);
 
-                if (item.Children.Count == 0) continue;
+                node.OnSelected(_ => OpenOutlineEntry(row));
 
-                row.Children = Box("tsspdf-outline-children");
-
-                var expanded = IsOutlineExpanded(row);
-
-                Toggle(row.Children, "tsspdf-collapsed", !expanded);
-                Toggle(row.Twisty,   PdfChromeStyles.OPEN, expanded);
-
-                // The twisty swallows the click so expanding a branch does not also navigate to it.
-                // Registered on the span rather than by checking the target, because the glyph inside
-                // it is what the pointer actually hits.
-                row.Twisty.addEventListener("click", new Action<Event>(e =>
+                if (item.Children.Count > 0)
                 {
-                    e.stopPropagation();
+                    var expanded = IsOutlineExpanded(row);
 
-                    SetOutlineExpanded(row, !IsOutlineExpanded(row));
-                }));
+                    node.Expanded(expanded);
 
-                AppendOutlineLevel(row.Children, item.Children, row);
+                    node.OnExpanded(_ => SetOutlineExpanded(row, true));
+                    node.OnCollapsed(_ => SetOutlineExpanded(row, false));
 
-                host.appendChild(row.Children);
+                    AppendOutlineLevel(child => node.Add(child), item.Children, row);
+                }
+
+                attach(node);
+
+                DecorateOutlineRow(row);
             }
+        }
+
+        /// <summary>
+        /// Adds the page number to a row, and applies the styling the document asks for.
+        ///
+        /// <b>The page number goes in the tree's own commands slot</b> - the element every row already
+        /// has for trailing content - rather than being appended wherever there was room. That is a
+        /// coupling to a <c>tss-</c> class and the one place the chrome reaches into a component's DOM;
+        /// it is guarded, so a Tesserae change that renames the slot costs the numbers rather than the
+        /// panel.
+        /// </summary>
+        private void DecorateOutlineRow(OutlineRow row)
+        {
+            var element = row.Element;
+            var content = Find(element, ".tss-tree-item-content");
+
+            if (content is null) return;
+
+            var label = Find(content, ".tss-tree-text");
+
+            if (label is object)
+            {
+                // The document decides how its own entries look. Colour is deliberately left alone
+                // when the PDF names none - PdfOutlineItem reports null rather than black for that
+                // exactly so the row can inherit a theme's foreground instead.
+                if (row.Item.Bold)            label.style.fontWeight = "600";
+                if (row.Item.Italic)          label.style.fontStyle  = "italic";
+                if (row.Item.Color is object) label.style.color      = row.Item.Color;
+
+                label.title = row.Item.Title ?? "";
+            }
+
+            var commands = Find(content, ".tss-tree-commands");
+
+            if (commands is null) return;
+
+            row.PageText = document.createElement("span").As<HTMLElement>();
+
+            row.PageText.className   = "tsspdf-outline-page";
+            row.PageText.textContent = row.Page > 0 ? row.Page.ToString() : "";
+
+            commands.appendChild(row.PageText);
         }
 
         /// <summary>
@@ -459,19 +586,19 @@ namespace Tesserae.Pdf
 
         private void SetOutlineExpanded(OutlineRow row, bool expanded)
         {
-            if (row is null || row.Children is null) return;
+            if (row is null) return;
 
             if (row.Ordinal < _outlineExpanded.Count) _outlineExpanded[row.Ordinal] = expanded;
 
-            Toggle(row.Children, "tsspdf-collapsed", !expanded);
-            Toggle(row.Twisty,   PdfChromeStyles.OPEN, expanded);
+            if (row.Node is object && row.Node.IsExpanded != expanded) row.Node.Expanded(expanded);
         }
 
         /// <summary>
         /// Follows an outline entry: to a place in the document, or out to a URL.
         ///
         /// An entry with no target is a heading rather than a link - some outlines are structured that
-        /// way - so clicking one expands its branch instead of doing nothing.
+        /// way - and the tree has already expanded it by the time this runs, which is the right thing
+        /// for a heading to do.
         /// </summary>
         private void OpenOutlineEntry(OutlineRow row)
         {
@@ -484,14 +611,7 @@ namespace Tesserae.Pdf
                 return;
             }
 
-            if (row.Item.Destination is object)
-            {
-                _viewer.GoToDestination(row.Item.Destination);
-
-                return;
-            }
-
-            if (row.Children is object) SetOutlineExpanded(row, !IsOutlineExpanded(row));
+            if (row.Item.Destination is object) _viewer.GoToDestination(row.Item.Destination);
         }
 
         /// <summary>
@@ -513,7 +633,7 @@ namespace Tesserae.Pdf
                 SetOutlineExpanded(ancestor, true);
             }
 
-            ScrollPanelTo(current.Row);
+            ScrollPanelTo(current.Element);
         }
 
         /// <summary>
@@ -544,7 +664,8 @@ namespace Tesserae.Pdf
 
         private sealed class ThumbnailTile
         {
-            internal HTMLElement   Button;
+            internal Button        Button;
+            internal HTMLElement   Element;
             internal HTMLElement   Frame;
             internal HTMLElement   MatchDot;
             internal PdfPageCanvas Canvas;
@@ -556,7 +677,7 @@ namespace Tesserae.Pdf
         private IntersectionObserver _thumbnailObserver;
 
         /// <summary>
-        /// The first page's width over its height, or 0 before it is known.
+        /// The first page's width over its height, as a CSS ratio, or null before it is known.
         ///
         /// <b>Why the grid needs this.</b> A frame with no page in it yet has no height of its own, so
         /// without a placeholder ratio every unrendered tile is the same 72px stub - and a panel whose
@@ -637,68 +758,64 @@ namespace Tesserae.Pdf
         /// <summary>
         /// Builds the grid: one empty frame per page, and an observer that fills a frame in when the
         /// scroller brings it close.
-        ///
-        /// The frames carry a minimum height rather than a fixed aspect ratio. A ratio would keep the
-        /// grid perfectly even before anything renders, at the cost of cropping any page that is not
-        /// the shape it guessed - and a document of mixed page sizes is exactly the one where a
-        /// thumbnail has to be honest about what it is showing.
         /// </summary>
         private void BuildThumbnails()
         {
-            if (_panelBody is null) return;
+            if (_thumbnailHost is null) return;
 
             ResetThumbnails();
-            Empty(_panelBody);
+
+            _thumbnailHost.Clear();
 
             var document_ = _viewer.Document;
 
             if (document_ is null || _pageCount == 0)
             {
-                var message = Box("tsspdf-panel-empty");
-
-                message.textContent = "No document.".t();
-
-                _panelBody.appendChild(message);
+                _thumbnailHost.Add(TextBlock("No document.".t()).Class("tsspdf-panel-empty").Small().Secondary());
 
                 return;
             }
 
-            var grid = Box("tsspdf-thumbs");
+            var grid = Grid(new[] { 1.fr(), 1.fr() }).Gap(12.px()).AlignContent(ItemAlign.Start);
 
             for (var pageNumber = 1; pageNumber <= _pageCount; pageNumber++)
             {
                 var captured = pageNumber;
                 var tile     = new ThumbnailTile { Page = captured };
 
-                var button = Button("tsspdf-thumb", $"Page {captured}".t(), () => _viewer.GoToPage(captured));
-
-                tile.Button   = button;
                 tile.Frame    = Box("tsspdf-thumb-frame");
                 tile.MatchDot = Box("tsspdf-thumb-match");
 
-                Show(tile.MatchDot, false);
+                tile.MatchDot.style.display = "none";
 
                 tile.Frame.appendChild(tile.MatchDot);
 
                 ApplyThumbnailAspect(tile);
 
-                button.appendChild(tile.Frame);
-                button.appendChild(Text("tsspdf-thumb-num", captured.ToString()));
+                tile.Button = Button()
+                   .NoMargin()
+                   .NoMinSize()
+                   .NoPadding()
+                   .NoBorder()
+                   .Class("tsspdf-thumb")
+                   .SetTitle($"Page {captured}".t())
+                   .ReplaceContent(VStack().WS().AlignItems(ItemAlign.Center).Gap(4.px()).Children(
+                        Raw(tile.Frame),
+                        TextBlock(captured.ToString()).Class("tsspdf-thumb-num")))
+                   .OnClick(() => _viewer.GoToPage(captured));
 
-                // The page number is on the tile already, so the tooltip would only repeat it - the
-                // accessible name set by Button is what carries it.
-                button.title = "";
+                tile.Element = tile.Button.Render();
 
-                grid.appendChild(button);
+                grid.Add(tile.Button);
 
                 _thumbnails.Add(tile);
             }
 
-            _panelBody.appendChild(grid);
+            _thumbnailHost.Add(grid);
 
             var options = new IntersectionObserverInit
             {
-                root       = _panelBody,
+                root       = PanelScroller(),
                 rootMargin = "240px 0px",
             };
 
@@ -749,7 +866,7 @@ namespace Tesserae.Pdf
 
             foreach (var tile in _thumbnails)
             {
-                _thumbnailObserver.observe(tile.Button);
+                _thumbnailObserver.observe(tile.Element);
             }
 
             HighlightCurrentPage();
@@ -762,7 +879,7 @@ namespace Tesserae.Pdf
 
             foreach (var tile in _thumbnails)
             {
-                if (tile.Button == element) return tile;
+                if (tile.Element == element) return tile;
             }
 
             return null;
@@ -778,7 +895,7 @@ namespace Tesserae.Pdf
         {
             foreach (var tile in _thumbnails)
             {
-                Toggle(tile.Button, PdfChromeStyles.ON, tile.Page == _page);
+                Toggle(tile.Element, PdfChromeStyles.ON, tile.Page == _page);
             }
 
             ScrollSelectedThumbnailIntoView();
@@ -790,8 +907,16 @@ namespace Tesserae.Pdf
 
             foreach (var row in _outlineRows)
             {
-                Toggle(row.Row, PdfChromeStyles.ON,      row == current);
-                Toggle(row.Row, PdfChromeStyles.SECTION, row == section);
+                if (row.Node is null) continue;
+
+                // A class rather than the tree's own Selected(), deliberately. Selecting an item
+                // programmatically makes the tree scroll it into view with the native
+                // scrollIntoView - which scrolls every scrollable ancestor up to the window, so
+                // every page change would drag the host application's scrollbar. The same bug
+                // PdfViewer.ScrollMatchIntoView exists to avoid, arriving through a component
+                // instead of through pdf.js. Selected() stays for what the reader clicks.
+                Toggle(row.Element, PdfChromeStyles.CURRENT, row == current);
+                Toggle(row.Element, PdfChromeStyles.SECTION, row == section);
             }
         }
 
@@ -801,7 +926,7 @@ namespace Tesserae.Pdf
 
             foreach (var tile in _thumbnails)
             {
-                if (tile.Page == _page) ScrollPanelTo(tile.Button);
+                if (tile.Page == _page) ScrollPanelTo(tile.Element);
             }
         }
 
@@ -809,27 +934,46 @@ namespace Tesserae.Pdf
         /// Scrolls the panel just far enough to bring a row into view, and not at all when it already
         /// is.
         ///
-        /// Deliberately not <c>scrollIntoView</c>: that centres, so every page change in a long
-        /// document would jump the panel even when what it is marking is already on screen.
+        /// Deliberately not <c>scrollIntoView</c>: that centres, and it scrolls every scrollable
+        /// ancestor up to the window - which is the bug <see cref="PdfViewer.ScrollMatchIntoView"/>
+        /// exists to avoid, and it would be no better here.
         /// </summary>
         private void ScrollPanelTo(HTMLElement element)
         {
-            if (_panelBody is null || element is null) return;
+            var scroller = PanelScroller();
 
-            var top    = element.offsetTop;
-            var bottom = top + element.offsetHeight;
+            if (scroller is null || element is null) return;
 
-            if (top < _panelBody.scrollTop)
+            var target = element.getBoundingClientRect().As<DOMRect>();
+            var host   = scroller.getBoundingClientRect().As<DOMRect>();
+
+            if (target.top < host.top)
             {
-                _panelBody.scrollTop = top > MARGIN ? top - MARGIN : 0;
+                scroller.scrollTop += target.top - host.top - MARGIN;
             }
-            else if (bottom > _panelBody.scrollTop + _panelBody.clientHeight)
+            else if (target.bottom > host.bottom)
             {
-                _panelBody.scrollTop = bottom - _panelBody.clientHeight + MARGIN;
+                scroller.scrollTop += target.bottom - host.bottom + MARGIN;
             }
         }
 
         private const int MARGIN = 12;
+
+        /// <summary>
+        /// The element the panel's content scrolls in - the Pivot's content pane.
+        ///
+        /// A coupling to a <c>tss-</c> class, and a shallow one: everything that reads it treats null
+        /// as "cannot scroll yet", so a rename costs the scroll-into-view rather than the panel.
+        /// </summary>
+        /// <summary>
+        /// The element the panel's content scrolls in - the Pivot's content pane, looked up inside the
+        /// element the panel was inserted as.
+        ///
+        /// Inside <c>_panelRendered</c> rather than by re-rendering the Pivot: asking a Tesserae
+        /// component to render twice can hand back a second element, and doing that here produced a
+        /// second tab strip in the panel.
+        /// </summary>
+        private HTMLElement PanelScroller() => Find(_panelRendered, ".tss-pivot-content");
 
         /* ------------------------------------------------------- matched pages */
 
@@ -841,7 +985,7 @@ namespace Tesserae.Pdf
 
             foreach (var tile in _thumbnails)
             {
-                Show(tile.MatchDot, false);
+                tile.MatchDot.style.display = "none";
             }
 
             UpdatePanelFooter();
@@ -877,7 +1021,7 @@ namespace Tesserae.Pdf
 
             foreach (var tile in _thumbnails)
             {
-                Show(tile.MatchDot, _matchPages.Contains(tile.Page));
+                tile.MatchDot.style.display = _matchPages.Contains(tile.Page) ? "" : "none";
             }
 
             UpdatePanelFooter();

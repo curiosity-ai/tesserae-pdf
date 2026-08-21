@@ -66,6 +66,21 @@ namespace Tesserae.Pdf
         int mode { get; }
     }
 
+    /// <summary>
+    /// The payload of <see cref="PdfViewerEvents.PageLabelsApplied"/>, on the reading side.
+    ///
+    /// The same shape as <see cref="PageLabelsEventPayload"/>, which is what dispatches it - declared
+    /// twice because one of them has to be an <c>[ObjectLiteral]</c> to be built and the other an
+    /// <c>[External]</c> interface to be read off the bus.
+    /// </summary>
+    [External]
+    [Convention(Notation.None)]
+    public interface IPageLabelsEvent
+    {
+        /// <summary>The labels, one per page, or null when the document names none.</summary>
+        string[] pageLabels { get; }
+    }
+
     /// <summary>Raised once per page, each time that page finishes painting.</summary>
     [External]
     [Convention(Notation.None)]

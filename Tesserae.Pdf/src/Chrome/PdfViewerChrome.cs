@@ -50,8 +50,44 @@ namespace Tesserae.Pdf
         private readonly HTMLElement _view;
         private readonly HTMLElement _viewerElement;
 
-        private HTMLElement _toolbar;
-        private HTMLElement _rail;
+        private IComponent _toolbar;
+        private IComponent _rail;
+
+        // The elements those two rendered to.
+        //
+        // <b>Render() is not idempotent on a Tesserae component</b> - a Stack asked twice can hand back
+        // a different element - so the thing that was inserted has to be remembered rather than asked
+        // for again. Asking again leaves the first copy in the DOM, which is two toolbars.
+        private HTMLElement _toolbarElement;
+        private HTMLElement _railElement;
+
+        private ResizeObserver _sizeObserver;
+
+        /// <summary>
+        /// The width band the chrome is currently in, as the class that is on its root.
+        ///
+        /// <b>Why bands rather than a media query.</b> A media query asks about the window, and this
+        /// is a component: the same page can hold one of these full-width and another in a 360px
+        /// pane, and they need different toolbars. So the breakpoints are measured on the chrome's own
+        /// box and published as a class, which is what the sheet keys off.
+        ///
+        /// Nothing is ever hidden without somewhere else to reach it: what the bands take out of the
+        /// toolbar goes into the overflow menu, and the fit modes are in the zoom menu regardless.
+        /// </summary>
+        private string _widthClass = "";
+
+        /// <summary>Below this, the fit modes lose their labels and keep their icons.</summary>
+        private const int NARROW_WIDTH = 1180;
+
+        /// <summary>Below this, the fit modes and the document's name leave the toolbar.</summary>
+        private const int TIGHT_WIDTH = 940;
+
+        /// <summary>
+        /// Below this the toolbar keeps only what a reader cannot do without - the panel toggle, the
+        /// page controls and search - and everything else moves into the overflow menu. The side panel
+        /// stops taking width from the document and covers it instead.
+        /// </summary>
+        private const int MINI_WIDTH = 700;
 
         /* ------------------------------------------------------------ configuration */
 
@@ -99,6 +135,13 @@ namespace Tesserae.Pdf
             _body.appendChild(_view);
             _root.appendChild(_body);
 
+            // The chrome measures itself rather than the window: it is a component, and a 1200px
+            // window can hold it in a 380px pane. A ResizeObserver on its own box is the only thing
+            // that knows which.
+            _sizeObserver = new ResizeObserver((_1, _2) => ApplyWidthClass());
+
+            _sizeObserver.observe(_root);
+
             // ⌘F / Ctrl+F while the focus is anywhere inside the chrome. Bound on the root rather
             // than on the document because a page can hold more than one of these, and the one the
             // reader is using is the one their focus is in - pdf.js's scroll host takes focus as soon
@@ -106,7 +149,6 @@ namespace Tesserae.Pdf
             _root.addEventListener("keydown", new Action<KeyboardEvent>(HandleRootKeyDown));
 
             BuildChrome();
-
             Subscribe();
         }
 
@@ -324,9 +366,22 @@ namespace Tesserae.Pdf
 
             if (_panel == panel) return this;
 
+            var wasOpen = _panel != PdfChromePanel.None;
+
             _panel = panel;
 
-            BuildPanel();
+            // A tab change is the Pivot's job, not a rebuild: it already swaps the two panes, and
+            // rebuilding around it leaves the old tab strip in the DOM. Only opening and closing
+            // changes what the panel *is*.
+            if (wasOpen && panel != PdfChromePanel.None)
+            {
+                SelectPanelTab();
+            }
+            else
+            {
+                BuildPanel();
+            }
+
             UpdateToolbarState();
 
             _onPanelChanged?.Invoke(_panel);
@@ -375,33 +430,36 @@ namespace Tesserae.Pdf
         /// </summary>
         private void BuildChrome()
         {
-            if (_toolbar is object)
+            if (_toolbarElement is object && _toolbarElement.parentElement is object)
             {
-                _root.removeChild(_toolbar);
-                _toolbar = null;
+                _toolbarElement.parentElement.removeChild(_toolbarElement);
             }
 
-            if (_rail is object)
+            if (_railElement is object && _railElement.parentElement is object)
             {
-                _body.removeChild(_rail);
-                _rail = null;
+                _railElement.parentElement.removeChild(_railElement);
             }
 
-            _toolbar = _layout == PdfChromeLayout.IconRail ? BuildSplitToolbar() : BuildSingleToolbar();
+            _toolbar        = _layout == PdfChromeLayout.IconRail ? BuildSplitToolbar() : BuildSingleToolbar();
+            _toolbarElement = _toolbar.Render();
+            _rail           = null;
+            _railElement    = null;
 
-            _root.insertBefore(_toolbar, _body);
+            _root.insertBefore(_toolbarElement, _body);
 
             if (_layout == PdfChromeLayout.IconRail)
             {
-                _rail = BuildRail();
+                _rail        = BuildRail();
+                _railElement = _rail.Render();
 
-                _body.insertBefore(_rail, _body.firstChild);
+                _body.insertBefore(_railElement, _body.firstChild);
             }
 
             BuildPanel();
             UpdateToolbarState();
             UpdatePageState();
             UpdateSearchState();
+            UpdateOverflowState();
         }
 
         /* -------------------------------------------------------------- event wiring */
@@ -451,7 +509,8 @@ namespace Tesserae.Pdf
 
                 // The document's own page numbering arrives after the document does, so the page box
                 // has to be told to look again - see PdfViewerEvents.PageLabelsApplied.
-                events.on(PdfViewerEvents.PageLabelsApplied, new Action<object>(_2 => UpdatePageState()));
+                events.on(PdfViewerEvents.PageLabelsApplied, new Action<object>(data =>
+                    ApplyPageLabels(((IPageLabelsEvent)data).pageLabels)));
 
                 events.on(PdfViewerEvents.SpreadModeChanged, new Action<object>(data =>
                 {
@@ -498,8 +557,9 @@ namespace Tesserae.Pdf
 
         private void ResetDocumentState()
         {
-            _pageCount = 0;
-            _page      = 0;
+            _pageCount         = 0;
+            _page              = 0;
+            _documentHasLabels = false;
 
             ResetOutline();
             ResetThumbnails();
@@ -523,6 +583,13 @@ namespace Tesserae.Pdf
 
             ResetThumbnails();
 
+            if (_sizeObserver is object)
+            {
+                _sizeObserver.disconnect();
+
+                _sizeObserver = null;
+            }
+
             _viewer.Dispose();
         }
 
@@ -530,6 +597,67 @@ namespace Tesserae.Pdf
 
         /// <summary>Whether <see cref="Dispose"/> has been called.</summary>
         public bool IsDisposed => _disposed;
+
+        /* -------------------------------------------------------------- responsive */
+
+        /// <summary>
+        /// Puts the current width band on the root, and moves whatever that band takes out of the
+        /// toolbar into the overflow menu.
+        /// </summary>
+        private void ApplyWidthClass()
+        {
+            var width = _root.getBoundingClientRect().As<DOMRect>().width;
+
+            // 0 while the chrome is detached or inside a collapsed parent, which is not a band.
+            if (width <= 0) return;
+
+            var band = width < MINI_WIDTH   ? "tsspdf-mini"
+                     : width < TIGHT_WIDTH  ? "tsspdf-tight"
+                     : width < NARROW_WIDTH ? "tsspdf-narrow"
+                     : "";
+
+            if (band == _widthClass) return;
+
+            if (_widthClass.Length > 0) _root.classList.remove(_widthClass);
+
+            _widthClass = band;
+
+            if (band.Length > 0) _root.classList.add(band);
+
+            UpdateOverflowState();
+        }
+
+        /// <summary>Whether the band in force has taken the fit modes out of the toolbar.</summary>
+        private bool FitModesInOverflow => _widthClass == "tsspdf-tight" || _widthClass == "tsspdf-mini";
+
+        /// <summary>Whether the band in force has taken rotate and spread out of the toolbar.</summary>
+        private bool ViewControlsInOverflow => _widthClass == "tsspdf-mini";
+
+        /// <summary>Whether the band in force has taken the Fuzzy | Precise pill out of the search row.</summary>
+        private bool SearchModeInOverflow => _widthClass == "tsspdf-tight" || _widthClass == "tsspdf-mini";
+
+        /// <summary>Whether the band in force has taken the zoom stepper out of the toolbar.</summary>
+        private bool ZoomInOverflow => _widthClass == "tsspdf-mini";
+
+        /// <summary>
+        /// The overflow button appears exactly when something has been taken out of the toolbar, and
+        /// its menu is built on open from whatever that is.
+        ///
+        /// On the rail layout it never appears: the rail has room for everything, which is the reason
+        /// that layout exists.
+        /// </summary>
+        private void UpdateOverflowState()
+        {
+            if (_overflowButton is null) return;
+
+            var needed = _layout == PdfChromeLayout.SingleToolbar
+                      && ((_showZoom && ZoomInOverflow)
+                       || (_showFitModes && FitModesInOverflow)
+                       || ((_showRotate || _showSpread) && ViewControlsInOverflow)
+                       || (_showSearch && SearchModeInOverflow));
+
+            PdfChromeElements.Show(_overflowButton, needed);
+        }
 
         /* ----------------------------------------------------------------- helpers */
 
@@ -541,8 +669,8 @@ namespace Tesserae.Pdf
 
             if (_documentNameText is null) return;
 
-            _documentNameText.textContent = name ?? "";
-            _documentNameText.title       = name ?? "";
+            _documentNameText.Text          = name ?? "";
+            _documentNameText.Render().title = name ?? "";
         }
 
         private string _effectiveDocumentName;

@@ -14,8 +14,9 @@ Tesserae.Pdf/                       the package
   src/PdfJs.Runtime.cs              loading, asset URLs, worker location, language
   src/PdfJs.Api.cs                  OpenAsync - a document with nothing on screen
   src/Components/                   PdfComponent (lifecycle base), PdfViewer, PdfPageCanvas
-  src/Chrome/                       PdfViewerChrome - the ready-made toolbar, panel and search box
-                                    (.Toolbar/.Search/.Panel partials, plus styles, icons, elements)
+  src/Chrome/                       PdfViewerChrome - the ready-made toolbar, panel and search box,
+                                    built from Tesserae's own components
+                                    (.Toolbar/.Search/.Panel partials, plus styles and elements)
   src/Interop/                      [External] declarations of pdfjsLib and pdfjsViewer
   src/Types/                        [ObjectLiteral] payloads, enums, and the friendly wrappers
                                     (PdfSource, PdfDocument, PdfPage, PdfError, PdfAnnotation, ...)
@@ -278,6 +279,54 @@ came free. Only three values have no theme equivalent (the icon-button hover was
 grey, the segmented track); they are declared as this sheet's own variables at the top so a host can
 override them without reaching into rules.
 
+**It is built from Tesserae's components**, not from raw DOM: `Button` for every button (with
+`UIcons` glyphs), `TextBox` for the page box, `SearchBox` for the search field - which brings the
+magnifier, the keyboard-shortcut chip, search-as-you-type and the invalid state with it - `Pivot` for
+the panel's tabs *and* its two panes, `Tree` for the outline, `Grid` for the thumbnails, `ContextMenu`
+for the zoom and overflow menus, `HStack`/`VStack` for every layout, `TextBlock` for every label. What
+is left in `PdfChromeStyles` is sizing (Tesserae sizes for a form; a toolbar is 40px), the three
+pieces Tesserae has no component for, and the chrome's own surfaces.
+
+Two things stayed bespoke, both because the candidate is the wrong shape: the segmented pills
+(`SegmentedPivot` is a scrollable tab strip that also hosts a content pane - 142x58 for two words -
+and `PivotSelector` collapses into a dropdown), and the 1px group separator (`HorizontalSeparator` is
+a full-width rule with optional centred text). The outline row is 32px rather than the comp's 27.5
+on purpose: that is the `Tree`'s density, and matching the comp would make this one panel the odd one
+out in a Tesserae application.
+
+**A Tesserae control does not distinguish being set from being used.** Three separate stack overflows
+and one wrong-tab bug, all the same shape, all worth knowing before wrapping one:
+
+- `TextBox.Text` and `SearchBox.SetText` raise the same event as a keystroke, so writing the current
+  page into the box from the handler for that event is a loop. Guard the *write*, not the handler -
+  `_writingPageBox` / `_writingSearchBox` - so the handler stays the single place that reacts.
+- `SearchBox.IsInvalid`'s setter re-renders, so assign it only on a change.
+- `Pivot` reports its own initial selection as a navigation, **a frame or two after it was built** -
+  so a scope guard around the build has already been released when it arrives, and a chrome asked to
+  open on Thumbnails is told by its own panel that the reader chose Outline. `_panelSettled` ignores
+  navigations until the panel has stopped announcing itself.
+- **`Render()` is not idempotent.** A `Stack` asked twice can hand back a different element, so what
+  was inserted has to be remembered rather than asked for again - `_toolbarElement`, `_panelRendered`,
+  `row.Element`, `tile.Element`. Asking again left a second tab strip in the panel.
+- **A `Pivot` renders a pane when its tab is first shown**, so a host stack filled in beforehand is
+  filled while detached. The panes are built inside the content factories for that reason.
+- **The `Tree`'s `Selected()` scrolls the row into view with the native `scrollIntoView`**, which
+  scrolls every scrollable ancestor - the same bug `PdfViewer.ScrollMatchIntoView` exists to avoid,
+  arriving through a component instead of through pdf.js. The page-driven highlight is a class of the
+  chrome's own; `Selected()` is left for what the reader clicks.
+
+**Nothing shifts as the reader moves.** Every label whose text changes has a reserved width - the
+zoom value, the page total, the match count, the rail's percentage - and the page total's *format* is
+decided once per document from the labels themselves rather than per page, because asking "does this
+page's label differ from its number" makes the text flip mid-scroll.
+
+**The toolbar sheds controls rather than clipping them.** `ApplyWidthClass` measures the chrome's own
+box - not the window, because one page can hold a full-width chrome and a 360px one - and publishes a
+band as a class: `narrow` drops the fit labels, `tight` drops the fit pill, the document name and the
+Fuzzy | Precise pill, `mini` drops rotate, spread, the zoom stepper and the page total, and turns the
+side panel into an overlay. Everything that leaves the toolbar arrives in the overflow menu, so no
+control is ever unreachable. Touch targets grow to 40px under `@media (pointer: coarse)`.
+
 Things that cost a debugging round each, and are worth not rediscovering:
 
 - **The view element must never be re-parented.** The chrome rebuilds its toolbar, rail and panel
@@ -326,10 +375,6 @@ Things that cost a debugging round each, and are worth not rediscovering:
 - **`CSSStyleDeclaration` has no `aspectRatio`.** `setProperty("aspect-ratio", ...)` /
   `removeProperty`. Several other modern properties are missing the same way; reach for `setProperty`
   rather than adding a declaration.
-- **The SVG glyphs are `innerHTML`.** They are compile-time constants in `PdfChromeIcons` with no
-  interpolation, which is what makes that safe here and not in general; the alternative is about two
-  hundred `createElementNS` calls for the same pixels. A font glyph cannot be stroked at 1.75px on a
-  16px box, which is why they are drawn rather than typed.
 
 ## The sample documents
 

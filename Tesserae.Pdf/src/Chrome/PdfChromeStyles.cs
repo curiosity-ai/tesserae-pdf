@@ -6,32 +6,40 @@ namespace Tesserae.Pdf
     /// The chrome's stylesheet, injected once into <c>&lt;head&gt;</c> the first time a
     /// <see cref="PdfViewerChrome"/> is built.
     ///
-    /// <b>Why a stylesheet and not inline styles.</b> Every control in this chrome has a hover, a
-    /// focus and a disabled appearance, and three of them have a "selected" one. Inline styles cannot
-    /// express any of that without a mousemove handler per element, so the whole thing is one sheet
-    /// of rules against <c>tsspdf-</c> classes and the elements carry classes rather than styles.
+    /// <b>What is left in here after the controls became Tesserae's.</b> Three kinds of rule, and
+    /// nothing else:
+    /// <list type="bullet">
+    /// <item><b>Sizing.</b> Tesserae's controls are sized for a form - a 36px button with a 4px
+    /// margin, a 36px field - and this is a 40px toolbar. The components carry their own trims
+    /// (<c>NoMargin</c>, <c>NoMinSize</c>, <c>NoPadding</c>), which do most of it; what is left is the
+    /// handful of exact numbers the design calls for: 32px square buttons, a 28px field, a 24px
+    /// segment.</item>
+    /// <item><b>The pieces Tesserae has no component for</b> - the 1px group separator, the segmented
+    /// track, the thumbnail tile, the search box's trailing controls.</item>
+    /// <item><b>The chrome itself</b> - toolbar, rail, panel and body: surfaces and borders rather
+    /// than controls.</item>
+    /// </list>
     ///
-    /// <b>Why it is not a Transpose resource.</b> Transpose emits a <c>&lt;link&gt;</c> for a CSS
-    /// resource, which would fetch a second file for a component most pages never mount - and
-    /// <c>tps.json</c>'s <c>files</c> globs plus <c>"outputFormatting": "Both"</c> make a stylesheet
-    /// awkward to declare (see the note there). It is a few kilobytes of text; inlining it keeps the
-    /// package's asset story to "pdf.js and nothing else".
-    ///
-    /// <b>The colours are Tesserae's.</b> Every surface, border and accent below resolves to a
+    /// <b>The colours are Tesserae's.</b> Every surface, border and accent resolves to a
     /// <c>--tss-*</c> theme variable, so the chrome follows <c>UI.Theme.Dark()</c> and a host's
-    /// <c>Theme.Build()</c> with no work and no second palette to keep in step. The handful of values
-    /// with no theme equivalent - the icon-button hover wash, the faint glyph grey, the segmented
-    /// track - are declared as this sheet's own variables at the top, once, so a host can override
-    /// them on <c>.tsspdf-chrome</c> without reaching into rules.
+    /// <c>Theme.Build()</c> with no second palette to keep in step. The handful of values with no
+    /// theme equivalent - the icon-button hover wash, the faint glyph grey, the segmented track - are
+    /// declared as this sheet's own variables at the top, once, so a host can override them on
+    /// <c>.tsspdf-chrome</c> without reaching into rules.
+    ///
+    /// <b>Rules that name a <c>tss-</c> class are a coupling</b>, and are marked as such below. They
+    /// are the price of using the components rather than redrawing them, and they are all of the
+    /// "make it 4px shorter" kind - none of them changes how a control behaves, so the worst a
+    /// Tesserae change can do is put a control back at its default size.
     /// </summary>
     internal static class PdfChromeStyles
     {
         internal const string ROOT       = "tsspdf-chrome";
         internal const string ON         = "tsspdf-on";
         internal const string OPEN       = "tsspdf-open";
-        internal const string FOCUS      = "tsspdf-focus";
         internal const string NO_MATCHES = "tsspdf-nomatches";
         internal const string SECTION    = "tsspdf-section";
+        internal const string CURRENT    = "tsspdf-current";
 
         private const string STYLE_ELEMENT_ID = "tsspdf-chrome-styles";
 
@@ -59,7 +67,7 @@ namespace Tesserae.Pdf
             style.appendChild(document.createTextNode(CSS));
 
             // Appended rather than prepended: these rules are meant to win against Tesserae's own
-            // sheet on the rare selector they share, and a later sheet wins a tie.
+            // sheet on the selectors they share, and a later sheet wins a tie.
             document.head.appendChild(style);
         }
 
@@ -73,34 +81,19 @@ namespace Tesserae.Pdf
   --tsspdf-fg-strong:var(--tss-default-foreground-hover-color);
   --tsspdf-fg-muted:var(--tss-secondary-foreground-color);
   --tsspdf-fg-faint:rgb(140,143,151);
-  --tsspdf-fg-disabled:var(--tss-disabled-foreground-color);
   --tsspdf-accent:var(--tss-link-color);
   --tsspdf-accent-soft:rgba(var(--tss-link-color-root),.10);
-  --tsspdf-accent-ring:rgba(var(--tss-link-color-root),.18);
   --tsspdf-hover:rgb(240,241,242);
-  --tsspdf-pressed:var(--tss-default-background-active-color);
   --tsspdf-track:rgb(240,241,242);
   --tsspdf-danger:var(--tss-danger-border-color);
-  --tsspdf-danger-ring:rgba(var(--tss-danger-border-color-root),.14);
   --tsspdf-shadow-sm:0 1px 2px 0 rgba(0,0,0,.05);
-  --tsspdf-shadow-md:0 4px 6px -1px rgba(0,0,0,.1),0 2px 4px -1px rgba(0,0,0,.06);
   --tsspdf-shadow-lift:0 4px 6px -1px rgba(0,0,0,.1);
   --tsspdf-panel-width:264px;
   --tsspdf-search-width:430px;
   display:flex;flex-direction:column;width:100%;height:100%;position:relative;overflow:hidden;
   background:var(--tsspdf-canvas);color:var(--tsspdf-fg);
-  font-family:var(--tss-sansserif-font-family);font-size:13px;line-height:1.35;
 }
 .tsspdf-chrome,.tsspdf-chrome *,.tsspdf-chrome *::before,.tsspdf-chrome *::after{box-sizing:border-box}
-
-/* Form controls do not inherit typography, so this is the reset that stops every button in the
-   chrome coming out in the browser's 13.333px system font. Written through :where() on purpose:
-   that contributes no specificity, so `.tsspdf-chrome :where(button)` scores zero and every rule
-   below - each of which is a single class - wins against it. Written the obvious way, the reset
-   scores one class plus one type and silently beats them all, which shows up as a toolbar whose
-   labels are one pixel too big and one shade too dark. */
-:where(.tsspdf-chrome) :where(button,input,select,textarea)
-  {font:inherit;line-height:inherit;color:inherit;letter-spacing:inherit}
 
 .tss-dark-mode .tsspdf-chrome{
   --tsspdf-accent-soft:rgba(var(--tss-link-color-root),.16);
@@ -108,7 +101,6 @@ namespace Tesserae.Pdf
   --tsspdf-track:rgba(255,255,255,.06);
   --tsspdf-fg-faint:rgb(120,128,144);
   --tsspdf-shadow-sm:none;
-  --tsspdf-shadow-md:0 4px 10px -2px rgba(0,0,0,.55);
   --tsspdf-shadow-lift:0 4px 10px -2px rgba(0,0,0,.55);
 }
 
@@ -119,179 +111,211 @@ namespace Tesserae.Pdf
    only way to do the thing it does. The scrollbar is suppressed because a 40px bar has no room for
    one - PdfChromeLayout.IconRail is the answer for a container this narrow, and this is what keeps
    the other layout usable rather than quietly clipped. */
-.tsspdf-toolbar{display:flex;align-items:center;gap:2px;height:40px;padding:0 8px;
-  background:var(--tsspdf-surface);border-bottom:1px solid var(--tsspdf-border);flex-shrink:0;
+.tsspdf-toolbar{height:40px;padding:0 8px;flex-shrink:0;
+  background:var(--tsspdf-surface);border-bottom:1px solid var(--tsspdf-border);
   overflow-x:auto;scrollbar-width:none;-ms-overflow-style:none}
 .tsspdf-toolbar::-webkit-scrollbar{display:none}
-.tsspdf-toolbar-split{gap:8px;padding:0 10px 0 8px}
-.tsspdf-sep{width:1px;height:20px;background:var(--tsspdf-border);margin:0 6px;flex-shrink:0}
+.tsspdf-sep{width:1px;height:20px;background:var(--tsspdf-border);flex-shrink:0;margin:0 6px}
 .tsspdf-toolbar-split .tsspdf-sep{margin:0}
-.tsspdf-spring{flex:1;min-width:16px}
-.tsspdf-group{display:flex;align-items:center;gap:2px;flex-shrink:0}
+.tsspdf-doctitle-text{font-size:13px;font-weight:600;white-space:nowrap;overflow:hidden;
+  text-overflow:ellipsis;min-width:0}
 
-.tsspdf-doctitle{display:flex;align-items:center;gap:8px;min-width:0;flex-shrink:1;overflow:hidden}
-.tsspdf-doctitle-text{font-size:13px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+/* -- coupling: Tesserae sizes a button for a form. These are the design's exact numbers. */
+.tsspdf-chrome .tsspdf-iconbtn.tss-btn{width:32px;height:32px;min-width:32px;min-height:32px;
+  padding:0;border:0;background:transparent;box-shadow:none;border-radius:6px;
+  color:var(--tsspdf-fg-muted);flex-shrink:0;justify-content:center}
+.tsspdf-chrome .tsspdf-iconbtn.tss-btn:hover:not(:disabled){background:var(--tsspdf-hover);
+  color:var(--tsspdf-fg-strong)}
+.tsspdf-chrome .tsspdf-iconbtn.tss-btn.tsspdf-on{background:var(--tsspdf-accent-soft);
+  color:var(--tsspdf-accent)}
+.tsspdf-chrome .tsspdf-iconbtn.tss-btn i{font-size:16px;line-height:1}
 
-/* ------------------------------------------------------------- icon button */
+/* The zoom value and its chevron: a field-shaped button rather than an icon-shaped one. */
+.tsspdf-chrome .tsspdf-zoom.tss-btn{height:28px;min-height:28px;min-width:70px;padding:0 8px;
+  border-radius:6px;font-size:12px;color:var(--tsspdf-fg);background:var(--tsspdf-surface);
+  border:1px solid var(--tsspdf-border);box-shadow:var(--tsspdf-shadow-sm);flex-shrink:0;gap:6px}
+.tsspdf-chrome .tsspdf-zoom.tss-btn:hover{background:var(--tsspdf-hover)}
+.tsspdf-chrome .tsspdf-zoom.tss-btn{flex-direction:row-reverse;justify-content:flex-end}
+.tsspdf-chrome .tsspdf-zoom.tss-btn i{font-size:12px;color:var(--tsspdf-fg-faint)}
+/* A fixed width for the value, so 96% and 140% do not move the buttons either side of it. */
+.tsspdf-chrome .tsspdf-zoom.tss-btn span{min-width:34px;text-align:left}
 
-.tsspdf-iconbtn{display:inline-flex;align-items:center;justify-content:center;width:32px;height:32px;
-  border-radius:6px;border:0;padding:0;background:transparent;color:var(--tsspdf-fg-muted);
-  cursor:pointer;flex-shrink:0}
-.tsspdf-iconbtn:hover:not(:disabled){background:var(--tsspdf-hover);color:var(--tsspdf-fg-strong)}
-.tsspdf-iconbtn:active:not(:disabled){background:var(--tsspdf-pressed);color:var(--tsspdf-fg-strong);
-  box-shadow:inset 0 2px 4px 0 rgba(0,0,0,.06)}
-.tsspdf-iconbtn.tsspdf-on{background:var(--tsspdf-accent-soft);color:var(--tsspdf-accent)}
-.tsspdf-iconbtn:disabled{color:var(--tsspdf-fg-disabled);cursor:not-allowed}
-.tsspdf-iconbtn:focus-visible{outline:none;box-shadow:0 0 0 2px var(--tsspdf-accent-ring)}
-.tsspdf-chrome svg{display:block;pointer-events:none}
-
-/* ------------------------------------------------------------- page number */
-
-.tsspdf-pagebox{width:38px;height:28px;padding:0;flex-shrink:0;text-align:center;font-size:12px;
-  border:1px solid var(--tsspdf-border);border-radius:6px;background:var(--tsspdf-surface);
-  color:var(--tsspdf-fg);box-shadow:var(--tsspdf-shadow-sm)}
-.tsspdf-pagebox:focus{outline:none;border-color:var(--tsspdf-accent);
-  box-shadow:0 0 0 2px var(--tsspdf-accent-ring)}
-.tsspdf-pagebox:disabled{color:var(--tsspdf-fg-disabled)}
-.tsspdf-pagetotal{font-size:12px;color:var(--tsspdf-fg-muted);white-space:nowrap}
-
-/* ------------------------------------------------------- field-shaped button */
-
-.tsspdf-field{display:inline-flex;align-items:center;gap:6px;height:28px;padding:0 8px;flex-shrink:0;
-  border-radius:6px;border:1px solid var(--tsspdf-border);background:var(--tsspdf-surface);
-  color:var(--tsspdf-fg);font-size:12px;cursor:pointer;box-shadow:var(--tsspdf-shadow-sm)}
-.tsspdf-field:hover{background:var(--tsspdf-hover)}
-.tsspdf-field.tsspdf-open,.tsspdf-field:focus-visible{outline:none;border-color:var(--tsspdf-accent);
-  box-shadow:0 0 0 2px var(--tsspdf-accent-ring)}
-.tsspdf-field-value{min-width:34px;text-align:left}
+/* -- coupling: the page box. Tesserae's text field is 36px tall and padded for a form. */
+.tsspdf-chrome .tsspdf-pagebox.tss-textbox-container{width:38px;min-width:38px;flex-shrink:0}
+.tsspdf-chrome .tsspdf-pagebox .tss-textbox{height:28px;padding:0 2px;font-size:12px;
+  text-align:center;border-radius:6px;box-shadow:var(--tsspdf-shadow-sm)}
+.tsspdf-chrome .tsspdf-pagebox .tss-textbox-error{display:none}
+/* A reserved width, because this text changes as the reader moves through the document - of 9 to
+   of 10, (1 of 12) to (12 of 12) - and everything after it would move with it. */
+.tsspdf-pagetotal{font-size:12px;color:var(--tsspdf-fg-muted);white-space:nowrap;flex-shrink:0;
+  min-width:52px}
+.tsspdf-chrome.tsspdf-labelled .tsspdf-pagetotal{min-width:74px}
 
 /* --------------------------------------------------------- segmented control */
 
-.tsspdf-seg{display:inline-flex;background:var(--tsspdf-track);border-radius:6px;padding:2px;gap:2px;
-  flex-shrink:0}
-.tsspdf-seg-item{display:inline-flex;align-items:center;gap:6px;height:24px;padding:0 9px;border:0;
-  border-radius:4px;background:transparent;color:var(--tsspdf-fg-muted);font-size:12px;
-  font-weight:600;cursor:pointer;white-space:nowrap}
-.tsspdf-seg-item:hover{color:var(--tsspdf-fg-strong)}
-.tsspdf-seg-item.tsspdf-on{background:var(--tsspdf-surface);color:var(--tsspdf-accent);
-  box-shadow:var(--tsspdf-shadow-sm)}
-.tsspdf-seg-item:focus-visible{outline:none;box-shadow:0 0 0 2px var(--tsspdf-accent-ring)}
-.tss-dark-mode .tsspdf-chrome .tsspdf-seg-item.tsspdf-on{background:rgba(255,255,255,.14);box-shadow:none}
+/* No Tesserae component for this: SegmentedPivot is a scrollable tab strip that also hosts a
+   content pane, and PivotSelector collapses to a dropdown. The track is three declarations and the
+   two things inside it are ordinary Tesserae buttons. */
+.tsspdf-seg{background:var(--tsspdf-track);border-radius:6px;padding:2px;flex-shrink:0}
+.tsspdf-chrome .tsspdf-seg-item.tss-btn{height:24px;min-height:24px;padding:0 9px;border-radius:4px;
+  font-size:12px;font-weight:600;color:var(--tsspdf-fg-muted);background:transparent;gap:6px}
+.tsspdf-chrome .tsspdf-seg-item.tss-btn:hover{color:var(--tsspdf-fg-strong);background:transparent}
+.tsspdf-chrome .tsspdf-seg-item.tss-btn.tsspdf-on{background:var(--tsspdf-surface);
+  color:var(--tsspdf-accent);box-shadow:var(--tsspdf-shadow-sm)}
+.tsspdf-chrome .tsspdf-seg-item.tss-btn i{font-size:14px}
+.tss-dark-mode .tsspdf-chrome .tsspdf-seg-item.tss-btn.tsspdf-on{background:rgba(255,255,255,.14);
+  box-shadow:none}
 .tsspdf-seg-sm{margin:0 3px 0 2px}
-.tsspdf-seg-sm .tsspdf-seg-item{height:22px;padding:0 8px;font-size:11px}
+.tsspdf-chrome .tsspdf-seg-sm .tsspdf-seg-item.tss-btn{height:22px;padding:0 8px;font-size:11px}
 
-/* ---------------------------------------------------------------- omnibox */
+/* ---------------------------------------------------------------- search */
 
-/* The search box is the one control in the toolbar allowed to shrink, and the min-width is where it
-   stops. Not a round number: everything beside the field is fixed-width - the magnifier, the count,
-   the two match steppers, the clear button and the Fuzzy|Precise pill come to about 250px - so a
-   smaller floor does not make the box smaller, it makes the field inside it zero wide. A search box
-   with nowhere to type is worse than a toolbar that scrolls, which is what happens instead. */
-.tsspdf-omni{display:flex;align-items:center;height:28px;width:var(--tsspdf-search-width);
-  min-width:310px;flex-shrink:1;overflow:hidden;border-radius:6px;
-  border:1px solid var(--tsspdf-border);background:var(--tsspdf-surface);
-  box-shadow:var(--tsspdf-shadow-sm)}
-.tsspdf-omni.tsspdf-focus{border-color:var(--tsspdf-accent);box-shadow:0 0 0 2px var(--tsspdf-accent-ring)}
-.tsspdf-omni.tsspdf-nomatches{border-color:var(--tsspdf-danger);box-shadow:0 0 0 2px var(--tsspdf-danger-ring)}
-.tsspdf-omni-icon{display:inline-flex;align-items:center;justify-content:center;width:28px;
-  flex-shrink:0;color:var(--tsspdf-fg-faint)}
-.tsspdf-omni.tsspdf-focus .tsspdf-omni-icon{color:var(--tsspdf-accent)}
-.tsspdf-omni.tsspdf-nomatches .tsspdf-omni-icon{color:var(--tsspdf-danger)}
-.tsspdf-omni-input{flex:1;min-width:56px;height:100%;padding:0;border:0;background:transparent;
-  color:var(--tsspdf-fg);font-size:13px}
-.tsspdf-omni-input:focus{outline:none}
-.tsspdf-omni-input::placeholder{color:var(--tsspdf-fg-faint)}
-.tsspdf-omni-count{padding:0 6px;white-space:nowrap;font-size:11px;color:var(--tsspdf-fg-muted);
-  font-family:var(--tss-monospace-font-family)}
-.tsspdf-omni-hint{padding:0 8px;white-space:nowrap;font-size:10px;color:var(--tsspdf-fg-faint);
-  font-family:var(--tss-monospace-font-family)}
-.tsspdf-omni-note{padding:0 8px;white-space:nowrap;font-size:11px;color:var(--tsspdf-danger)}
-.tsspdf-omni-step{display:inline-flex;align-items:center;justify-content:center;width:22px;height:22px;
-  padding:0;flex-shrink:0;border:0;border-radius:4px;background:transparent;
-  color:var(--tsspdf-fg-muted);cursor:pointer}
-.tsspdf-omni-step:hover:not(:disabled){background:var(--tsspdf-hover)}
-.tsspdf-omni-step:disabled{color:var(--tsspdf-fg-disabled);cursor:not-allowed}
-.tsspdf-omni-clear{display:inline-flex;align-items:center;justify-content:center;width:24px;height:26px;
-  padding:0;flex-shrink:0;margin-left:4px;border:0;border-left:1px solid var(--tsspdf-border);
-  background:transparent;color:var(--tsspdf-fg-faint);cursor:pointer}
-.tsspdf-omni-clear:hover{color:var(--tsspdf-danger)}
-.tsspdf-omni-help{display:flex;align-items:center;gap:6px;padding:4px 0 0 2px;font-size:11px;
-  color:var(--tsspdf-fg-muted)}
+/* -- coupling: Tesserae's search box is 36px tall. Everything else about it - the magnifier, the
+   keyboard-shortcut chip, search-as-you-type, the invalid state - is the component's own. */
+.tsspdf-chrome .tsspdf-search.tss-searchbox-container{height:28px;
+  width:var(--tsspdf-search-width);min-width:310px;flex-shrink:1}
+.tsspdf-chrome .tsspdf-search .tss-searchbox{height:28px;font-size:13px}
+.tsspdf-chrome .tsspdf-search.tss-searchbox-container.tsspdf-nomatches{border-color:var(--tsspdf-danger);
+  box-shadow:0 0 0 2px rgba(var(--tss-danger-border-color-root),.14)}
+.tsspdf-chrome .tsspdf-search.tsspdf-nomatches .tss-searchbox-icon{color:var(--tsspdf-danger)}
 
-/* -------------------------------------------------------------- popup menu */
+.tsspdf-searchrow{flex-shrink:1;min-width:0}
+/* Reserved and right-aligned: 1 / 3 becoming 10 / 30 must not move the buttons beside it. */
+.tsspdf-count{padding:0 6px;white-space:nowrap;font-size:11px;color:var(--tsspdf-fg-muted);
+  font-family:var(--tss-monospace-font-family);flex-shrink:0;min-width:58px;text-align:right}
+.tsspdf-note{padding:0 6px;white-space:nowrap;font-size:11px;color:var(--tsspdf-danger);flex-shrink:0}
+.tsspdf-chrome .tsspdf-step.tss-btn{width:22px;height:22px;min-width:22px;min-height:22px;
+  padding:0;border:0;background:transparent;box-shadow:none;border-radius:4px;
+  color:var(--tsspdf-fg-muted);flex-shrink:0;justify-content:center}
+.tsspdf-chrome .tsspdf-step.tss-btn:hover:not(:disabled){background:var(--tsspdf-hover)}
+.tsspdf-chrome .tsspdf-step.tss-btn i{font-size:13px}
 
-.tsspdf-menu{position:absolute;z-index:30;min-width:150px;padding:4px;
-  background:var(--tsspdf-surface);border:1px solid var(--tsspdf-border);border-radius:6px;
-  box-shadow:var(--tsspdf-shadow-md)}
-.tsspdf-menu-item{display:flex;align-items:center;gap:8px;width:100%;padding:6px 8px;border:0;
-  border-radius:4px;background:transparent;color:var(--tsspdf-fg);font-size:13px;text-align:left;
-  cursor:pointer;white-space:nowrap}
-.tsspdf-menu-item:hover{background:var(--tsspdf-hover)}
-.tsspdf-menu-item.tsspdf-on{background:var(--tsspdf-accent-soft);color:var(--tsspdf-accent);font-weight:600}
-.tsspdf-menu-item:focus-visible{outline:none;box-shadow:0 0 0 2px var(--tsspdf-accent-ring)}
-.tsspdf-menu-check{display:inline-flex;width:13px;flex-shrink:0}
-.tsspdf-menu-item:not(.tsspdf-on) .tsspdf-menu-check{visibility:hidden}
-.tsspdf-menu-sep{height:1px;margin:4px 6px;background:var(--tsspdf-separator)}
+/* ------------------------------------------------------- responsive + mobile */
+
+/* The bands are measured on the chrome's own box and published as a class by ApplyWidthClass, not
+   taken from a media query: the same page can hold one of these full-width and another in a 360px
+   pane. Nothing disappears without somewhere else to reach it - what leaves the toolbar arrives in
+   the overflow menu, and the fit modes are in the zoom menu at every width. */
+
+/* narrow: the fit modes keep their icons and give up their labels. */
+.tsspdf-narrow .tsspdf-seg-item.tss-btn span:not(:empty){display:none}
+.tsspdf-chrome.tsspdf-narrow .tsspdf-seg-sm .tsspdf-seg-item.tss-btn span:not(:empty){display:inline}
+
+/* tight: the fit modes and the document's name leave the toolbar, and the search box gives up its
+   shortcut chip - which is a hint, not a control. */
+.tsspdf-tight .tsspdf-toolbar > .tsspdf-seg,
+.tsspdf-mini  .tsspdf-toolbar > .tsspdf-seg{display:none}
+.tsspdf-tight .tsspdf-doctitle,
+.tsspdf-mini  .tsspdf-doctitle{display:none}
+.tsspdf-chrome.tsspdf-tight .tsspdf-search.tss-searchbox-container,
+.tsspdf-chrome.tsspdf-mini  .tsspdf-search.tss-searchbox-container{min-width:210px}
+.tsspdf-tight .tss-searchbox-shortcut,
+.tsspdf-mini  .tss-searchbox-shortcut{display:none}
+
+/* tight: the Fuzzy | Precise pill is 108px of a row that no longer has it, and the mode moves to the
+   overflow menu with everything else that left. */
+.tsspdf-tight .tsspdf-seg-sm,
+.tsspdf-mini  .tsspdf-seg-sm{display:none}
+
+/* mini: rotate, spread and the whole zoom stepper leave the toolbar, and the page total goes with
+   them - the box still says which page, and its tooltip still says of how many. What is left is the
+   panel toggle, the page controls and search, which is what a reader on a phone actually uses. */
+.tsspdf-mini .tsspdf-rotate,
+.tsspdf-mini .tsspdf-spread,
+.tsspdf-mini .tsspdf-zoomgroup,
+.tsspdf-mini .tsspdf-pagetotal{display:none}
+.tsspdf-chrome.tsspdf-mini .tsspdf-count{min-width:0}
+
+/* mini: the panel stops taking width from a document that has none to give, and covers it instead.
+   Positioned against the body, which is why the body is relative. */
+.tsspdf-body{position:relative}
+.tsspdf-chrome.tsspdf-mini .tsspdf-panel{position:absolute;top:0;left:0;bottom:0;z-index:5;
+  width:min(320px,86%);min-width:0;box-shadow:0 8px 24px -6px rgba(0,0,0,.28)}
+
+/* Touch: the design's 32px squares are a mouse target. A finger wants 40, and the toolbar grows to
+   suit rather than the buttons overlapping. */
+@media (pointer:coarse){
+  .tsspdf-toolbar{height:48px}
+  .tsspdf-chrome .tsspdf-iconbtn.tss-btn{width:40px;height:40px;min-width:40px;min-height:40px}
+  .tsspdf-chrome .tsspdf-iconbtn.tss-btn i{font-size:18px}
+  .tsspdf-rail{width:56px}
+  .tsspdf-chrome .tsspdf-step.tss-btn{width:28px;height:28px;min-width:28px;min-height:28px}
+  .tsspdf-chrome .tsspdf-pagebox .tss-textbox,
+  .tsspdf-chrome .tsspdf-zoom.tss-btn,
+  .tsspdf-chrome .tsspdf-search.tss-searchbox-container,
+  .tsspdf-chrome .tsspdf-search .tss-searchbox{height:34px}
+  .tsspdf-chrome .tsspdf-seg-item.tss-btn{height:30px}
+  .tsspdf-seg{padding:3px}
+  .tsspdf-chrome .tsspdf-outline .tss-tree-item-content{padding:9px 8px}
+}
 
 /* ------------------------------------------------------------- body / rail */
 
 .tsspdf-body{display:flex;flex:1;min-height:0}
 .tsspdf-view{position:relative;flex:1;min-width:0;min-height:0;background:var(--tsspdf-canvas)}
-
-.tsspdf-rail{display:flex;flex-direction:column;align-items:center;gap:2px;width:48px;padding:6px 0;
-  flex-shrink:0;background:var(--tsspdf-canvas);border-right:1px solid var(--tsspdf-border);
-  overflow:hidden}
+.tsspdf-rail{width:48px;padding:6px 0;flex-shrink:0;background:var(--tsspdf-canvas);
+  border-right:1px solid var(--tsspdf-border);overflow:hidden}
 .tsspdf-rail-sep{width:24px;height:1px;margin:5px 0;background:var(--tsspdf-border);flex-shrink:0}
 .tsspdf-rail-zoom{padding:1px 0;font-size:10px;color:var(--tsspdf-fg-muted);
-  font-family:var(--tss-monospace-font-family)}
+  font-family:var(--tss-monospace-font-family);min-width:34px;text-align:center}
 
 /* ------------------------------------------------------------------ panel */
 
-.tsspdf-panel{display:flex;flex-direction:column;width:var(--tsspdf-panel-width);min-width:0;
+.tsspdf-chrome .tsspdf-panel{width:var(--tsspdf-panel-width);min-width:var(--tsspdf-panel-width);
   flex-shrink:0;background:var(--tsspdf-surface);border-right:1px solid var(--tsspdf-border)}
-.tsspdf-panel-tabs{display:flex;gap:18px;padding:0 16px;flex-shrink:0;
+
+/* -- coupling: the panel's tabs are a Tesserae Pivot. The design puts them on the panel's own
+   border rather than on a bar of their own, and gives the strip the panel's padding. */
+.tsspdf-chrome .tsspdf-panel .tss-pivot{height:100%}
+.tsspdf-chrome .tsspdf-panel .tss-pivot-titlebar{padding:0 16px;gap:18px;flex-shrink:0;
   border-bottom:1px solid var(--tsspdf-border)}
-.tsspdf-tab{padding:10px 0 8px;border:0;border-bottom:2px solid transparent;background:none;
-  font-size:13px;font-weight:400;color:var(--tsspdf-fg-muted);cursor:pointer}
-.tsspdf-tab:hover{color:var(--tsspdf-fg-strong)}
-.tsspdf-tab.tsspdf-on{font-weight:600;color:var(--tsspdf-accent);border-bottom-color:var(--tsspdf-accent)}
-.tsspdf-tab:focus-visible{outline:none;box-shadow:0 0 0 2px var(--tsspdf-accent-ring)}
-/* Positioned so a row's offsetTop is measured against the scroller, which is what
-   scrolling the current page or outline entry into view reads. */
-.tsspdf-panel-body{position:relative;flex:1;min-height:0;overflow:auto}
-.tsspdf-panel-foot{display:flex;align-items:center;gap:8px;padding:8px 12px;flex-shrink:0;
-  border-top:1px solid var(--tsspdf-separator);font-size:11px;color:var(--tsspdf-fg-muted)}
-.tsspdf-panel-count{font-family:var(--tss-monospace-font-family)}
-.tsspdf-panel-action{margin-left:auto;padding:0;border:0;background:none;font-size:11px;
-  color:var(--tsspdf-accent);cursor:pointer}
-.tsspdf-panel-action:disabled{color:var(--tsspdf-fg-disabled);cursor:default}
+/* Two tabs never need a scroller or an overflow affordance, and the design's strip has neither.
+   The buttons carry an inline display, so these have to be stronger than an inline declaration. */
+.tsspdf-chrome .tsspdf-panel .tss-pivot-titlebar-wrapper > .tss-btn{display:none !important}
+.tsspdf-chrome .tsspdf-panel .tss-pivot-titlebar-scroller{overflow:visible}
+.tsspdf-chrome .tsspdf-panel .tss-pivot-content{flex:1;min-height:0;overflow:auto;padding:0}
+
+.tsspdf-panel-foot{padding:8px 12px;flex-shrink:0;border-top:1px solid var(--tsspdf-separator);
+  font-size:11px;color:var(--tsspdf-fg-muted)}
+.tsspdf-panel-count{font-family:var(--tss-monospace-font-family);font-size:11px;
+  color:var(--tsspdf-fg-muted)}
+.tsspdf-chrome .tsspdf-panel-action.tss-btn{min-height:0;padding:0;border:0;background:none;
+  box-shadow:none;font-size:11px;color:var(--tsspdf-accent)}
+.tsspdf-chrome .tsspdf-panel-action.tss-btn:hover{text-decoration:underline;background:none}
 .tsspdf-panel-empty{padding:16px;font-size:12px;color:var(--tsspdf-fg-muted)}
 
 /* ---------------------------------------------------------------- outline */
 
-.tsspdf-outline{padding:8px}
-.tsspdf-outline-item{display:flex;align-items:center;gap:6px;width:100%;padding:5px 8px;
-  margin-left:-3px;border:0;border-left:3px solid transparent;border-radius:4px;background:none;
-  font-size:13px;color:inherit;text-align:left;cursor:pointer}
-.tsspdf-outline-item:hover{background:var(--tsspdf-hover)}
-.tsspdf-outline-item.tsspdf-section{background:var(--tsspdf-pressed);
+/* -- coupling: a Tesserae Tree, at the design's density. The checkbox column is hidden rather than
+   configured away because selection is what the tree is for here and the box is not. */
+.tsspdf-chrome .tsspdf-outline .tss-tree-checkbox{display:none}
+.tsspdf-chrome .tsspdf-outline{padding:8px}
+.tsspdf-chrome .tsspdf-outline .tss-tree-item-content{min-height:0;padding:5px 8px;border-radius:4px;
+  border-left:3px solid transparent;margin-left:-3px;gap:6px;font-size:13px;line-height:1.35}
+/* An icon font brings its own line box, which is what made these rows 32px rather than the design's
+   27.5 - the glyph is 11px but the line it sits on was not. */
+.tsspdf-chrome .tsspdf-outline .tss-tree-chevron{font-size:11px;width:14px;height:16px;flex-shrink:0;
+  line-height:16px}
+.tsspdf-chrome .tsspdf-outline .tss-tree-commands{margin-left:auto;flex-shrink:0;line-height:16px}
+.tsspdf-chrome .tsspdf-outline .tss-tree-item-content:hover{background:var(--tsspdf-hover)}
+/* No line-height here on purpose. Tesserae sets 22px on this element, which makes an outline row
+   32px rather than the design's 27.5 - and that is the component's density, the same as every other
+   tree in the host application. Overriding it would make this one panel the odd one out, which is the
+   opposite of why the tree is a Tesserae Tree. */
+.tsspdf-chrome .tsspdf-outline .tss-tree-text{flex:1;min-width:0;overflow:hidden;
+  text-overflow:ellipsis;white-space:nowrap}
+.tsspdf-chrome .tsspdf-outline .tsspdf-section > .tss-tree-item-content{background:var(--tss-default-background-active-color);
   border-left-color:var(--tsspdf-accent);font-weight:600}
-.tsspdf-outline-item.tsspdf-on{color:var(--tsspdf-accent);font-weight:600}
-.tsspdf-outline-item:focus-visible{outline:none;box-shadow:0 0 0 2px var(--tsspdf-accent-ring)}
-.tsspdf-outline-twisty{display:inline-flex;justify-content:center;width:14px;flex-shrink:0;
-  color:var(--tsspdf-fg-faint);cursor:pointer}
-.tsspdf-outline-twisty.tsspdf-open svg{transform:rotate(90deg)}
-.tsspdf-outline-title{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.tsspdf-outline-page{flex-shrink:0;font-size:11px;color:var(--tsspdf-fg-faint);
-  font-family:var(--tss-monospace-font-family)}
-.tsspdf-outline-children{padding-left:20px}
-.tsspdf-outline-children.tsspdf-collapsed{display:none}
+.tsspdf-chrome .tsspdf-outline .tsspdf-current > .tss-tree-item-content .tss-tree-text{
+  color:var(--tsspdf-accent);font-weight:600}
+.tsspdf-outline-page{font-family:var(--tss-monospace-font-family);font-size:11px;
+  color:var(--tsspdf-fg-faint);flex-shrink:0}
 
 /* ------------------------------------------------------------- thumbnails */
 
-.tsspdf-thumbs{display:grid;grid-template-columns:1fr 1fr;gap:12px;align-content:start;padding:12px}
-.tsspdf-thumb{display:flex;flex-direction:column;align-items:center;gap:4px;width:100%;padding:0;
-  border:0;background:none;cursor:pointer}
+.tsspdf-thumbs{padding:12px}
+.tsspdf-chrome .tsspdf-thumb.tss-btn{flex-direction:column;gap:4px;width:100%;height:auto;
+  min-height:0;padding:0;background:none;border:0;box-shadow:none}
 .tsspdf-thumb-frame{position:relative;display:flex;width:100%;min-height:72px;overflow:hidden;
   background:#fff;border:1px solid var(--tsspdf-border);box-shadow:var(--tsspdf-shadow-sm)}
 .tsspdf-thumb.tsspdf-on .tsspdf-thumb-frame{border:2px solid var(--tsspdf-accent);
@@ -305,7 +329,6 @@ namespace Tesserae.Pdf
    invisible on exactly the tiles that have one. */
 .tsspdf-thumb-match{position:absolute;top:3px;right:3px;z-index:1;width:7px;height:7px;
   border-radius:50%;background:var(--tsspdf-accent);box-shadow:0 0 0 1.5px #fff}
-.tsspdf-thumb:focus-visible .tsspdf-thumb-frame{box-shadow:0 0 0 2px var(--tsspdf-accent-ring)}
 ";
     }
 }

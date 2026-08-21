@@ -1,8 +1,7 @@
 using System;
-using System.Threading.Tasks;
-using Transpose;
 using Tesserae;
 using static Transpose.Core.dom;
+using static Tesserae.UI;
 using static Tesserae.Pdf.PdfChromeElements;
 using static TNT.T;
 
@@ -11,15 +10,22 @@ namespace Tesserae.Pdf
     /// <summary>
     /// The search box, and the state machine behind it.
     ///
+    /// <b>It is a Tesserae <see cref="SearchBox"/></b>, which turns out to be most of the design
+    /// already: the magnifier, the keyboard-shortcut chip the mockup draws as <c>⌘F</c>,
+    /// search-as-you-type with its own debounce, the shortcut handler, and an invalid state for the
+    /// red "no matches" appearance. What the chrome adds beside it is the running count, the two match
+    /// steppers, the clear, and the <c>Fuzzy | Precise</c> pill - the mockup puts those inside the
+    /// field's border; here they sit next to it, because reaching inside a component to add trailing
+    /// controls is a coupling that buys 4px.
+    ///
     /// <b>Always visible, rather than a bar that opens.</b> A find bar that appears on ⌘F is right for
     /// a browser, where finding is occasional. In a document reader it is most of what people do, and
     /// a control that has to be summoned is a control most readers never learn exists.
     ///
     /// <b>Fuzzy | Precise instead of three checkboxes.</b> pdf.js's matching has three independent
     /// switches - case, whole words, diacritics - and a reader who wants any of them wants all three:
-    /// they are looking for this exact word, not for something like it. So the two named modes are
-    /// what the chrome offers, and <see cref="FindOptions"/> stays there for a host that needs the
-    /// switches separately.
+    /// they are looking for this exact word, not for something like it. <see cref="FindOptions"/> is
+    /// still there on the viewer for a host that needs them separately.
     ///
     /// <b>Results arrive over time, and that shapes everything here.</b> pdf.js reads a page's text
     /// when it reaches it, so a search on a long document reports a growing count before it reports an
@@ -29,34 +35,32 @@ namespace Tesserae.Pdf
     /// </summary>
     public sealed partial class PdfViewerChrome
     {
-        private HTMLElement      _searchBox;
-        private HTMLInputElement _searchInput;
-        private HTMLElement      _searchCount;
-        private HTMLElement      _searchHint;
-        private HTMLElement      _searchNote;
+        private SearchBox _searchBox;
+        private Stack     _searchRow;
+        private TextBlock _searchCount;
+        private TextBlock _searchNote;
+        private Button    _searchPrevious;
+        private Button    _searchNext;
+        private Button    _searchClear;
+        private Button    _fuzzySegment;
+        private Button    _preciseSegment;
 
-        private HTMLButtonElement _searchPrevious;
-        private HTMLButtonElement _searchNext;
-        private HTMLButtonElement _searchClear;
-        private HTMLButtonElement _fuzzySegment;
-        private HTMLButtonElement _preciseSegment;
+        private string    _query = "";
 
-        private string    _query        = "";
+        /// <summary>
+        /// Set while the chrome is writing into the search box.
+        ///
+        /// <b>A Tesserae input raises the same event for a programmatic write as for a keystroke.</b>
+        /// So <c>SetText</c> inside a handler for that event is a loop - and this one is a tight one:
+        /// clearing the box reports an empty query, which clears the box. The guard is on the write
+        /// rather than on the handler, so the handler stays the single place that reacts to a change.
+        /// </summary>
+        private bool _writingSearchBox;
         private string    _runningQuery;
         private int       _matchCurrent;
         private int       _matchTotal;
         private FindState _findState = FindState.Pending;
         private bool      _searchSettled;
-
-        private int _searchGeneration;
-
-        /// <summary>
-        /// How long the box waits after a keystroke before searching.
-        ///
-        /// Long enough that typing a word is one search rather than five - each of which reads the
-        /// whole document - and short enough that it still feels like as-you-type. Enter skips it.
-        /// </summary>
-        private const int SEARCH_DEBOUNCE_MS = 220;
 
         /* ------------------------------------------------------------------ public */
 
@@ -92,7 +96,7 @@ namespace Tesserae.Pdf
         {
             _query = query ?? "";
 
-            if (_searchInput is object) _searchInput.value = _query;
+            WriteSearchBox(_query);
 
             if (_query.Length == 0)
             {
@@ -106,14 +110,10 @@ namespace Tesserae.Pdf
             return this;
         }
 
-        /// <summary>Moves keyboard focus into the search box and selects what is in it.</summary>
+        /// <summary>Moves keyboard focus into the search box.</summary>
         public PdfViewerChrome FocusSearch()
         {
-            if (_searchInput is object)
-            {
-                _searchInput.focus();
-                _searchInput.select();
-            }
+            _searchBox?.Focus();
 
             return this;
         }
@@ -124,7 +124,7 @@ namespace Tesserae.Pdf
             _query        = "";
             _runningQuery = null;
 
-            if (_searchInput is object) _searchInput.value = "";
+            WriteSearchBox("");
 
             ResetSearchResults();
 
@@ -135,91 +135,97 @@ namespace Tesserae.Pdf
 
         /* --------------------------------------------------------------- assembly */
 
-        private HTMLElement BuildSearchBox()
+        /// <summary>
+        /// The search box and the controls beside it, as one row that gives up width before anything
+        /// else in the toolbar does.
+        /// </summary>
+        private Stack BuildSearchRow()
         {
-            _searchBox = Box("tsspdf-omni");
+            _searchBox = SearchBox("Find in document".t())
+               .SetIcon(UIcons.Search)
+               .SearchAsYouType()
+               .Class("tsspdf-search");
 
-            _searchBox.appendChild(Glyph("tsspdf-omni-icon", PdfChromeIcons.SEARCH_14));
+            // The component draws the shortcut as a chip at the trailing edge of the field, which is
+            // exactly where the design puts it - and takes the keystroke itself, so the chrome's own
+            // root handler is only there for the case where focus is inside the document.
+            _searchBox.SetKeyboardShortcut(FindShortcutKeys());
+            _searchBox.OnShortcut(() => FocusSearch());
 
-            _searchInput = document.createElement("input").As<HTMLInputElement>();
+            _searchBox.OnSearch((_, text) => HandleSearchInput(text));
 
-            _searchInput.className   = "tsspdf-omni-input";
-            _searchInput.type        = "text";
-            _searchInput.value       = _query;
-            _searchInput.placeholder = "Find in document".t();
+            _searchCount = TextBlock("").Class("tsspdf-count");
+            _searchNote  = TextBlock("").Class("tsspdf-note");
 
-            _searchInput.setAttribute("aria-label", "Find in document".t());
+            _searchPrevious = StepButton(UIcons.AngleUp,   "Previous match".t(), () => _viewer.FindPrevious());
+            _searchNext     = StepButton(UIcons.AngleDown, "Next match".t(),     () => _viewer.FindNext());
 
-            _searchInput.addEventListener("input",   new Action<Event>(_ => HandleSearchInput()));
-            _searchInput.addEventListener("keydown", new Action<KeyboardEvent>(HandleSearchKeyDown));
-
-            _searchInput.addEventListener("focus", new Action<Event>(_ => UpdateSearchState()));
-            _searchInput.addEventListener("blur",  new Action<Event>(_ => UpdateSearchState()));
-
-            _searchBox.appendChild(_searchInput);
-
-            _searchCount = Text("tsspdf-omni-count", "");
-            _searchNote  = Text("tsspdf-omni-note", "");
-            _searchHint  = Text("tsspdf-omni-hint", FindShortcutHint());
-
-            _searchBox.appendChild(_searchNote);
-            _searchBox.appendChild(_searchCount);
-            _searchBox.appendChild(_searchHint);
-
-            _searchPrevious = Button("tsspdf-omni-step", "Previous match".t(), () => _viewer.FindPrevious());
-            _searchNext     = Button("tsspdf-omni-step", "Next match".t(),     () => _viewer.FindNext());
-
-            _searchPrevious.innerHTML = PdfChromeIcons.CHEVRON_UP_13;
-            _searchNext.innerHTML     = PdfChromeIcons.CHEVRON_DOWN_13;
-
-            _searchBox.appendChild(_searchPrevious);
-            _searchBox.appendChild(_searchNext);
-
-            _searchClear = Button("tsspdf-omni-clear", "Clear".t(), () =>
+            _searchClear = StepButton(UIcons.CrossSmall, "Clear".t(), () =>
             {
                 ClearSearch();
                 FocusSearch();
             });
 
-            _searchClear.innerHTML = PdfChromeIcons.CLOSE_12;
-
-            _searchBox.appendChild(_searchClear);
-
-            var modes = Box("tsspdf-seg tsspdf-seg-sm");
-
-            _fuzzySegment = Segment(null, "Fuzzy".t(),
+            _fuzzySegment = Segment("Fuzzy".t(), null,
                 "Ignore case, accents and word boundaries".t(), () => SearchMode(PdfSearchMode.Fuzzy));
 
-            _preciseSegment = Segment(null, "Precise".t(),
+            _preciseSegment = Segment("Precise".t(), null,
                 "Match case, whole words, diacritics respected".t(), () => SearchMode(PdfSearchMode.Precise));
 
-            modes.appendChild(_fuzzySegment);
-            modes.appendChild(_preciseSegment);
+            var modes = HStack().Class("tsspdf-seg tsspdf-seg-sm").AlignItems(ItemAlign.Center)
+               .Gap(2.px()).Children(_fuzzySegment, _preciseSegment);
 
-            _searchBox.appendChild(modes);
+            _searchRow = HStack().Class("tsspdf-searchrow").AlignItems(ItemAlign.Center).Gap(2.px())
+               .Children(_searchBox.Grow(), _searchNote, _searchCount,
+                         _searchPrevious, _searchNext, _searchClear, modes);
 
-            return _searchBox;
+            return _searchRow;
         }
 
         /// <summary>
-        /// The shortcut as the reader's own keyboard writes it. ⌘F on a Mac, Ctrl+F everywhere else.
+        /// The shortcut as the reader's own keyboard writes it, for the component's chip.
         ///
         /// Read off <c>navigator.platform</c>, which is deprecated and still the only thing that
         /// answers this question in every browser that ships. Getting it wrong costs a wrong hint in a
-        /// 10px grey, so it is not worth a user-agent-data round trip.
+        /// 10px chip, so it is not worth a user-agent-data round trip.
         /// </summary>
-        private static string FindShortcutHint()
+        private static string[] FindShortcutKeys()
         {
             var platform = navigator.platform ?? "";
 
-            return platform.ToLower().Contains("mac") ? "\u2318F" : "Ctrl+F";
+            return platform.ToLower().Contains("mac")
+                ? new[] { "⌘", "F" }
+                : new[] { "Ctrl", "F" };
         }
 
         /* ---------------------------------------------------------------- typing */
 
-        private void HandleSearchInput()
+        /// <summary>
+        /// Takes what the reader typed. <see cref="SearchBox.SearchAsYouType"/> debounces this, so it
+        /// arrives once per pause rather than once per keystroke - which matters, because each search
+        /// reads the whole document.
+        /// </summary>
+        private void WriteSearchBox(string text)
         {
-            _query = _searchInput.value ?? "";
+            if (_searchBox is null) return;
+
+            _writingSearchBox = true;
+
+            try
+            {
+                _searchBox.SetText(text);
+            }
+            finally
+            {
+                _writingSearchBox = false;
+            }
+        }
+
+        private void HandleSearchInput(string text)
+        {
+            if (_writingSearchBox) return;
+
+            _query = text ?? "";
 
             if (_query.Length == 0)
             {
@@ -236,58 +242,7 @@ namespace Tesserae.Pdf
             _matchTotal    = 0;
 
             UpdateSearchState();
-
-            var generation = ++_searchGeneration;
-
-            DebouncedSearchAsync(generation).FireAndForget();
-        }
-
-        private async Task DebouncedSearchAsync(int generation)
-        {
-            await Task.Delay(SEARCH_DEBOUNCE_MS);
-
-            // Superseded by a later keystroke, or the chrome has gone.
-            if (generation != _searchGeneration || _disposed) return;
-
             RunSearch();
-        }
-
-        private void HandleSearchKeyDown(KeyboardEvent e)
-        {
-            if (e.key == "Enter")
-            {
-                e.preventDefault();
-
-                // Enter on a query already running means "the next one"; on a query the debounce has
-                // not got to yet it means "now, please".
-                if (_query.Length > 0 && _query == _runningQuery)
-                {
-                    if (e.shiftKey)
-                    {
-                        _viewer.FindPrevious();
-                    }
-                    else
-                    {
-                        _viewer.FindNext();
-                    }
-                }
-                else if (_query.Length > 0)
-                {
-                    _searchGeneration++;
-
-                    RunSearch();
-                }
-            }
-            else if (e.key == "Escape")
-            {
-                e.preventDefault();
-
-                ClearSearch();
-            }
-
-            // The chrome's own ⌘F handler is on the root, and the viewer scrolls on the arrow keys.
-            // Neither should hear a reader typing into this box.
-            e.stopPropagation();
         }
 
         private void RunSearch()
@@ -314,9 +269,9 @@ namespace Tesserae.Pdf
         /// Takes a report from the find controller.
         ///
         /// <paramref name="carriesState"/> is false for a running-count event, which carries no state
-        /// of its own - so the last outcome is kept rather than assumed to be Pending. That is the same trap
-        /// <see cref="PdfViewer"/> documents: count events arrive between control-state events and
-        /// sometimes after them, and treating one as "still searching" overwrites "found" a moment
+        /// of its own - so the last outcome is kept rather than assumed to be Pending. That is the same
+        /// trap <see cref="PdfViewer"/> documents: count events arrive between control-state events
+        /// and sometimes after them, and treating one as "still searching" overwrites "found" a moment
         /// after the search succeeded.
         /// </summary>
         private void ApplyMatches(IMatchesCount matches, bool carriesState, FindState state)
@@ -350,8 +305,9 @@ namespace Tesserae.Pdf
         }
 
         /// <summary>
-        /// Paints the whole box from the state above: which of the count, the hint and the note is
-        /// showing, whether the steppers are usable, and which of the two mode segments is selected.
+        /// Paints the whole row from the state above: which of the count and the note is showing,
+        /// whether the steppers are there, whether the field reads as invalid, and which of the two
+        /// mode segments is selected.
         ///
         /// One function rather than a change per event, because the four states this control has are
         /// distinguished by combinations - a non-empty query with a settled zero count is the only one
@@ -359,7 +315,7 @@ namespace Tesserae.Pdf
         /// </summary>
         private void UpdateSearchState()
         {
-            if (_searchBox is null) return;
+            if (_searchRow is null) return;
 
             Toggle(_fuzzySegment,   PdfChromeStyles.ON, _searchMode == PdfSearchMode.Fuzzy);
             Toggle(_preciseSegment, PdfChromeStyles.ON, _searchMode == PdfSearchMode.Precise);
@@ -371,10 +327,12 @@ namespace Tesserae.Pdf
             var noMatches = searching && _searchSettled && _matchTotal == 0;
             var hasCount  = searching && _matchTotal > 0;
 
-            Toggle(_searchBox, PdfChromeStyles.FOCUS, document.activeElement == _searchInput && !noMatches);
+            // The component's own invalid state, plus a class for the parts of the red appearance it
+            // does not cover. Assigned only on a change: the setter re-renders the field.
+            if (_searchBox.IsInvalid != noMatches) _searchBox.IsInvalid = noMatches;
+
             Toggle(_searchBox, PdfChromeStyles.NO_MATCHES, noMatches);
 
-            Show(_searchHint,  !searching);
             Show(_searchCount, hasCount);
             Show(_searchNote,  noMatches);
 
@@ -388,11 +346,11 @@ namespace Tesserae.Pdf
 
             if (hasCount)
             {
-                _searchCount.textContent = _matchCurrent + " / " + _matchTotal;
+                _searchCount.Text = _matchCurrent + " / " + _matchTotal;
 
                 // Wrapping is why the view jumped backwards, and a reader who is not told assumes
                 // something broke. Too small a thing for a banner, big enough for the tooltip.
-                _searchCount.title = _findState == FindState.Wrapped
+                _searchCount.Render().title = _findState == FindState.Wrapped
                     ? "Continued from the start of the document".t()
                     : "";
             }
@@ -400,11 +358,10 @@ namespace Tesserae.Pdf
             if (noMatches)
             {
                 // "Try Fuzzy" is only advice if Fuzzy is not what just failed.
-                _searchNote.textContent = _searchMode == PdfSearchMode.Precise
+                _searchNote.Text = _searchMode == PdfSearchMode.Precise
                     ? "No matches - try Fuzzy".t()
                     : "No matches".t();
             }
-
         }
     }
 }

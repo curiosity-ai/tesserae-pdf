@@ -1,7 +1,7 @@
 using System;
-using Transpose;
 using Tesserae;
 using static Transpose.Core.dom;
+using static Tesserae.UI;
 using static Tesserae.Pdf.PdfChromeElements;
 using static TNT.T;
 
@@ -10,41 +10,40 @@ namespace Tesserae.Pdf
     /// <summary>
     /// The chrome's controls: the two toolbar arrangements, the icon rail, and the zoom menu.
     ///
-    /// Every handler here calls a public method on <see cref="PdfViewer"/> and reads its state back
-    /// from the event bus rather than from the control - so a zoom changed by a keyboard shortcut, by
-    /// a host, or by pdf.js resolving a fit mode after a resize moves the label just the same. No
-    /// control in this file is the source of truth for anything.
+    /// Every control here is a Tesserae component, and every handler calls a public method on
+    /// <see cref="PdfViewer"/> and reads its state back from the event bus rather than from the
+    /// control - so a zoom changed by a keyboard shortcut, by a host, or by pdf.js resolving a fit
+    /// mode after a resize moves the label just the same. No control in this file is the source of
+    /// truth for anything.
     /// </summary>
     public sealed partial class PdfViewerChrome
     {
-        private HTMLElement _outlineToggle;
-        private HTMLElement _thumbnailToggle;
+        private Button _outlineToggle;
+        private Button _thumbnailToggle;
+        private Button _previousPage;
+        private Button _nextPage;
+        private Button _zoomButton;
+        private Button _fitPageControl;
+        private Button _fitWidthControl;
+        private Button _spreadToggle;
 
-        private HTMLButtonElement _previousPage;
-        private HTMLButtonElement _nextPage;
-        private HTMLInputElement  _pageBox;
-        private HTMLElement       _pageTotal;
+        private TextBox   _pageBox;
+        private TextBlock _pageTotal;
+        private TextBlock _railZoom;
+        private TextBlock _documentNameText;
 
-        private HTMLButtonElement _zoomField;
-        private HTMLElement       _zoomValue;
-        private HTMLElement       _zoomMenu;
-        private HTMLElement       _railZoom;
-
-        private HTMLButtonElement _fitPageControl;
-        private HTMLButtonElement _fitWidthControl;
-        private HTMLButtonElement _spreadToggle;
-
-        private HTMLElement _documentNameText;
+        private ContextMenu _zoomMenu;
+        private Button      _overflowButton;
 
         /* --------------------------------------------------------- single toolbar */
 
         /// <summary>
         /// <see cref="PdfChromeLayout.SingleToolbar"/>: one 40px row holding everything, with the
-        /// search box pushed to the right by a spring so it takes whatever width is left.
+        /// search box pushed to the right by the page controls' growth so it takes what is left.
         /// </summary>
-        private HTMLElement BuildSingleToolbar()
+        private IComponent BuildSingleToolbar()
         {
-            var toolbar = Box("tsspdf-toolbar");
+            var toolbar = HStack().WS().Class("tsspdf-toolbar").AlignItems(ItemAlign.Center).Gap(2.px());
 
             var wroteGroup = false;
 
@@ -57,46 +56,58 @@ namespace Tesserae.Pdf
 
             if (_showPageControls)
             {
-                if (wroteGroup) toolbar.appendChild(Separator());
+                if (wroteGroup) toolbar.Add(Separator());
 
-                toolbar.appendChild(BuildPreviousPageButton());
-                toolbar.appendChild(BuildPageBox());
-                toolbar.appendChild(BuildNextPageButton());
+                toolbar.Add(BuildPreviousPageButton());
+                toolbar.Add(BuildPageBox());
+                toolbar.Add(BuildNextPageButton());
 
                 wroteGroup = true;
             }
 
             if (_showZoom)
             {
-                if (wroteGroup) toolbar.appendChild(Separator());
+                if (wroteGroup) toolbar.Add(Separator());
 
-                toolbar.appendChild(IconButton(PdfChromeIcons.ZOOM_OUT, "Zoom out".t(), () => _viewer.ZoomOut()));
-                toolbar.appendChild(BuildZoomField());
-                toolbar.appendChild(IconButton(PdfChromeIcons.ZOOM_IN, "Zoom in".t(), () => _viewer.ZoomIn()));
+                // One group, so the band that cannot fit it hides it with one rule - and so the
+                // overflow menu has one thing to stand in for.
+                toolbar.Add(HStack().Class("tsspdf-zoomgroup").AlignItems(ItemAlign.Center).Gap(2.px()).Children(
+                    IconButton(UIcons.ZoomOut, "Zoom out".t(), () => _viewer.ZoomOut()),
+                    BuildZoomButton(),
+                    IconButton(UIcons.ZoomIn, "Zoom in".t(), () => _viewer.ZoomIn())));
 
                 wroteGroup = true;
             }
 
             if (_showFitModes)
             {
-                if (wroteGroup) toolbar.appendChild(Separator());
+                if (wroteGroup) toolbar.Add(Separator());
 
-                toolbar.appendChild(BuildFitSegments());
+                toolbar.Add(BuildFitSegments(withLabels: true));
 
                 wroteGroup = true;
             }
 
             if (_showRotate || _showSpread)
             {
-                if (wroteGroup) toolbar.appendChild(Separator());
+                if (wroteGroup) toolbar.Add(Separator());
 
-                if (_showRotate) toolbar.appendChild(BuildRotateButton());
-                if (_showSpread) toolbar.appendChild(BuildSpreadToggle());
+                if (_showRotate) toolbar.Add(BuildRotateButton());
+                if (_showSpread) toolbar.Add(BuildSpreadToggle());
             }
 
-            toolbar.appendChild(Spring());
+            toolbar.Add(BuildOverflowButton());
 
-            if (_showSearch) toolbar.appendChild(BuildSearchBox());
+            if (_showSearch)
+            {
+                // Grow rather than a spacer: the search row takes the width nothing else claimed,
+                // which is what pushes it to the right and what makes it the thing that shrinks.
+                toolbar.Add(BuildSearchRow().Grow());
+            }
+            else
+            {
+                toolbar.Add(VStack().Grow());
+            }
 
             return toolbar;
         }
@@ -110,39 +121,35 @@ namespace Tesserae.Pdf
         /// The name is the only thing in this chrome allowed to shrink to nothing - it is the one
         /// piece that can be elided without taking a control away.
         /// </summary>
-        private HTMLElement BuildSplitToolbar()
+        private IComponent BuildSplitToolbar()
         {
-            var toolbar = Box("tsspdf-toolbar tsspdf-toolbar-split");
+            var toolbar = HStack().WS().Class("tsspdf-toolbar tsspdf-toolbar-split")
+               .AlignItems(ItemAlign.Center).Gap(8.px());
 
             if (_showDocumentName)
             {
-                var title = Box("tsspdf-doctitle");
+                _documentNameText = TextBlock(_effectiveDocumentName ?? "").Class("tsspdf-doctitle-text");
 
-                title.appendChild(Glyph("", PdfChromeIcons.FILE_PDF));
-
-                _documentNameText             = Text("tsspdf-doctitle-text", _effectiveDocumentName ?? "");
-                _documentNameText.title       = _effectiveDocumentName ?? "";
-
-                title.appendChild(_documentNameText);
-                toolbar.appendChild(title);
+                toolbar.Add(HStack().Class("tsspdf-doctitle").AlignItems(ItemAlign.Center).Gap(8.px())
+                   .Children(Icon(UIcons.FilePdf).Foreground("var(--tsspdf-danger)"), _documentNameText));
             }
 
             if (_showPageControls)
             {
-                if (_showDocumentName) toolbar.appendChild(Separator());
+                if (_showDocumentName) toolbar.Add(Separator());
 
-                var group = Box("tsspdf-group");
-
-                group.appendChild(BuildPreviousPageButton());
-                group.appendChild(BuildPageBox());
-                group.appendChild(BuildNextPageButton());
-
-                toolbar.appendChild(group);
+                toolbar.Add(HStack().AlignItems(ItemAlign.Center).Gap(2.px()).Children(
+                    BuildPreviousPageButton(), BuildPageBox(), BuildNextPageButton()));
             }
 
-            toolbar.appendChild(Spring());
-
-            if (_showSearch) toolbar.appendChild(BuildSearchBox());
+            if (_showSearch)
+            {
+                toolbar.Add(BuildSearchRow().Grow());
+            }
+            else
+            {
+                toolbar.Add(VStack().Grow());
+            }
 
             return toolbar;
         }
@@ -156,44 +163,40 @@ namespace Tesserae.Pdf
         /// Zoom in is above zoom out, and the percentage sits between them, because that is the
         /// direction the buttons point: a vertical stepper reads upwards.
         /// </summary>
-        private HTMLElement BuildRail()
+        private IComponent BuildRail()
         {
-            var rail = Box("tsspdf-rail");
+            var rail = VStack().HS().Class("tsspdf-rail").AlignItems(ItemAlign.Center).Gap(2.px());
 
-            if (_showPanelToggles && (_showOutlineTab || _showThumbnailTab))
-            {
-                AppendPanelToggles(rail);
-            }
+            if (_showPanelToggles && (_showOutlineTab || _showThumbnailTab)) AppendPanelToggles(rail);
 
             if (_showZoom)
             {
-                rail.appendChild(Box("tsspdf-rail-sep"));
+                rail.Add(Raw(Box("tsspdf-rail-sep")));
+                rail.Add(IconButton(UIcons.ZoomIn, "Zoom in".t(), () => _viewer.ZoomIn()));
 
-                rail.appendChild(IconButton(PdfChromeIcons.ZOOM_IN, "Zoom in".t(), () => _viewer.ZoomIn()));
+                _railZoom = TextBlock("-").Class("tsspdf-rail-zoom");
 
-                _railZoom = Text("tsspdf-rail-zoom", "-");
-
-                rail.appendChild(_railZoom);
-                rail.appendChild(IconButton(PdfChromeIcons.ZOOM_OUT, "Zoom out".t(), () => _viewer.ZoomOut()));
+                rail.Add(_railZoom);
+                rail.Add(IconButton(UIcons.ZoomOut, "Zoom out".t(), () => _viewer.ZoomOut()));
             }
 
             if (_showFitModes)
             {
-                rail.appendChild(Box("tsspdf-rail-sep"));
+                rail.Add(Raw(Box("tsspdf-rail-sep")));
 
-                _fitPageControl  = IconButton(PdfChromeIcons.FIT_PAGE_16,  "Fit page".t(),    () => _viewer.FitPage());
-                _fitWidthControl = IconButton(PdfChromeIcons.FIT_WIDTH_16, "Fit content".t(), () => _viewer.FitWidth());
+                _fitPageControl  = IconButton(UIcons.Compress, "Fit page".t(),    () => _viewer.FitPage());
+                _fitWidthControl = IconButton(UIcons.ArrowsH,  "Fit content".t(), () => _viewer.FitWidth());
 
-                rail.appendChild(_fitPageControl);
-                rail.appendChild(_fitWidthControl);
+                rail.Add(_fitPageControl);
+                rail.Add(_fitWidthControl);
             }
 
             if (_showRotate || _showSpread)
             {
-                rail.appendChild(Box("tsspdf-rail-sep"));
+                rail.Add(Raw(Box("tsspdf-rail-sep")));
 
-                if (_showRotate) rail.appendChild(BuildRotateButton());
-                if (_showSpread) rail.appendChild(BuildSpreadToggle());
+                if (_showRotate) rail.Add(BuildRotateButton());
+                if (_showSpread) rail.Add(BuildSpreadToggle());
             }
 
             return rail;
@@ -201,35 +204,35 @@ namespace Tesserae.Pdf
 
         /* --------------------------------------------------------------- controls */
 
-        private void AppendPanelToggles(HTMLElement host)
+        private void AppendPanelToggles(Stack host)
         {
             if (_showOutlineTab)
             {
-                _outlineToggle = IconButton(PdfChromeIcons.OUTLINE, "Document outline".t(),
+                _outlineToggle = IconButton(UIcons.ListTree, "Document outline".t(),
                     () => TogglePanel(PdfChromePanel.Outline));
 
-                host.appendChild(_outlineToggle);
+                host.Add(_outlineToggle);
             }
 
             if (_showThumbnailTab)
             {
-                _thumbnailToggle = IconButton(PdfChromeIcons.THUMBNAILS, "Thumbnails".t(),
+                _thumbnailToggle = IconButton(UIcons.Apps, "Thumbnails".t(),
                     () => TogglePanel(PdfChromePanel.Thumbnails));
 
-                host.appendChild(_thumbnailToggle);
+                host.Add(_thumbnailToggle);
             }
         }
 
-        private HTMLButtonElement BuildPreviousPageButton()
+        private Button BuildPreviousPageButton()
         {
-            _previousPage = IconButton(PdfChromeIcons.CHEVRON_UP_16, "Previous page".t(), () => _viewer.PreviousPage());
+            _previousPage = IconButton(UIcons.AngleUp, "Previous page".t(), () => _viewer.PreviousPage());
 
             return _previousPage;
         }
 
-        private HTMLButtonElement BuildNextPageButton()
+        private Button BuildNextPageButton()
         {
-            _nextPage = IconButton(PdfChromeIcons.CHEVRON_DOWN_16, "Next page".t(), () => _viewer.NextPage());
+            _nextPage = IconButton(UIcons.AngleDown, "Next page".t(), () => _viewer.NextPage());
 
             return _nextPage;
         }
@@ -243,52 +246,50 @@ namespace Tesserae.Pdf
         /// other way round, or a document whose labels are <c>1..n</c> offset by its front matter
         /// would answer every entry with the wrong page.
         /// </summary>
-        private HTMLElement BuildPageBox()
+        private IComponent BuildPageBox()
         {
-            var group = Box("tsspdf-group");
+            _pageBox = TextBox().NoSpellCheck().Class("tsspdf-pagebox");
 
-            _pageBox = document.createElement("input").As<HTMLInputElement>();
+            var input = Find(_pageBox, "input").As<HTMLInputElement>();
 
-            _pageBox.className = "tsspdf-pagebox";
-            _pageBox.type      = "text";
-
-            _pageBox.setAttribute("aria-label", "Page".t());
-
-            _pageBox.addEventListener("keydown", new Action<KeyboardEvent>(e =>
+            if (input is object)
             {
-                if (e.key == "Enter")
+                input.setAttribute("aria-label", "Page".t());
+
+                input.addEventListener("keydown", new Action<KeyboardEvent>(e =>
                 {
-                    CommitPageBox();
-                }
-                else if (e.key == "Escape")
+                    if (e.key == "Enter")
+                    {
+                        CommitPageBox();
+                    }
+                    else if (e.key == "Escape")
+                    {
+                        UpdatePageState();
+
+                        input.blur();
+                    }
+
+                    // Neither key, nor any other, is left to bubble past this box: the viewer scrolls
+                    // on the arrow keys and the chrome takes Ctrl+F, and a reader editing a page
+                    // number is doing neither.
+                    e.stopPropagation();
+                }));
+
+                input.addEventListener("input", new Action<Event>(_ => _pageBoxEdited = true));
+
+                input.addEventListener("focus", new Action<Event>(_ =>
                 {
-                    UpdatePageState();
+                    _pageBoxEdited = false;
 
-                    _pageBox.blur();
-                }
+                    input.select();
+                }));
+            }
 
-                // Both keys and every other one are left to bubble no further than this box: the
-                // viewer scrolls on the arrow keys, and a reader editing a page number is not
-                // scrolling.
-                e.stopPropagation();
-            }));
+            _pageBox.Attach(_ => CommitPageBox());
 
-            _pageBox.addEventListener("change", new Action<Event>(_ => CommitPageBox()));
-            _pageBox.addEventListener("input",  new Action<Event>(_ => _pageBoxEdited = true));
+            _pageTotal = TextBlock("").Class("tsspdf-pagetotal");
 
-            _pageBox.addEventListener("focus", new Action<Event>(_ =>
-            {
-                _pageBoxEdited = false;
-
-                _pageBox.select();
-            }));
-
-            _pageTotal = Text("tsspdf-pagetotal", "");
-
-            group.appendChild(_pageBox);
-            group.appendChild(_pageTotal);
-
-            return group;
+            return HStack().AlignItems(ItemAlign.Center).Gap(5.px()).Children(_pageBox, _pageTotal);
         }
 
         /// <summary>
@@ -300,11 +301,39 @@ namespace Tesserae.Pdf
         /// </summary>
         private bool _pageBoxEdited;
 
+        /// <summary>
+        /// Set while the chrome is writing into the page box.
+        ///
+        /// <b>A Tesserae input raises the same event for a programmatic write as for a keystroke</b>,
+        /// so putting the current page into the box from inside the handler for that event is a loop.
+        /// The guard is on the write rather than on the handler, so the handler stays the single place
+        /// that reacts to a change.
+        /// </summary>
+        private bool _writingPageBox;
+
+        private void WritePageBox(string value)
+        {
+            if (_pageBox is null) return;
+
+            _writingPageBox = true;
+
+            try
+            {
+                _pageBox.Text = value;
+            }
+            finally
+            {
+                _writingPageBox = false;
+            }
+        }
+
         private void CommitPageBox()
         {
+            if (_writingPageBox) return;
+
             _pageBoxEdited = false;
 
-            var typed = (_pageBox.value ?? "").Trim();
+            var typed = (_pageBox.Text ?? "").Trim();
 
             if (typed.Length == 0)
             {
@@ -339,190 +368,185 @@ namespace Tesserae.Pdf
             UpdatePageState();
         }
 
-        private HTMLButtonElement BuildRotateButton()
-            => IconButton(PdfChromeIcons.ROTATE, "Rotate right".t(), () => _viewer.Rotate());
+        private Button BuildRotateButton()
+            => IconButton(UIcons.RotateRight, "Rotate right".t(), () => _viewer.Rotate()).Class("tsspdf-rotate");
 
         /// <summary>
         /// The spread toggle: off, or pairs starting on odd pages, which is how a book falls open.
         ///
         /// Its state comes from pdf.js's <c>spreadmodechanged</c> rather than from a field here,
         /// because a document can ask for a spread itself through its <c>/PageLayout</c> and the
-        /// button should show what the viewer is doing, not what was last clicked.
+        /// button should show what the viewer is doing, not what was last clicked. Which is also why
+        /// it is a <see cref="Button"/> and not a <c>ToggleButton</c>: the state lives in the viewer,
+        /// and a control with its own copy of it would be a second source of truth.
         /// </summary>
-        private HTMLButtonElement BuildSpreadToggle()
+        private Button BuildSpreadToggle()
         {
-            _spreadToggle = IconButton(PdfChromeIcons.SPREAD, "Two-page spread".t(), () =>
-                _viewer.Spread(_spreadMode == SpreadMode.None ? SpreadMode.Odd : SpreadMode.None));
+            _spreadToggle = IconButton(UIcons.TableColumns, "Two-page spread".t(), () =>
+                    _viewer.Spread(_spreadMode == SpreadMode.None ? SpreadMode.Odd : SpreadMode.None))
+               .Class("tsspdf-spread");
 
             return _spreadToggle;
         }
 
         /// <summary>
-        /// The <c>Fit page | Fit content</c> control - as a labelled segmented control in the single
-        /// toolbar, and as two icon buttons on the rail.
+        /// The <c>Fit page | Fit content</c> control - a labelled segmented control in the single
+        /// toolbar, and two icon buttons on the rail.
+        ///
+        /// <b>Why the track is drawn here rather than taken from Tesserae.</b> Both candidates are the
+        /// wrong shape: <c>SegmentedPivot</c> is a scrollable tab strip that also hosts a content pane
+        /// (measured 142x58 for two words), and <c>PivotSelector</c> is a responsive tab strip that
+        /// collapses into a dropdown. The two things inside the track are ordinary Tesserae buttons;
+        /// the track itself is three declarations.
         ///
         /// <b>"Fit content" is pdf.js's <c>page-width</c></b>, and the wording is deliberate: what a
         /// reader means by it is "make the text as wide as the pane", which is fitting the width.
         /// "Fit width" describes the mechanism rather than the outcome.
         /// </summary>
-        private HTMLElement BuildFitSegments()
+        private IComponent BuildFitSegments(bool withLabels)
         {
-            var group = Box("tsspdf-seg");
-
-            _fitPageControl = Segment(PdfChromeIcons.FIT_PAGE_14, "Fit page".t(), "Fit the whole page".t(),
+            _fitPageControl = Segment("Fit page".t(), UIcons.Compress, "Fit the whole page".t(),
                 () => _viewer.FitPage());
 
-            _fitWidthControl = Segment(PdfChromeIcons.FIT_WIDTH_14, "Fit content".t(), "Fit the page width".t(),
+            _fitWidthControl = Segment("Fit content".t(), UIcons.ArrowsH, "Fit the page width".t(),
                 () => _viewer.FitWidth());
 
-            group.appendChild(_fitPageControl);
-            group.appendChild(_fitWidthControl);
+            return HStack().Class("tsspdf-seg").AlignItems(ItemAlign.Center).Gap(2.px())
+               .Children(_fitPageControl, _fitWidthControl);
+        }
 
-            return group;
+        /// <summary>
+        /// The overflow menu: where the controls a narrow toolbar cannot show go.
+        ///
+        /// Built on open rather than kept, because what is in it depends on the width band in force -
+        /// and because the fit modes need a tick against the one that is active, which moves.
+        /// </summary>
+        private Button BuildOverflowButton()
+        {
+            _overflowButton = IconButton(UIcons.GripDots, "More controls".t(), ShowOverflowMenu);
+
+            Show(_overflowButton, false);
+
+            return _overflowButton;
+        }
+
+        private void ShowOverflowMenu()
+        {
+            var menu = ContextMenu();
+
+            if (_showZoom && ZoomInOverflow)
+            {
+                menu.Add(MenuRow("Zoom in".t(),  UIcons.ZoomIn,  false, () => _viewer.ZoomIn()));
+                menu.Add(MenuRow("Zoom out".t(), UIcons.ZoomOut, false, () => _viewer.ZoomOut()));
+                menu.Add(ContextMenuItem("").Divider());
+            }
+
+            if (_showFitModes && FitModesInOverflow)
+            {
+                menu.Add(MenuRow("Fit page".t(),    UIcons.Compress, IsPresetInForce("page-fit"),   () => _viewer.FitPage()));
+                menu.Add(MenuRow("Fit content".t(), UIcons.ArrowsH,  IsPresetInForce("page-width"), () => _viewer.FitWidth()));
+                menu.Add(MenuRow("Actual size".t(), null,            IsPresetInForce("page-actual"), () => _viewer.ActualSize()));
+            }
+
+            if (ViewControlsInOverflow && (_showRotate || _showSpread))
+            {
+                if (menu.Render().hasChildNodes()) menu.Add(ContextMenuItem("").Divider());
+
+                if (_showRotate)
+                {
+                    menu.Add(MenuRow("Rotate right".t(), UIcons.RotateRight, false, () => _viewer.Rotate()));
+                }
+
+                if (_showSpread)
+                {
+                    menu.Add(MenuRow("Two-page spread".t(), UIcons.TableColumns, _spreadMode != SpreadMode.None,
+                        () => _viewer.Spread(_spreadMode == SpreadMode.None ? SpreadMode.Odd : SpreadMode.None)));
+                }
+            }
+
+            if (_showSearch && SearchModeInOverflow)
+            {
+                if (menu.Render().hasChildNodes()) menu.Add(ContextMenuItem("").Divider());
+
+                menu.Add(MenuRow("Fuzzy".t(), null, _searchMode == PdfSearchMode.Fuzzy,
+                    () => SearchMode(PdfSearchMode.Fuzzy)));
+
+                menu.Add(MenuRow("Precise".t(), null, _searchMode == PdfSearchMode.Precise,
+                    () => SearchMode(PdfSearchMode.Precise)));
+            }
+
+            menu.ShowFor(_overflowButton, 0, 4);
+        }
+
+        /// <summary>
+        /// One row of a menu: an optional tick, an icon, and a label.
+        ///
+        /// The tick column is always there, occupied or not, so the labels line up whether anything is
+        /// selected or not - a menu whose text moves when a tick appears is the same shifting the rest
+        /// of this chrome is careful to avoid.
+        /// </summary>
+        private static ContextMenu.Item MenuRow(string label, UIcons? icon, bool current, Action apply)
+        {
+            var row = HStack().AlignItems(ItemAlign.Center).Gap(8.px());
+
+            row.Add(current
+                ? (IComponent)Icon(UIcons.Check).Foreground("var(--tsspdf-accent)")
+                : TextBlock("").W(13));
+
+            if (icon.HasValue) row.Add(Icon(icon.Value).Foreground("var(--tsspdf-fg-muted)"));
+
+            row.Add(current ? TextBlock(label).SemiBold().Foreground("var(--tsspdf-accent)") : TextBlock(label));
+
+            return ContextMenuItem(row).OnClick(apply);
         }
 
         /* ------------------------------------------------------------- zoom menu */
 
-        private HTMLElement BuildZoomField()
+        private Button BuildZoomButton()
         {
-            _zoomField = Button("tsspdf-field", "Zoom".t(), ToggleZoomMenu);
+            _zoomButton = Button("-")
+               .SetIcon(UIcons.AngleDown)
+               .NoMargin()
+               .NoMinSize()
+               .NoPadding()
+               .Class("tsspdf-zoom")
+               .SetTitle("Zoom".t())
+               .OnClick(ShowZoomMenu);
 
-            _zoomValue = Text("tsspdf-field-value", "-");
-
-            _zoomField.appendChild(_zoomValue);
-            _zoomField.appendChild(Glyph("", PdfChromeIcons.CHEVRON_DOWN_12_FAINT));
-
-            _zoomField.setAttribute("aria-haspopup", "true");
-
-            return _zoomField;
-        }
-
-        private void ToggleZoomMenu()
-        {
-            if (_zoomMenu is object)
-            {
-                CloseZoomMenu();
-
-                return;
-            }
-
-            OpenZoomMenu();
+            return _zoomButton;
         }
 
         /// <summary>
         /// Opens the zoom menu under its button.
         ///
-        /// Positioned against the chrome's own box rather than the page's, so it moves with a chrome
-        /// inside a scrolling pane and cannot be clipped by one - the chrome is
-        /// <c>position:relative</c> and this is <c>position:absolute</c> inside it. It is also flipped
-        /// to stay inside the chrome's right edge, which is what a chrome narrower than its toolbar
-        /// needs.
+        /// A Tesserae <see cref="ContextMenu"/>, which brings the positioning, the outside-click
+        /// dismissal, the Escape handling and the layer stacking with it - all of which the chrome
+        /// previously did itself. Rebuilt on every open rather than kept, because the tick beside the
+        /// entry in force moves.
         /// </summary>
-        private void OpenZoomMenu()
+        private void ShowZoomMenu()
         {
-            var menu = Box("tsspdf-menu");
+            _zoomMenu = ContextMenu();
 
-            AppendZoomMenuItem(menu, "Fit page".t(),    IsPresetInForce("page-fit"),    () => _viewer.FitPage());
-            AppendZoomMenuItem(menu, "Fit content".t(), IsPresetInForce("page-width"),  () => _viewer.FitWidth());
-            AppendZoomMenuItem(menu, "Actual size".t(), IsPresetInForce("page-actual"), () => _viewer.ActualSize());
-            AppendZoomMenuItem(menu, "Automatic".t(),   IsPresetInForce("auto"),        () => _viewer.AutoZoom());
+            AppendZoomMenuItem("Fit page".t(),    IsPresetInForce("page-fit"),    () => _viewer.FitPage());
+            AppendZoomMenuItem("Fit content".t(), IsPresetInForce("page-width"),  () => _viewer.FitWidth());
+            AppendZoomMenuItem("Actual size".t(), IsPresetInForce("page-actual"), () => _viewer.ActualSize());
+            AppendZoomMenuItem("Automatic".t(),   IsPresetInForce("auto"),        () => _viewer.AutoZoom());
 
-            menu.appendChild(Box("tsspdf-menu-sep"));
+            _zoomMenu.Add(ContextMenuItem("").Divider());
 
             foreach (var level in _zoomLevels)
             {
                 var captured = level;
 
-                AppendZoomMenuItem(menu, FormatPercent(captured), IsZoomInForce(captured), () => _viewer.Zoom(captured));
+                AppendZoomMenuItem(FormatPercent(captured), IsZoomInForce(captured), () => _viewer.Zoom(captured));
             }
 
-            _zoomMenu = menu;
-
-            _root.appendChild(menu);
-
-            var anchor = _zoomField.getBoundingClientRect().As<DOMRect>();
-            var host   = _root.getBoundingClientRect().As<DOMRect>();
-
-            var left = anchor.left - host.left;
-
-            // Keep it inside the chrome. 8px of margin so it never sits flush against the edge.
-            var overflow = left + menu.offsetWidth - (host.width - 8);
-
-            if (overflow > 0) left -= overflow;
-
-            menu.style.left = (left < 8 ? 8 : left) + "px";
-            menu.style.top  = (anchor.bottom - host.top + 5) + "px";
-
-            _zoomField.classList.add(PdfChromeStyles.OPEN);
-
-            // Both handlers are captured in fields so the same delegate can be removed again: a
-            // document listener is removed by identity, and a second lambda would not match.
-            _dismissZoomMenu = new Action<Event>(e =>
-            {
-                var target = e.target.As<HTMLElement>();
-
-                if (target is object && _zoomMenu  is object && _zoomMenu.contains(target))  return;
-                if (target is object && _zoomField is object && _zoomField.contains(target)) return;
-
-                CloseZoomMenu();
-            });
-
-            _escapeZoomMenu = new Action<Event>(e =>
-            {
-                if (e.As<KeyboardEvent>().key == "Escape") CloseZoomMenu();
-            });
-
-            document.addEventListener("pointerdown", _dismissZoomMenu);
-            document.addEventListener("keydown", _escapeZoomMenu);
+            _zoomMenu.ShowFor(_zoomButton, 0, 4);
         }
 
-        private Action<Event> _dismissZoomMenu;
-        private Action<Event> _escapeZoomMenu;
-
-        private void CloseZoomMenu()
-        {
-            if (_dismissZoomMenu is object)
-            {
-                document.removeEventListener("pointerdown", _dismissZoomMenu);
-
-                _dismissZoomMenu = null;
-            }
-
-            if (_escapeZoomMenu is object)
-            {
-                document.removeEventListener("keydown", _escapeZoomMenu);
-
-                _escapeZoomMenu = null;
-            }
-
-            if (_zoomMenu is object)
-            {
-                if (_zoomMenu.parentElement is object) _zoomMenu.parentElement.removeChild(_zoomMenu);
-
-                _zoomMenu = null;
-            }
-
-            if (_zoomField is object) _zoomField.classList.remove(PdfChromeStyles.OPEN);
-        }
-
-        private void AppendZoomMenuItem(HTMLElement menu, string label, bool current, Action apply)
-        {
-            var item = Button("tsspdf-menu-item", null, () =>
-            {
-                CloseZoomMenu();
-
-                apply();
-            });
-
-            item.appendChild(Glyph("tsspdf-menu-check", PdfChromeIcons.CHECK_13));
-            item.appendChild(Text("", label));
-
-            if (current) item.classList.add(PdfChromeStyles.ON);
-
-            item.setAttribute("aria-checked", current ? "true" : "false");
-
-            menu.appendChild(item);
-        }
+        private void AppendZoomMenuItem(string label, bool current, Action apply)
+            => _zoomMenu.Add(MenuRow(label, null, current, apply));
 
         /// <summary>Whether a named fit mode is the one in force.</summary>
         private bool IsPresetInForce(string preset) => _scalePreset == preset;
@@ -537,8 +561,7 @@ namespace Tesserae.Pdf
         private bool IsZoomInForce(double factor)
             => string.IsNullOrEmpty(_scalePreset) && Math.Abs(_scale - factor) < 0.005;
 
-        private static string FormatPercent(double scale)
-            => Math.Round(scale * 100) + "%";
+        private static string FormatPercent(double scale) => Math.Round(scale * 100) + "%";
 
         /* ------------------------------------------------------------ state → DOM */
 
@@ -560,8 +583,8 @@ namespace Tesserae.Pdf
         {
             var percent = _scale > 0 ? FormatPercent(_scale) : "-";
 
-            if (_zoomValue is object) _zoomValue.textContent = percent;
-            if (_railZoom  is object) _railZoom.textContent  = percent;
+            if (_zoomButton is object) _zoomButton.Text = percent;
+            if (_railZoom   is object) _railZoom.Text   = percent;
 
             var fitPage  = _scalePreset == "page-fit";
             var fitWidth = _scalePreset == "page-width";
@@ -571,12 +594,6 @@ namespace Tesserae.Pdf
 
             SetPressed(_fitPageControl,  fitPage);
             SetPressed(_fitWidthControl, fitWidth);
-
-            // The menu shows a tick against the current zoom, so it has to be rebuilt or closed when
-            // that changes underneath it. Closing is the honest option: a zoom that moved while the
-            // menu was open moved because something else asked, and silently re-ticking a different
-            // row under the pointer is how a mis-click happens.
-            if (_zoomMenu is object) CloseZoomMenu();
         }
 
         private void UpdatePageState()
@@ -584,16 +601,18 @@ namespace Tesserae.Pdf
             if (_pageBox is object)
             {
                 var label = CurrentPageLabel();
+                var input = Find(_pageBox, "input").As<HTMLInputElement>();
 
                 // Not while it is being edited: replacing what somebody is halfway through typing is
                 // maddening, and pagechanging fires as the document scrolls under them.
-                if (!(_pageBoxEdited && document.activeElement == _pageBox))
+                if (!(_pageBoxEdited && input is object && document.activeElement == input))
                 {
-                    _pageBox.value = _pageCount > 0 ? (label ?? _page.ToString()) : "";
+                    WritePageBox(_pageCount > 0 ? (label ?? _page.ToString()) : "");
                 }
 
-                _pageBox.disabled = _pageCount == 0;
-                _pageBox.title = _pageCount > 0 ? $"Page {_page} of {_pageCount}".t() : "";
+                _pageBox.Disabled(_pageCount == 0);
+
+                if (input is object) input.title = _pageCount > 0 ? $"Page {_page} of {_pageCount}".t() : "";
             }
 
             if (_pageTotal is object)
@@ -602,13 +621,17 @@ namespace Tesserae.Pdf
                 // about both halves. The parenthesised form is pdf.js's own answer to that, and it is
                 // the right one: the box says what is printed on the page, and this says where in the
                 // document that is. A document with no labels - most of them - reads "of 12".
-                _pageTotal.textContent = _pageCount == 0 ? ""
-                                       : HasPageLabel()  ? $"({_page} of {_pageCount})".t()
-                                                         : $"of {_pageCount}".t();
+                //
+                // Which form it is, is decided by the document rather than by the page: asking per
+                // page whether the label differs from the number makes the text - and so the width of
+                // everything after it - flip as the reader scrolls.
+                _pageTotal.Text = _pageCount == 0   ? ""
+                                : _documentHasLabels ? $"({_page} of {_pageCount})".t()
+                                                     : $"of {_pageCount}".t();
             }
 
-            if (_previousPage is object) _previousPage.disabled = _pageCount == 0 || _page <= 1;
-            if (_nextPage     is object) _nextPage.disabled     = _pageCount == 0 || _page >= _pageCount;
+            if (_previousPage is object) _previousPage.Disabled(_pageCount == 0 || _page <= 1);
+            if (_nextPage     is object) _nextPage.Disabled(_pageCount == 0 || _page >= _pageCount);
         }
 
         /// <summary>
@@ -626,27 +649,34 @@ namespace Tesserae.Pdf
         }
 
         /// <summary>
-        /// Whether the document labels its pages as something other than their numbers.
+        /// Whether the document labels its pages as something other than their numbers - decided once
+        /// per document, from the labels themselves.
         ///
         /// A document whose labels happen to be "1", "2", ... counts as having none: the labels are
-        /// real, but "(3 of 12)" beside a box reading 3 tells the reader nothing.
+        /// real, but "(3 of 12)" beside a box reading 3 tells the reader nothing. Asking that question
+        /// of the whole array rather than of the current page is what keeps the answer - and the width
+        /// of the text - the same on every page of the document.
         /// </summary>
-        private bool HasPageLabel()
+        private bool _documentHasLabels;
+
+        private void ApplyPageLabels(string[] labels)
         {
-            var label = CurrentPageLabel();
+            _documentHasLabels = false;
+            
 
-            return !string.IsNullOrEmpty(label) && label != _page.ToString();
-        }
+            if (labels is object)
+            {
+                for (var i = 0; i < labels.Length; i++)
+                {
+                    if (string.IsNullOrEmpty(labels[i]) || labels[i] == (i + 1).ToString()) continue;
 
-        /// <summary>
-        /// Mirrors a toggle's visual state into <c>aria-pressed</c>. Separate from the class because a
-        /// button that is only visually selected is selected for exactly the people who cannot see it.
-        /// </summary>
-        private static void SetPressed(HTMLElement element, bool pressed)
-        {
-            if (element is null) return;
+                    _documentHasLabels = true;
 
-            element.setAttribute("aria-pressed", pressed ? "true" : "false");
+                    break;
+                }
+            }
+
+            UpdatePageState();
         }
     }
 }

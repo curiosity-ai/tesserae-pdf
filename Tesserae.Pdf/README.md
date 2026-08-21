@@ -27,8 +27,11 @@ box with a `Fuzzy | Precise` switch, and a tabbed outline / thumbnails panel. Fo
 wants a document reader and does not want to have an opinion about what one looks like. It is a
 composition of `PdfJs.Viewer()`'s public surface and nothing else, and `chrome.Viewer` hands that
 component back - so starting here and replacing the toolbar later costs the toolbar and nothing more.
-Every colour resolves to a `--tss-*` theme variable, so it follows `UI.Theme.Dark()` and your own
-`Theme.Build()` with no work.
+It is built from Tesserae's own components - `Button`, `TextBox`, `SearchBox`, `Pivot`, `Tree`,
+`Grid`, `ContextMenu`, `HStack`/`VStack` - so it looks and behaves like the rest of your application,
+and every colour resolves to a `--tss-*` theme variable, so `UI.Theme.Dark()` and your own
+`Theme.Build()` come through with no work. It sheds controls into an overflow menu as it narrows
+rather than clipping them, and grows its touch targets on a coarse pointer.
 
 **`PdfJs.PageCanvas()`** - one page painted into a canvas. A thumbnail, a preview tile, a page in a
 contact sheet. Give it a URL and it opens its own document; give it a `PdfDocument` and it borrows
