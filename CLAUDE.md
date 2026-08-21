@@ -221,6 +221,21 @@ These cost a debugging round each. Don't simplify them away.
   own elements rather than taking one.
 - **Release order matters.** Tell the viewer to let go of a document *before* destroying the loading
   task; the other order leaves it holding pages of a document that has gone.
+- **pdf.js scrolls a search match into view with the *native* `element.scrollIntoView`**, which by
+  specification scrolls every scrollable ancestor until the element is visible in the *window*. In
+  pdf.js's own full-page viewer nothing sits above the scroll host, so that is invisible; in a viewer
+  embedded in a page that scrolls, every search result drags the host application's scrollbar along
+  with the document's. Its pre-6 `ui_utils` helper walked `offsetParent` and stopped at the first
+  scrollable one, and did not. `PdfFindControllerJs.scrollMatchIntoView` is assignable, which is what
+  lets `PdfViewer.ScrollMatchIntoView` replace it with the bounded equivalent - measured with rects
+  rather than by walking `offsetParent`, because a rect survives the CSS transform pdf.js scales a
+  page with between a zoom and its sharp re-render.
+  **Keep the one-shot.** pdf.js guards that call with a private flag spent on the first scroll, so the
+  override keeps its own, armed from the `find` event on the bus. Without it every repaint of the page
+  holding the selected match - a zoom, a rotation, a scroll far enough to re-render it - yanks the view
+  back to the match. Arming it from the bus rather than from `Find()` is deliberate: a host dispatching
+  `find` itself, which is the only way to reach an option this surface does not wrap, still gets its
+  match scrolled to.
 
 ## Fixed: a viewer in an animating modal froze the whole tab
 

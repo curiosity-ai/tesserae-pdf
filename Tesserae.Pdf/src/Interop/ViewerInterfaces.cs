@@ -265,6 +265,37 @@ namespace Tesserae.Pdf
         /// what pdf.js hands back.
         /// </summary>
         public extern es5.Array<es5.Array<double>> pageMatches { get; }
+
+        /// <summary>
+        /// What pdf.js calls to bring the selected match into view, and <b>assignable</b> - which is
+        /// the only reason this package can fix what it does.
+        ///
+        /// pdf.js 6 implements it as <c>element.scrollIntoView({ block: "start" })</c> - the
+        /// <i>native</i> DOM method, which by specification scrolls every scrollable ancestor up to
+        /// the window. In pdf.js's own full-page viewer nothing is above the scroll host, so that is
+        /// invisible; in a viewer embedded in a scrolling page it means a search scrolls the page as
+        /// well as the document. Earlier versions used pdf.js's own <c>ui_utils</c> helper, which
+        /// walked <c>offsetParent</c> and stopped at the first scrollable one, and did not.
+        ///
+        /// <see cref="PdfViewer"/> assigns this and does the bounded equivalent instead. Set-only, as
+        /// the point is to replace it rather than to read it.
+        /// </summary>
+        public extern Action<IScrollMatchIntoViewParameters> scrollMatchIntoView { set; }
+    }
+
+    /// <summary>What pdf.js hands <c>scrollMatchIntoView</c>.</summary>
+    [External]
+    [Convention(Notation.None)]
+    public interface IScrollMatchIntoViewParameters
+    {
+        /// <summary>The span wrapping the match in the page's text layer.</summary>
+        HTMLElement element { get; }
+
+        /// <summary>The 0-based page index the match is on.</summary>
+        int pageIndex { get; }
+
+        /// <summary>The 0-based index of the match within that page.</summary>
+        int matchIndex { get; }
     }
 
     /// <summary>Which search match is current.</summary>

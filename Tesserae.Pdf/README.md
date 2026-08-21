@@ -103,6 +103,11 @@ on a page render, where it means "include the values already entered".
 `AnnotationEditor(AnnotationEditorMode.None)` while configuring the component to build the editor
 layer; afterwards tools switch freely, but a viewer built without it cannot grow one.
 
+**A search scrolls the viewer, not your page.** pdf.js 6 brings a match into view with the native
+`element.scrollIntoView`, which scrolls every scrollable ancestor up to the window - so in a viewer
+embedded in a scrolling page it moves your scrollbar as well as the document's. The component
+replaces that one call with the bounded equivalent, so you do not have to do anything about it.
+
 **Watch for "Setting up fake worker" in the console.** It means the worker could not be loaded and
 pdf.js is parsing on the main thread - documents still render, and the UI freezes while they do.
 

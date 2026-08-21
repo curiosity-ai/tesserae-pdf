@@ -499,6 +499,63 @@ namespace Tesserae.Pdf
         private FindOptions _lastOptions;
         private FindState   _lastFindState = FindState.Pending;
 
+        // Armed when a search is dispatched, spent on the first match scrolled into view. See
+        // ScrollMatchIntoView.
+        private bool _matchScrollPending;
+
+        /// <summary>
+        /// Brings the selected search match into view, scrolling <b>this viewer</b> and nothing above
+        /// it.
+        ///
+        /// <b>Why this exists.</b> pdf.js does the same job with
+        /// <c>element.scrollIntoView({ block: "start" })</c> - the native DOM method, which by
+        /// specification scrolls every scrollable ancestor until the element is visible in the
+        /// window. That is invisible in pdf.js's own full-page viewer, where the scroll host is the
+        /// outermost scroller; in a viewer embedded in a page that scrolls, it means every search
+        /// result drags the host application's scrollbar along with the document's. The fix is not to
+        /// prevent the scroll but to bound it, which is what pdf.js's own <c>ui_utils</c> helper used
+        /// to do before version 6 replaced it with the native call.
+        ///
+        /// Measured with rects rather than by walking <c>offsetParent</c> - which is how that helper
+        /// did it - because a rect stays correct through the CSS transform pdf.js scales a page with
+        /// between a zoom and the sharp re-render that follows it.
+        /// </summary>
+        private void ScrollMatchIntoView(IScrollMatchIntoViewParameters parameters)
+        {
+            if (parameters is null || _scrollHost is null || _findController is null) return;
+
+            // Only for a match the reader just asked for, and only once per ask. pdf.js guards this
+            // with a one-shot flag of its own, private to it, so the override keeps its own: without
+            // one, every repaint of the page holding the selected match - a zoom, a rotation, a
+            // scroll far enough to re-render it - would yank the view back to that match.
+            if (!_matchScrollPending) return;
+
+            var element = parameters.element;
+
+            if (element is null) return;
+
+            var selected = _findController.selected;
+
+            if (selected is null) return;
+            if (selected.pageIdx != parameters.pageIndex || selected.matchIdx != parameters.matchIndex) return;
+
+            _matchScrollPending = false;
+
+            var target = element.getBoundingClientRect().As<DOMRect>();
+            var host   = _scrollHost.getBoundingClientRect().As<DOMRect>();
+
+            // pdf.js asks for block: "start", which puts the match flush against the top edge with
+            // none of the line above it for context. Its pre-6 helper offset it by 50px instead, and
+            // that is the better of the two.
+            _scrollHost.scrollTop += target.top - host.top - MATCH_SCROLL_MARGIN;
+
+            // inline: "center", as pdf.js asks. Moves nothing until the page is wider than the view,
+            // which is the case that needs it - a match off the right edge at high zoom.
+            _scrollHost.scrollLeft += target.left - host.left - (host.width - target.width) / 2;
+        }
+
+        private const int MATCH_SCROLL_MARGIN = 50;
+
         private PdfViewer Find(object query, FindOptions options, string type, bool findPrevious = false)
         {
             if (_events is null || query is null) return this;
@@ -808,6 +865,11 @@ namespace Tesserae.Pdf
                 updateMatchesCountOnProgress = true,
             });
 
+            // Replaces pdf.js's own "bring the match into view", which is the native
+            // element.scrollIntoView and therefore scrolls the host page too. See
+            // ScrollMatchIntoView, and the note on the declaration.
+            _findController.scrollMatchIntoView = ScrollMatchIntoView;
+
             var options = new PdfViewerOptions
             {
                 container            = _scrollHost,
@@ -973,6 +1035,14 @@ namespace Tesserae.Pdf
             });
 
             On(PdfViewerEvents.SandboxCreated, _ => _onSandboxCreated?.Invoke());
+
+            // Arms ScrollMatchIntoView. Taken off the bus rather than set in Find() so that a host
+            // dispatching "find" itself - the only way to reach options this surface does not wrap -
+            // still gets its match scrolled to. pdf.js's own listener runs first, but the scroll it
+            // leads to happens after the page's text has been read, so the flag is set in time.
+            On(PdfViewerEvents.Find, _ => _matchScrollPending = true);
+
+            On(PdfViewerEvents.FindBarClose, _ => _matchScrollPending = false);
         }
 
         /// <summary>
