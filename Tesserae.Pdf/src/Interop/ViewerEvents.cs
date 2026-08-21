@@ -54,6 +54,18 @@ namespace Tesserae.Pdf
         int pageNumber    { get; }
     }
 
+    /// <summary>
+    /// Raised when the scroll mode or the spread mode changed. Both events carry the same shape, so
+    /// the value means <see cref="ScrollMode"/> on one and <see cref="SpreadMode"/> on the other.
+    /// </summary>
+    [External]
+    [Convention(Notation.None)]
+    public interface ILayoutModeChangedEvent
+    {
+        /// <summary>The new mode, as its enum's numeric value.</summary>
+        int mode { get; }
+    }
+
     /// <summary>Raised once per page, each time that page finishes painting.</summary>
     [External]
     [Convention(Notation.None)]
@@ -158,6 +170,21 @@ namespace Tesserae.Pdf
         /// <summary>The rotation changed.</summary>
         public const string RotationChanging = "rotationchanging";
 
+        /// <summary>
+        /// The page layout changed - see <see cref="Pdf.ScrollMode"/>. Carries an
+        /// <see cref="ILayoutModeChangedEvent"/>.
+        /// </summary>
+        public const string ScrollModeChanged = "scrollmodechanged";
+
+        /// <summary>
+        /// The spread mode changed - see <see cref="Pdf.SpreadMode"/>. Carries an
+        /// <see cref="ILayoutModeChangedEvent"/>.
+        ///
+        /// Worth listening to rather than tracking a toggle's own state: pdf.js also changes the
+        /// spread mode by itself, when a document asks for one through its <c>/PageLayout</c>.
+        /// </summary>
+        public const string SpreadModeChanged = "spreadmodechanged";
+
         /// <summary>A search's running match count.</summary>
         public const string UpdateFindMatchesCount = "updatefindmatchescount";
 
@@ -178,5 +205,20 @@ namespace Tesserae.Pdf
 
         /// <summary>Raised <b>by</b> a host to drop the highlights and forget the search.</summary>
         public const string FindBarClose = "findbarclose";
+
+        /// <summary>
+        /// <b>This package's own event, not pdf.js's.</b> Raised by <see cref="PdfViewer"/> once it has
+        /// handed the document's page labels to the viewer - or established that the document has none.
+        ///
+        /// It exists because pdf.js raises nothing at that point and the timing is not otherwise
+        /// knowable. Labels are fetched after the document loads, so <c>currentPageLabel</c> answers
+        /// null for a document that does have labels for as long as that round trip takes: a toolbar
+        /// that reads it on <c>pagesinit</c> shows "1" for a page the document calls "i", and has no
+        /// second signal telling it to look again. This is that signal.
+        ///
+        /// Namespaced, because it shares a bus with pdf.js's own events and a plain name is a name
+        /// pdf.js might one day want.
+        /// </summary>
+        public const string PageLabelsApplied = "tesserae-pdf:pagelabelsapplied";
     }
 }

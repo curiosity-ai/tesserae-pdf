@@ -10,10 +10,12 @@ plus a sample gallery that exercises it in a browser. It depends on **Tesserae o
 
 ```
 Tesserae.Pdf/                       the package
-  src/PdfJs.cs                      static factory: Viewer() / PageCanvas()
+  src/PdfJs.cs                      static factory: Viewer() / ViewerChrome() / PageCanvas()
   src/PdfJs.Runtime.cs              loading, asset URLs, worker location, language
   src/PdfJs.Api.cs                  OpenAsync - a document with nothing on screen
   src/Components/                   PdfComponent (lifecycle base), PdfViewer, PdfPageCanvas
+  src/Chrome/                       PdfViewerChrome - the ready-made toolbar, panel and search box
+                                    (.Toolbar/.Search/.Panel partials, plus styles, icons, elements)
   src/Interop/                      [External] declarations of pdfjsLib and pdfjsViewer
   src/Types/                        [ObjectLiteral] payloads, enums, and the friendly wrappers
                                     (PdfSource, PdfDocument, PdfPage, PdfError, PdfAnnotation, ...)
@@ -244,6 +246,76 @@ loop in your own code. If script answers instantly while both are frozen, every 
 hypothesis - an observer cycle, DOM thrash, a dispose loop - is a dead end. The Modal sample page is
 the regression check.
 
+## The ready-made chrome
+
+`PdfJs.ViewerChrome()` is `PdfJs.Viewer()` with a toolbar around it, built from
+[a Claude Design handoff](https://claude.ai/design) that mocked up two arrangements of the same
+controls. It does not weaken the "the package draws no toolbar" position in `PdfViewer` - it is a
+*composition* of that component's public surface, in the package because every application that wants
+a reader was writing the same twelve buttons.
+
+**The colours are Tesserae's, not the mockup's.** Every surface, border, accent, muted and disabled
+value in `PdfChromeStyles` resolves to a `--tss-*` variable, which is not a compromise: the mockup's
+light palette *is* Tesserae's light theme, value for value - `rgb(255,255,255)`, `rgb(249,250,251)`,
+`rgb(224,230,235)`, `rgb(101,103,107)`, `rgb(36,142,250)`, `rgb(235,234,234)` - and its dark accent
+and danger are Tesserae's dark ones. So the light chrome is pixel-identical to the comp and dark mode
+came free. Only three values have no theme equivalent (the icon-button hover wash, the faint glyph
+grey, the segmented track); they are declared as this sheet's own variables at the top so a host can
+override them without reaching into rules.
+
+Things that cost a debugging round each, and are worth not rediscovering:
+
+- **The view element must never be re-parented.** The chrome rebuilds its toolbar, rail and panel
+  freely, but `.tsspdf-view` is the last child of `.tsspdf-body` and stays there: taking it out of the
+  DOM - even to put it straight back - is a teardown as far as `PdfComponent`'s mount observer is
+  concerned, and would drop the document on a change of layout. Everything else is inserted *before*
+  it.
+- **Subscribe to the event bus, not to the viewer's `On*` callbacks.** Those are single slots, so a
+  chrome that used them would silently take `OnPageChanged` away from the host. The bus is multicast,
+  and it is rebuilt with the viewer, so the subscriptions go away with it and are replayed by
+  `Configure` on the next mount.
+- **A `:where()` reset, or the toolbar comes out wrong by one pixel and one shade.** `button` does not
+  inherit typography, so the sheet needs a reset - and the obvious `.tsspdf-chrome button` scores one
+  class plus one type, which beats every single-class rule below it. `:where(.tsspdf-chrome)
+  :where(button,input,...)` scores zero and loses to all of them, which is the point.
+- **Outline page numbers and open branches are keyed to a position in the walk, not to a row.** Two
+  reasons, and each is a bug on its own: the tree is rebuilt (by closing and reopening the panel, or
+  switching layout) and answers living on the row objects would go with it; and destinations have to
+  resolve while the panel is *closed*, so resolution cannot walk rows that do not exist. `_outlineFlat`
+  / `_outlinePages` / `_outlineExpanded` are parallel lists in the order `AppendOutlineLevel` draws.
+- **An outline entry's page number takes a worker round trip, and pdf.js will not do it for you.** A
+  destination is a name or an array whose first element is *either* a page reference *or* an
+  already-resolved index, told apart by its JavaScript type - which is why
+  `PdfDocument.GetDestinationPageAsync` asks `Script.TypeOf` rather than testing a C# type. It buys
+  the number beside each entry and, more usefully, "which section am I in".
+- **Unrendered thumbnail frames need a placeholder aspect ratio.** Without one every stub is the same
+  72px box, and a panel whose tiles are the wrong height cannot be scrolled to the right one - opening
+  on page 200 of 248 lands nowhere near it, and because the tiles that then come into view are the
+  wrong ones, it never converges. Page 1's proportions are applied to every frame and dropped from
+  each as its own page arrives, so a mixed-size document is laid out on a guess and corrected rather
+  than cropped to the guess. The ratio is written as `612 / 792`, two integers, because a computed
+  decimal goes through a locale and CSS does not accept `0,77`.
+- **The "no matches" appearance may only come from a control-state event.** "The count is still zero"
+  is what every long document looks like for its first few hundred milliseconds.
+- **pdf.js raises nothing when page labels are applied**, and until they are, `currentPageLabel`
+  answers null even for a document that has them - so a toolbar reading it at `pagesinit` shows "1"
+  for a page the document calls "i" and never learns otherwise. `PdfViewerEvents.PageLabelsApplied` is
+  this package's own event, dispatched by `PdfViewer` for that. With labels in play the page box holds
+  a label, so the total reads `(11 of 12)` rather than `of 12` - pdf.js's own viewer does the same,
+  and "9 of 12" beside a box reading 9 would be a lie about both halves.
+- **`PdfFindControllerJs.pageMatches` is the only way to learn *which* pages a search hit** - the
+  events carry totals. It is sparse while a search runs (a page pdf.js has not read has no entry,
+  which is not the same as no matches), so read it per report rather than accumulating. Typed through
+  `es5.Array`, which is emitted as the global `Array`, so nothing is materialised and no `$type` is
+  expected on what pdf.js hands back.
+- **`CSSStyleDeclaration` has no `aspectRatio`.** `setProperty("aspect-ratio", ...)` /
+  `removeProperty`. Several other modern properties are missing the same way; reach for `setProperty`
+  rather than adding a declaration.
+- **The SVG glyphs are `innerHTML`.** They are compile-time constants in `PdfChromeIcons` with no
+  interpolation, which is what makes that safe here and not in general; the alternative is about two
+  hundred `createElementNS` calls for the same pixels. A font glyph cannot be stroked at 1.75px on a
+  16px box, which is why they are drawn rather than typed.
+
 ## The sample documents
 
 `scripts/make-sample-pdfs.mjs` writes the six PDFs the gallery opens, by hand, with no dependencies.
@@ -289,7 +361,7 @@ Two things this depends on, both easy to break:
   so one visit creates one page's viewers rather than every page's at startup - and leaving a page
   unmounts them. That is a feature: it exercises the components' teardown on every click.
 
-There are 21 pages in three groups: **Viewer** (the component and everything it does), **Pages** (the
+There are 22 pages in three groups: **Viewer** (the component and everything it does), **Pages** (the
 headless half - render, thumbnails, text, metadata, character maps) and **Runtime and hosting**
 (loading, modals, remount, several documents, save, scripting, localization).
 

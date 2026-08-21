@@ -21,6 +21,15 @@ It draws **no toolbar**: that is the part that has to look like the rest of your
 component exposes the methods a toolbar calls (`NextPage`, `FitWidth`, `Rotate`, `Search`, ...) and
 leaves the buttons to you.
 
+**`PdfJs.ViewerChrome()`** - the same viewer with the toolbar already on it. Panel toggles, page
+controls, a zoom stepper with a menu, the two fit modes, rotate and spread, an always-visible search
+box with a `Fuzzy | Precise` switch, and a tabbed outline / thumbnails panel. For an application that
+wants a document reader and does not want to have an opinion about what one looks like. It is a
+composition of `PdfJs.Viewer()`'s public surface and nothing else, and `chrome.Viewer` hands that
+component back - so starting here and replacing the toolbar later costs the toolbar and nothing more.
+Every colour resolves to a `--tss-*` theme variable, so it follows `UI.Theme.Dark()` and your own
+`Theme.Build()` with no work.
+
 **`PdfJs.PageCanvas()`** - one page painted into a canvas. A thumbnail, a preview tile, a page in a
 contact sheet. Give it a URL and it opens its own document; give it a `PdfDocument` and it borrows
 one, which is how a rail of thumbnails shares a single document rather than opening twelve.
@@ -61,6 +70,17 @@ PdfJs.AssetsPath = "https://static.example.com/pdfjs";
 ```
 
 ## Things worth knowing
+
+**The chrome is the shortcut, not the replacement.** `PdfJs.ViewerChrome()` and `PdfJs.Viewer()` are
+the same component with and without a toolbar. Reach for the chrome when a reader is what you want;
+reach for the viewer when the controls have to be yours, or when there is barely a control at all - a
+preview pane, a print dialog, a thumbnail with a click-to-zoom. The chrome can also be pared back
+(`ShowZoom(false)`, `Tabs(thumbnails: false)`, `ShowSearch(false)`) rather than swapped out.
+
+**The chrome owns the viewer's event slots.** `OnPageChanged` and friends on `PdfViewer` are single
+slots - a second call replaces the first - so register on the chrome (`OnPanelChanged`,
+`OnSearchModeChanged`) or on the shared event bus. The chrome deliberately uses the bus itself so
+`chrome.Viewer.OnPageChanged(...)` stays free for you.
 
 **Give the viewer a height.** It fills its container and scrolls inside it, so in a container of no
 height it renders nothing - which looks like a document that failed to load.
@@ -103,8 +123,59 @@ pdf.js can ask for, and `{0}` is TNT's own placeholder convention.
 how dates inside annotations are formatted. `L10n(customObject)` replaces the bridge entirely, and
 `WithoutOwnLocalization()` falls back to pdf.js's built-in English.
 
+`PdfJs.ViewerChrome()` labels its own controls through the same table, and they are in the same
+position - add these too if you use it.
+
 <details>
-<summary>The 45 translatable strings</summary>
+<summary>The 40 strings the chrome uses</summary>
+
+| Key |
+| --- |
+| `({0} of {1})` |
+| `Actual size` |
+| `Automatic` |
+| `Clear` |
+| `Continued from the start of the document` |
+| `Document outline` |
+| `Find in document` |
+| `Fit content` |
+| `Fit page` |
+| `Fit the page width` |
+| `Fit the whole page` |
+| `Fuzzy` |
+| `Ignore case, accents and word boundaries` |
+| `Match case, whole words, diacritics respected` |
+| `Next match` |
+| `Next page` |
+| `No document.` |
+| `No matches` |
+| `No matches - try Fuzzy` |
+| `of {0}` |
+| `Outline` |
+| `Page` |
+| `Page {0}` |
+| `Page {0} of {1}` |
+| `pages {0}` |
+| `pages {0} +{1} more` |
+| `Precise` |
+| `Previous match` |
+| `Previous page` |
+| `Rotate right` |
+| `Searching...` |
+| `Show in outline` |
+| `This document has no outline.` |
+| `Thumbnails` |
+| `Two-page spread` |
+| `Zoom` |
+| `Zoom in` |
+| `Zoom out` |
+| `{0} matches` |
+| `{0} pages` |
+
+</details>
+
+<details>
+<summary>The 45 translatable strings pdf.js can ask for</summary>
 
 | Key |
 | --- |

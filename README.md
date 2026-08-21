@@ -3,9 +3,10 @@
 **Tesserae.Pdf** — a [Tesserae](https://github.com/curiosity-ai/tesserae) wrapper around
 [Mozilla's pdf.js](https://github.com/mozilla/pdf.js), for Transpose C#-to-JavaScript applications.
 
-A scrollable, searchable document viewer; a single-page canvas renderer for thumbnails and previews;
-and a typed API over pdf.js's display surface for everything that needs no viewer at all — text
-extraction, metadata, permissions, outlines.
+A scrollable, searchable document viewer — bare, or with a full reader chrome already on it; a
+single-page canvas renderer for thumbnails and previews; and a typed API over pdf.js's display
+surface for everything that needs no viewer at all — text extraction, metadata, permissions,
+outlines.
 
 **[Browse the sample gallery →](https://curiosity-ai.github.io/tesserae-pdf/)**
 
@@ -29,7 +30,7 @@ and [`TODO.md`](TODO.md) for what is deliberately not in it.
 | | |
 | --- | --- |
 | `Tesserae.Pdf/` | the package |
-| `Tesserae.Pdf.Sample/` | the sample gallery — 21 pages, one per feature |
+| `Tesserae.Pdf.Sample/` | the sample gallery — 22 pages, one per feature |
 | `scripts/make-sample-pdfs.mjs` | generates the gallery's PDF fixtures |
 | `scripts/stage-samples.mjs` | stages a Release build for GitHub Pages |
 

@@ -169,6 +169,20 @@ namespace Tesserae.Pdf
     }
 
     /// <summary>
+    /// The payload of <see cref="PdfViewerEvents.PageLabelsApplied"/> - this package's own event,
+    /// raised once <see cref="PdfViewer"/> has told the viewer what the document calls its pages.
+    /// </summary>
+    [ObjectLiteral]
+    public class PageLabelsEventPayload
+    {
+        /// <summary>
+        /// The labels, one per page, or null when the document names none - which is the common case
+        /// and is the answer, not the absence of one.
+        /// </summary>
+        public string[] pageLabels;
+    }
+
+    /// <summary>
     /// The payload of the <c>"find"</c> event - the only way to drive pdf.js's find controller,
     /// which has no method for it.
     /// </summary>

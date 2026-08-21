@@ -33,6 +33,23 @@ namespace Tesserae.Pdf.Sample
                    .Show();
             });
 
+            // The chrome is the same component with a toolbar around it, so it goes through the same
+            // wait - and it puts more inside the animating ancestor (a panel, a thumbnail rail) than
+            // the bare viewer does, which makes it the harder half of this regression check.
+            var openChrome = Button("Open the chrome in a modal").SetIcon(UIcons.LayoutFluid).OnClick(() =>
+            {
+                var chrome = PdfJs.ViewerChrome()
+                   .Url(OUTLINE_PDF)
+                   .Panel(PdfChromePanel.Thumbnails)
+                   .OnPanelChanged(panel => status.Text = $"Panel {panel} in the modal.");
+
+                chrome.Viewer.FitWidth();
+
+                Modal("A reader in a modal")
+                   .Content(VStack().W(1040).H(620).Children(chrome.S()))
+                   .Show();
+            });
+
             _content = SectionStack().Secondary()
                .SampleTitle(typeof(ModalSample), UIcons.WindowMaximize, "A viewer inside a modal, and the stall it used to cause")
                .FlatSection(VStack().Children(
@@ -47,11 +64,11 @@ namespace Tesserae.Pdf.Sample
                .FlatSection(VStack().Children(
                     Card(VStack().WS().Children(
                         SampleSubTitle("Try it"),
-                        open,
+                        HStack().WS().Gap(8.px()).Wrap().Children(open, openChrome),
                         status.MT(8),
-                        SampleHint("Open it, scroll it, select some text, close it, and open it again. The page should stay responsive throughout, and the console should stay clean.")
+                        SampleHint("Open either one, scroll it, select some text, close it, and open it again. The page should stay responsive throughout, and the console should stay clean. The second is the harder case: a panel of thumbnails is a dozen more pdf.js views inside the animating ancestor.")
                     )).SetTitle("Usage")))
-               .SeeAlso(typeof(RemountSample), typeof(DocumentViewerSample), typeof(ZoomAndFitSample));
+               .SeeAlso(typeof(RemountSample), typeof(DocumentViewerSample), typeof(ViewerChromeSample));
         }
 
         public HTMLElement Render() => _content.Render();

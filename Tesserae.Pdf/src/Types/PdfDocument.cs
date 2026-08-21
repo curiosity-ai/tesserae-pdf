@@ -186,6 +186,74 @@ namespace Tesserae.Pdf
             return destinations;
         }
 
+        /// <summary>
+        /// The 1-based page a destination points at, or 0 when it points at nothing this document can
+        /// resolve.
+        ///
+        /// Takes the value <see cref="PdfOutlineItem.Destination"/> carries, in either of the two
+        /// forms a PDF destination comes in: the name of a named destination, or an explicit array
+        /// whose first element is the target page. So this is what turns "Capacity planning" in an
+        /// outline into "page 11" - which is what an outline panel shows beside each entry, and what
+        /// tells it which entry the reader is currently inside.
+        ///
+        /// <b>Three round trips in the worst case</b> - the named-destination lookup, then the page
+        /// reference - so resolve an outline once and keep the answers rather than asking per repaint.
+        /// pdf.js caches on its side, but the calls still cross to the worker.
+        ///
+        /// Returns 0 rather than throwing for an entry that has no target, names a destination the
+        /// document does not declare, or points into a different file: an outline with a few dead
+        /// entries is ordinary, and a panel should draw the rest of it.
+        /// </summary>
+        public async Task<int> GetDestinationPageAsync(object destination)
+        {
+            if (destination is null) return 0;
+
+            var explicitDestination = destination;
+
+            // A named destination has to be looked up first; an explicit one is already the array.
+            if (Script.TypeOf(destination) == "string")
+            {
+                explicitDestination = await PromiseHelper.ToTask<object>(_document.getDestination((string)destination));
+            }
+
+            if (explicitDestination is null) return 0;
+
+            var parts = (object[])explicitDestination;
+
+            if (parts is null || parts.Length == 0) return 0;
+
+            var target = parts[0];
+
+            if (target is null) return 0;
+
+            // The first element is either a page reference - an object carrying the object number and
+            // generation - or a 0-based page index that pdf.js has already resolved. Which one it is
+            // is a question about its JavaScript type and nothing else, which is why this asks
+            // typeof rather than testing against a C# type: `target is double` would go through the
+            // runtime's type metadata, and what arrives here is a plain JavaScript value.
+            if (Script.TypeOf(target) == "number")
+            {
+                var index = (int)(double)target;
+
+                return index >= 0 && index < PageCount ? index + 1 : 0;
+            }
+
+            int resolved;
+
+            try
+            {
+                resolved = await PromiseHelper.ToTask<int>(_document.getPageIndex(target));
+            }
+            catch (Exception)
+            {
+                // A reference to a page in another document, or a broken one. Not worth reporting:
+                // the caller asked where an entry points, and the answer is "nowhere here".
+                return 0;
+            }
+
+            return resolved >= 0 && resolved < PageCount ? resolved + 1 : 0;
+        }
+
         /// <summary>The document's bytes as pdf.js holds them - the file as fetched, without form edits.</summary>
         public Task<es5.Uint8Array> GetDataAsync() => PromiseHelper.ToTask<es5.Uint8Array>(_document.getData());
 

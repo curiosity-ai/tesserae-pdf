@@ -4,10 +4,15 @@ What is deliberately not in Tesserae.Pdf, and what might be worth adding.
 
 ## Out of scope by decision
 
-**A toolbar.** The viewer draws none, and this is the load-bearing decision in the whole package: a
+**A toolbar on `PdfJs.Viewer()`.** It draws none, and this is still the load-bearing decision: a
 toolbar is the part that has to look like the rest of the host application, and the same viewer is
 asked for by a full-page reader, a preview pane and a modal, which want three different sets of
 buttons. The component exposes the methods a toolbar calls; the buttons stay outside.
+
+What that left out was the application that wants a reader and no opinion about it, which
+`PdfJs.ViewerChrome()` now answers — as a *composition* of the viewer's public surface, in the
+package rather than instead of it. Both are the same component; the chrome is the one with the
+buttons already attached, and `chrome.Viewer` is the one underneath.
 
 **A print service.** pdf.js's own printing lives in `web/app.js`, which is not shipped on npm, and it
 works by building a hidden iframe of rasterised pages sized to the browser's print dialogue —
@@ -22,8 +27,9 @@ ground with less machinery, and lets a host lay the rail out however it likes.
 effectively dead and pdf.js's support for it is partial.
 
 **An annotation-editor toolbar.** The editor *modes* are wrapped, and switching between them is one
-call — but the palette, the colour picker and the thickness slider are UI, which is the previous
-point again.
+call — but the palette, the colour picker and the thickness slider are a different kind of UI from
+the chrome's: a reader's controls are the same everywhere, an editor's are a design decision per
+application. `PdfViewerChrome` deliberately has no editing controls for that reason.
 
 ## Worth considering
 

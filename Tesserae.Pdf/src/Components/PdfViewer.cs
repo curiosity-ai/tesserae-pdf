@@ -1182,6 +1182,12 @@ namespace Tesserae.Pdf
             // null is the normal answer - most documents just use their page numbers - and passing it
             // is how pdf.js is told to do the same.
             _viewer.setPageLabels(labels);
+
+            // pdf.js raises nothing here, and until this point currentPageLabel answers null even for
+            // a document that has labels - so a toolbar showing one has no way to know it should look
+            // again. Raised for a document with no labels too: "there are none" is the answer that
+            // stops a toolbar waiting. See PdfViewerEvents.PageLabelsApplied.
+            _events?.dispatch(PdfViewerEvents.PageLabelsApplied, new PageLabelsEventPayload { pageLabels = labels });
         }
 
         private async Task AnswerPasswordAsync(IPdfDocumentLoadingTask loadingTask, Action<string> updatePassword, PasswordReason reason)

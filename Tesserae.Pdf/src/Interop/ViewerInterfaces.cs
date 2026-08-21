@@ -249,6 +249,22 @@ namespace Tesserae.Pdf
 
         /// <summary>Whether matches are currently highlighted.</summary>
         public extern bool highlightMatches { get; }
+
+        /// <summary>
+        /// The matches found so far, as one array of text offsets per page - indexed by page
+        /// <i>index</i>, so entry 0 is page 1.
+        ///
+        /// This is the only way to learn <b>which</b> pages a search hit: the count events carry
+        /// totals and the selected-match event carries one page, and neither answers "show me the
+        /// pages with matches on them". Sparse while a search is running - a page pdf.js has not read
+        /// yet has no entry at all, which is not the same as having no matches - so read it on the
+        /// find control-state event rather than treating a gap as a miss.
+        ///
+        /// Typed through <c>es5.Array</c> rather than as a C# array: <c>es5.Array</c> is emitted as
+        /// the global <c>Array</c>, so nothing is materialised and no <c>$type</c> is expected on
+        /// what pdf.js hands back.
+        /// </summary>
+        public extern es5.Array<es5.Array<double>> pageMatches { get; }
     }
 
     /// <summary>Which search match is current.</summary>

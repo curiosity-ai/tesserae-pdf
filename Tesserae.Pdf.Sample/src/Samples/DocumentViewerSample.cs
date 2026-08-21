@@ -46,6 +46,7 @@ namespace Tesserae.Pdf.Sample
                     Card(VStack().WS().Children(
                         TextBlock("PdfJs.Viewer() builds pdf.js's viewer stack - an event bus, a link service, a find controller and the viewer itself - inside a scroll host of the shape pdf.js insists on. Give it a URL and it shows a document."),
                         TextBlock("What it does not build is a toolbar. Every control above this document is plain Tesserae calling plain methods, because a toolbar is the part that has to look like the rest of your application - and because the same viewer is asked for by a full-page reader, a preview pane and a modal, which want three different sets of buttons.").MT(8),
+                        TextBlock("If a reader is what you want rather than a viewer to build one from, PdfJs.ViewerChrome() is this component with a toolbar already on it - see the Viewer Chrome page. It calls the same methods this toolbar does.").MT(8),
                         TextBlock("Pages, links, text selection, the annotation layer, keyboard scrolling and search all work with no further wiring. The document's outline, its metadata and its text are on the Document the viewer hands to OnDocumentLoaded.").MT(8))).SetTitle("Overview")))
                .FlatSection(VStack().Children(
                     Card(VStack().WS().Children(
@@ -59,7 +60,7 @@ namespace Tesserae.Pdf.Sample
                         viewer.H(600).WS().MT(8),
                         SampleHint("Select some text, click a link in the outline document, or scroll with the arrow keys - all of that is pdf.js's, with nothing wired up here.")
                     )).SetTitle("Usage")))
-               .SeeAlso(typeof(ZoomAndFitSample), typeof(SearchSample), typeof(OutlineAndNavigationSample));
+               .SeeAlso(typeof(ViewerChromeSample), typeof(ZoomAndFitSample), typeof(SearchSample), typeof(OutlineAndNavigationSample));
         }
 
         public HTMLElement Render() => _content.Render();

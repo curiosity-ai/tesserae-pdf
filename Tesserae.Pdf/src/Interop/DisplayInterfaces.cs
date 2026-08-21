@@ -89,6 +89,18 @@ namespace Tesserae.Pdf
         /// <summary>Resolves with a JavaScript <c>Map</c> of every named destination.</summary>
         IPromise getDestinations();
 
+        /// <summary>
+        /// Resolves with the 0-based page index of a page <i>reference</i> - the <c>{ num, gen }</c>
+        /// object an explicit destination's first element carries.
+        ///
+        /// This is the second half of turning an outline entry into a page number, and it is only
+        /// needed for the reference form: an explicit destination's first element is <b>either</b> a
+        /// reference <b>or</b> an already-resolved page index, and pdf.js tells them apart by their
+        /// JavaScript type rather than by a flag. See <c>PdfDocument.GetDestinationPageAsync</c>,
+        /// which does both halves.
+        /// </summary>
+        IPromise getPageIndex(object reference);
+
         /// <summary>Resolves with the document's page labels ("i", "ii", "1", ...), or null.</summary>
         IPromise getPageLabels();
 
