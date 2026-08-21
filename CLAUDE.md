@@ -281,18 +281,27 @@ override them without reaching into rules.
 
 **It is built from Tesserae's components**, not from raw DOM: `Button` for every button (with
 `UIcons` glyphs), `TextBox` for the page box, `SearchBox` for the search field - which brings the
-magnifier, the keyboard-shortcut chip, search-as-you-type and the invalid state with it - `Pivot` for
-the panel's tabs *and* its two panes, `Tree` for the outline, `Grid` for the thumbnails, `ContextMenu`
-for the zoom and overflow menus, `HStack`/`VStack` for every layout, `TextBlock` for every label. What
-is left in `PdfChromeStyles` is sizing (Tesserae sizes for a form; a toolbar is 40px), the three
-pieces Tesserae has no component for, and the chrome's own surfaces.
+magnifier, the keyboard-shortcut chip, search-as-you-type and the invalid state with it - `Tree` for
+the outline, `Grid` for the thumbnails, `ContextMenu` for the zoom and overflow menus, `Tooltip` for
+every control that has no visible label, `HStack`/`VStack` for every layout, `TextBlock` for every
+label. What is left in `PdfChromeStyles` is sizing (Tesserae sizes for a form; a toolbar is 40px), the
+two pieces Tesserae has no component for, and the chrome's own surfaces.
 
-Two things stayed bespoke, both because the candidate is the wrong shape: the segmented pills
+Two things stayed bespoke, both because the candidate is the wrong shape: the `Fuzzy | Precise` pill
 (`SegmentedPivot` is a scrollable tab strip that also hosts a content pane - 142x58 for two words -
 and `PivotSelector` collapses into a dropdown), and the 1px group separator (`HorizontalSeparator` is
 a full-width rule with optional centred text). The outline row is 32px rather than the comp's 27.5
 on purpose: that is the `Tree`'s density, and matching the comp would make this one panel the odd one
 out in a Tesserae application.
+
+**Two controls in the comp are gone, and both for the same reason: they said something twice.**
+The comp's `Fit page | Fit content` pill was the widest thing in the toolbar and repeated two of the
+four entries at the top of the zoom menu - so the fit modes live in that menu only (the icon rail
+keeps its two buttons: that layout has no zoom menu to put them in). And the panel's `Pivot` tab strip
+sat directly under the two toolbar toggles that already said which pane was open and are what a reader
+reaches for; the panel now shows whichever pane they chose, and the strip's width went to the outline.
+What that removed as well: `_panelSettled`, `SettlePanelAsync`, `OnNavigate`, the two content
+factories, and a whole class of "the Pivot disagrees with the chrome" bug.
 
 **A Tesserae control does not distinguish being set from being used.** Three separate stack overflows
 and one wrong-tab bug, all the same shape, all worth knowing before wrapping one:
@@ -301,19 +310,28 @@ and one wrong-tab bug, all the same shape, all worth knowing before wrapping one
   page into the box from the handler for that event is a loop. Guard the *write*, not the handler -
   `_writingPageBox` / `_writingSearchBox` - so the handler stays the single place that reacts.
 - `SearchBox.IsInvalid`'s setter re-renders, so assign it only on a change.
-- `Pivot` reports its own initial selection as a navigation, **a frame or two after it was built** -
-  so a scope guard around the build has already been released when it arrives, and a chrome asked to
-  open on Thumbnails is told by its own panel that the reader chose Outline. `_panelSettled` ignores
-  navigations until the panel has stopped announcing itself.
 - **`Render()` is not idempotent.** A `Stack` asked twice can hand back a different element, so what
   was inserted has to be remembered rather than asked for again - `_toolbarElement`, `_panelRendered`,
-  `row.Element`, `tile.Element`. Asking again left a second tab strip in the panel.
-- **A `Pivot` renders a pane when its tab is first shown**, so a host stack filled in beforehand is
-  filled while detached. The panes are built inside the content factories for that reason.
-- **The `Tree`'s `Selected()` scrolls the row into view with the native `scrollIntoView`**, which
-  scrolls every scrollable ancestor - the same bug `PdfViewer.ScrollMatchIntoView` exists to avoid,
-  arriving through a component instead of through pdf.js. The page-driven highlight is a class of the
-  chrome's own; `Selected()` is left for what the reader clicks.
+  `_panelBodyElement`, `row.Element`, `tile.Element`. Asking again left a second tab strip in the
+  panel. It is also why a pane is `Add`ed to the mounted scroller and its element then read back out
+  of the DOM, rather than rendered and inserted.
+- **A `ContextMenu` cannot be rendered.** It is a `Layer`, and `Layer.Render()` throws
+  `NotImplementedException` - so `menu.Render().hasChildNodes()`, to decide whether a group needs a
+  divider above it, threw the moment a band put two groups in the overflow menu. That is *every* band
+  that puts anything in it, and the throw arrives as a bare `ctor` with no stack. Count what you
+  wrote instead.
+- **A `Tree.Item`'s click does not select it.** Its handler toggles the branch and raises `OnClick`;
+  it touches selection only with `SelectionEnabled` *and* a shift-click, or on the checkbox - which
+  this panel hides. So the outline's rows, wired to `OnSelected`, did nothing at all when a reader
+  clicked them. `OnClick` is the hook. Selection stays off: **the `Tree`'s `Selected()` scrolls the
+  row into view with the native `scrollIntoView`**, which scrolls every scrollable ancestor - the same
+  bug `PdfViewer.ScrollMatchIntoView` exists to avoid, arriving through a component instead of through
+  pdf.js - and the page-driven highlight is a class of the chrome's own anyway.
+- **A one-class rule loses to Tesserae's own two-class one.** The band that hides the search box's
+  shortcut chip was written `.tsspdf-mini .tss-searchbox-shortcut`, and
+  `.tss-searchbox-container.tss-searchbox-has-shortcut > .tss-searchbox-shortcut` outscores it - so
+  the chip stayed, silently. Chain the band to `.tsspdf-chrome` and the target to `.tsspdf-search`
+  when overriding a component's own display.
 
 **Nothing shifts as the reader moves.** Every label whose text changes has a reserved width - the
 zoom value, the page total, the match count, the rail's percentage - and the page total's *format* is
@@ -322,10 +340,15 @@ page's label differ from its number" makes the text flip mid-scroll.
 
 **The toolbar sheds controls rather than clipping them.** `ApplyWidthClass` measures the chrome's own
 box - not the window, because one page can hold a full-width chrome and a 360px one - and publishes a
-band as a class: `narrow` drops the fit labels, `tight` drops the fit pill, the document name and the
-Fuzzy | Precise pill, `mini` drops rotate, spread, the zoom stepper and the page total, and turns the
-side panel into an overlay. Everything that leaves the toolbar arrives in the overflow menu, so no
-control is ever unreachable. Touch targets grow to 40px under `@media (pointer: coarse)`.
+band as a class: `tight` drops the document name, the shortcut chip and the Fuzzy | Precise pill,
+`mini` drops rotate, spread, the zoom stepper and the page total, turns the side panel into an
+overlay, and **wraps the search box onto a second row** - a phone leaves the chrome about 330px, the
+controls that are left take 270 of it and the field's floor is 210, so on one line it does not fit at
+any floor a reader could type in. (`narrow` publishes its class and has no rules: what it used to do
+was strip the labels off the fit pill.) Everything that leaves the toolbar arrives in the overflow
+menu, so no control is ever unreachable - including the fit modes, which need a home there whenever
+the zoom menu is not on the toolbar, band or `ShowZoom(false)` alike. Touch targets grow to 40px under
+`@media (pointer: coarse)`.
 
 Things that cost a debugging round each, and are worth not rediscovering:
 
@@ -421,7 +444,7 @@ Two things this depends on, both easy to break:
   so one visit creates one page's viewers rather than every page's at startup - and leaving a page
   unmounts them. That is a feature: it exercises the components' teardown on every click.
 
-There are 22 pages in three groups: **Viewer** (the component and everything it does), **Pages** (the
+There are 21 pages in three groups: **Viewer** (the component and everything it does), **Pages** (the
 headless half - render, thumbnails, text, metadata, character maps) and **Runtime and hosting**
 (loading, modals, remount, several documents, save, scripting, localization).
 

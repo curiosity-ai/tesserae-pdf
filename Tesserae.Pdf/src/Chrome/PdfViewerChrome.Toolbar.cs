@@ -79,15 +79,11 @@ namespace Tesserae.Pdf
                 wroteGroup = true;
             }
 
-            if (_showFitModes)
-            {
-                if (wroteGroup) toolbar.Add(Separator());
-
-                toolbar.Add(BuildFitSegments(withLabels: true));
-
-                wroteGroup = true;
-            }
-
+            // <b>No fit control on the toolbar.</b> Fit page and Fit content are two of the four
+            // entries at the top of the zoom menu, next to the percentages they compete with, and a
+            // segmented pill repeating them in the row was the same choice twice - the widest thing
+            // in the toolbar, spent on a mode a reader sets once. The rail keeps its two icon
+            // buttons: that layout has no zoom menu to put them in.
             if (_showRotate || _showSpread)
             {
                 if (wroteGroup) toolbar.Add(Separator());
@@ -184,6 +180,9 @@ namespace Tesserae.Pdf
             {
                 rail.Add(Raw(Box("tsspdf-rail-sep")));
 
+                // <b>"Fit content" is pdf.js's <c>page-width</c></b>, and the wording is deliberate:
+                // what a reader means by it is "make the text as wide as the pane", which is fitting
+                // the width. "Fit width" describes the mechanism rather than the outcome.
                 _fitPageControl  = IconButton(UIcons.Compress, "Fit page".t(),    () => _viewer.FitPage());
                 _fitWidthControl = IconButton(UIcons.ArrowsH,  "Fit content".t(), () => _viewer.FitWidth());
 
@@ -390,32 +389,6 @@ namespace Tesserae.Pdf
         }
 
         /// <summary>
-        /// The <c>Fit page | Fit content</c> control - a labelled segmented control in the single
-        /// toolbar, and two icon buttons on the rail.
-        ///
-        /// <b>Why the track is drawn here rather than taken from Tesserae.</b> Both candidates are the
-        /// wrong shape: <c>SegmentedPivot</c> is a scrollable tab strip that also hosts a content pane
-        /// (measured 142x58 for two words), and <c>PivotSelector</c> is a responsive tab strip that
-        /// collapses into a dropdown. The two things inside the track are ordinary Tesserae buttons;
-        /// the track itself is three declarations.
-        ///
-        /// <b>"Fit content" is pdf.js's <c>page-width</c></b>, and the wording is deliberate: what a
-        /// reader means by it is "make the text as wide as the pane", which is fitting the width.
-        /// "Fit width" describes the mechanism rather than the outcome.
-        /// </summary>
-        private IComponent BuildFitSegments(bool withLabels)
-        {
-            _fitPageControl = Segment("Fit page".t(), UIcons.Compress, "Fit the whole page".t(),
-                () => _viewer.FitPage());
-
-            _fitWidthControl = Segment("Fit content".t(), UIcons.ArrowsH, "Fit the page width".t(),
-                () => _viewer.FitWidth());
-
-            return HStack().Class("tsspdf-seg").AlignItems(ItemAlign.Center).Gap(2.px())
-               .Children(_fitPageControl, _fitWidthControl);
-        }
-
-        /// <summary>
         /// The overflow menu: where the controls a narrow toolbar cannot show go.
         ///
         /// Built on open rather than kept, because what is in it depends on the width band in force -
@@ -434,23 +407,35 @@ namespace Tesserae.Pdf
         {
             var menu = ContextMenu();
 
+            // <b>A flag, not <c>menu.Render()</c>.</b> A ContextMenu is a Layer, and Layer.Render
+            // throws NotImplementedException - it is shown, never rendered in place - so asking
+            // "does it have anything in it yet" to decide on a divider threw the moment a band put
+            // two groups in the menu, which is every band that puts anything in it. Counting what
+            // was written is the question anyway.
+            var wrote = false;
+
             if (_showZoom && ZoomInOverflow)
             {
                 menu.Add(MenuRow("Zoom in".t(),  UIcons.ZoomIn,  false, () => _viewer.ZoomIn()));
                 menu.Add(MenuRow("Zoom out".t(), UIcons.ZoomOut, false, () => _viewer.ZoomOut()));
-                menu.Add(ContextMenuItem("").Divider());
+
+                wrote = true;
             }
 
             if (_showFitModes && FitModesInOverflow)
             {
-                menu.Add(MenuRow("Fit page".t(),    UIcons.Compress, IsPresetInForce("page-fit"),   () => _viewer.FitPage()));
-                menu.Add(MenuRow("Fit content".t(), UIcons.ArrowsH,  IsPresetInForce("page-width"), () => _viewer.FitWidth()));
+                if (wrote) menu.Add(ContextMenuItem("").Divider());
+
+                menu.Add(MenuRow("Fit page".t(),    UIcons.Compress, IsPresetInForce("page-fit"),    () => _viewer.FitPage()));
+                menu.Add(MenuRow("Fit content".t(), UIcons.ArrowsH,  IsPresetInForce("page-width"),  () => _viewer.FitWidth()));
                 menu.Add(MenuRow("Actual size".t(), null,            IsPresetInForce("page-actual"), () => _viewer.ActualSize()));
+
+                wrote = true;
             }
 
             if (ViewControlsInOverflow && (_showRotate || _showSpread))
             {
-                if (menu.Render().hasChildNodes()) menu.Add(ContextMenuItem("").Divider());
+                if (wrote) menu.Add(ContextMenuItem("").Divider());
 
                 if (_showRotate)
                 {
@@ -462,11 +447,13 @@ namespace Tesserae.Pdf
                     menu.Add(MenuRow("Two-page spread".t(), UIcons.TableColumns, _spreadMode != SpreadMode.None,
                         () => _viewer.Spread(_spreadMode == SpreadMode.None ? SpreadMode.Odd : SpreadMode.None)));
                 }
+
+                wrote = true;
             }
 
             if (_showSearch && SearchModeInOverflow)
             {
-                if (menu.Render().hasChildNodes()) menu.Add(ContextMenuItem("").Divider());
+                if (wrote) menu.Add(ContextMenuItem("").Divider());
 
                 menu.Add(MenuRow("Fuzzy".t(), null, _searchMode == PdfSearchMode.Fuzzy,
                     () => SearchMode(PdfSearchMode.Fuzzy)));
@@ -510,8 +497,9 @@ namespace Tesserae.Pdf
                .NoMinSize()
                .NoPadding()
                .Class("tsspdf-zoom")
-               .SetTitle("Zoom".t())
                .OnClick(ShowZoomMenu);
+
+            _zoomButton = PdfChromeElements.Tip(_zoomButton, "Zoom and fit".t());
 
             return _zoomButton;
         }

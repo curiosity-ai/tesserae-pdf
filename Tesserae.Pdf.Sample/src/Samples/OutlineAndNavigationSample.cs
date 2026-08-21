@@ -55,7 +55,7 @@ namespace Tesserae.Pdf.Sample
                             viewer.HS().Grow()),
                         SampleHint("This document's first two pages are labelled i and ii, so page label \"7\" is the ninth page - which is what the status line shows.")
                     )).SetTitle("Usage")))
-               .SeeAlso(typeof(DocumentViewerSample), typeof(MetadataSample), typeof(ThumbnailsSample));
+               .SeeAlso(typeof(ViewerChromeSample), typeof(MetadataSample), typeof(ThumbnailsSample));
         }
 
         private static string PageLabel(PdfViewer viewer)

@@ -65,15 +65,33 @@ namespace Tesserae.Pdf
 
         private static Button Wire(Button button, string tooltip, Action click)
         {
-            // SetTitle rather than the Tooltip extension: a Tesserae tooltip is a layer that follows
-            // the pointer, which is a lot of machinery for a toolbar of twelve buttons - and the
-            // native title is what a reader expects from one.
-            if (!string.IsNullOrEmpty(tooltip)) button = button.SetTitle(tooltip);
+            if (!string.IsNullOrEmpty(tooltip)) button = Tip(button, tooltip);
 
             if (click is object) button = button.OnClick(click);
 
             return button;
         }
+
+        /// <summary>
+        /// Names a control that has no visible label - a tooltip a reader sees, plus the accessible
+        /// name a screen reader reads.
+        ///
+        /// <b>A Tesserae tooltip rather than the native <c>title</c>.</b> The chrome used titles at
+        /// first, on the grounds that Tippy is a lot of machinery for a row of twelve icon buttons.
+        /// The panel toggles settled it: they are the one pair whose glyphs carry <i>state</i> - which
+        /// pane is open - and "hold still for a second and the operating system may tell you" is not
+        /// an answer to "which of these two is the outline". Once one button in a row has a real
+        /// tooltip the rest need one too, or the row reads as broken.
+        ///
+        /// Not both: Tippy is given the text explicitly, so a <c>title</c> left in place would show
+        /// the operating system's tooltip underneath Tesserae's. The accessible name goes on
+        /// <c>aria-label</c> instead, which is where it belonged anyway.
+        ///
+        /// Tesserae attaches the tooltip on the first hover, so a toolbar that is never hovered costs
+        /// one event handler per button and nothing else.
+        /// </summary>
+        internal static Button Tip(Button button, string tooltip)
+            => button.AriaLabel(tooltip).Tooltip(tooltip, placement: TooltipPlacement.Bottom, delayShow: 350);
 
         /// <summary>
         /// A vertical hairline between groups of controls.

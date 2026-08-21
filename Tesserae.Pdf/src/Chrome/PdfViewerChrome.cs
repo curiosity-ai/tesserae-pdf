@@ -370,12 +370,12 @@ namespace Tesserae.Pdf
 
             _panel = panel;
 
-            // A tab change is the Pivot's job, not a rebuild: it already swaps the two panes, and
-            // rebuilding around it leaves the old tab strip in the DOM. Only opening and closing
-            // changes what the panel *is*.
+            // Switching pane swaps what is in the panel; opening and closing is what changes whether
+            // there is a panel at all. Kept apart so a switch does not take the panel out of the DOM
+            // and put an identical one back.
             if (wasOpen && panel != PdfChromePanel.None)
             {
-                SelectPanelTab();
+                ShowPanelPane();
             }
             else
             {
@@ -627,8 +627,15 @@ namespace Tesserae.Pdf
             UpdateOverflowState();
         }
 
-        /// <summary>Whether the band in force has taken the fit modes out of the toolbar.</summary>
-        private bool FitModesInOverflow => _widthClass == "tsspdf-tight" || _widthClass == "tsspdf-mini";
+        /// <summary>
+        /// Whether the fit modes need a home in the overflow menu.
+        ///
+        /// They are not on the toolbar any more - they are the first two entries of the zoom menu - so
+        /// the question is whether that menu is reachable. It is not when the band has taken the zoom
+        /// stepper away, and it never is when the host turned zoom off, and in both cases the fit
+        /// modes would otherwise be unreachable.
+        /// </summary>
+        private bool FitModesInOverflow => !_showZoom || ZoomInOverflow;
 
         /// <summary>Whether the band in force has taken rotate and spread out of the toolbar.</summary>
         private bool ViewControlsInOverflow => _widthClass == "tsspdf-mini";

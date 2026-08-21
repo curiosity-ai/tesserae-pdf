@@ -22,16 +22,17 @@ component exposes the methods a toolbar calls (`NextPage`, `FitWidth`, `Rotate`,
 leaves the buttons to you.
 
 **`PdfJs.ViewerChrome()`** - the same viewer with the toolbar already on it. Panel toggles, page
-controls, a zoom stepper with a menu, the two fit modes, rotate and spread, an always-visible search
-box with a `Fuzzy | Precise` switch, and a tabbed outline / thumbnails panel. For an application that
-wants a document reader and does not want to have an opinion about what one looks like. It is a
-composition of `PdfJs.Viewer()`'s public surface and nothing else, and `chrome.Viewer` hands that
-component back - so starting here and replacing the toolbar later costs the toolbar and nothing more.
-It is built from Tesserae's own components - `Button`, `TextBox`, `SearchBox`, `Pivot`, `Tree`,
+controls, a zoom stepper whose menu holds the fit modes, rotate and spread, an always-visible search
+box with a `Fuzzy | Precise` switch, and a side panel showing the outline or the page thumbnails. For
+an application that wants a document reader and does not want to have an opinion about what one looks
+like. It is a composition of `PdfJs.Viewer()`'s public surface and nothing else, and `chrome.Viewer`
+hands that component back - so starting here and replacing the toolbar later costs the toolbar and
+nothing more. It is built from Tesserae's own components - `Button`, `TextBox`, `SearchBox`, `Tree`,
 `Grid`, `ContextMenu`, `HStack`/`VStack` - so it looks and behaves like the rest of your application,
 and every colour resolves to a `--tss-*` theme variable, so `UI.Theme.Dark()` and your own
 `Theme.Build()` come through with no work. It sheds controls into an overflow menu as it narrows
-rather than clipping them, and grows its touch targets on a coarse pointer.
+rather than clipping them, wraps its search box onto a second row on a phone, and grows its touch
+targets on a coarse pointer.
 
 **`PdfJs.PageCanvas()`** - one page painted into a canvas. A thumbnail, a preview tile, a page in a
 contact sheet. Give it a URL and it opens its own document; give it a `PdfDocument` and it borrows
@@ -135,7 +136,7 @@ how dates inside annotations are formatted. `L10n(customObject)` replaces the br
 position - add these too if you use it.
 
 <details>
-<summary>The 40 strings the chrome uses</summary>
+<summary>The 38 strings the chrome uses</summary>
 
 | Key |
 | --- |
@@ -148,18 +149,16 @@ position - add these too if you use it.
 | `Find in document` |
 | `Fit content` |
 | `Fit page` |
-| `Fit the page width` |
-| `Fit the whole page` |
 | `Fuzzy` |
 | `Ignore case, accents and word boundaries` |
 | `Match case, whole words, diacritics respected` |
+| `More controls` |
 | `Next match` |
 | `Next page` |
 | `No document.` |
 | `No matches` |
 | `No matches - try Fuzzy` |
 | `of {0}` |
-| `Outline` |
 | `Page` |
 | `Page {0}` |
 | `Page {0} of {1}` |
@@ -174,7 +173,7 @@ position - add these too if you use it.
 | `This document has no outline.` |
 | `Thumbnails` |
 | `Two-page spread` |
-| `Zoom` |
+| `Zoom and fit` |
 | `Zoom in` |
 | `Zoom out` |
 | `{0} matches` |

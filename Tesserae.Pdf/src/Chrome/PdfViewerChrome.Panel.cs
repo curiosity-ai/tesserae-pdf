@@ -12,14 +12,16 @@ using static TNT.T;
 namespace Tesserae.Pdf
 {
     /// <summary>
-    /// The side panel: a Tesserae <see cref="Pivot"/> holding a <see cref="Tesserae.Tree"/> of the
-    /// document's outline and a <see cref="Grid"/> of page thumbnails, over a footer that says what a
-    /// search found.
+    /// The side panel: a <see cref="Tesserae.Tree"/> of the document's outline or a
+    /// <see cref="Grid"/> of page thumbnails, over a footer that says what a search found.
     ///
-    /// The Pivot earns its place twice over: it is the tab strip <i>and</i> the thing that swaps the
-    /// two panes, so the chrome no longer tracks which pane is mounted. The Tree brings the twisties,
-    /// the indentation, the selection and <c>role="tree"</c> with it, and has a commands slot on every
-    /// row - which is where the page number goes.
+    /// <b>One pane, no tab strip.</b> The panel used to be a <see cref="Pivot"/>, which was a tab
+    /// strip and the thing that swapped the panes - and the tab strip was the second control saying
+    /// which pane was open, under two toolbar toggles that already said it and are what a reader
+    /// reaches for. So the toggles are the only switch now, the panel shows whichever pane they
+    /// chose, and the width the strip took goes to the outline. The Tree stays: it brings the
+    /// twisties, the indentation, the keyboard handling and <c>role="tree"</c> with it, and has a
+    /// commands slot on every row - which is where the page number goes.
     ///
     /// Two things here are more than they look.
     ///
@@ -39,32 +41,14 @@ namespace Tesserae.Pdf
     {
         private Stack       _panelElement;
         private HTMLElement _panelRendered;
-        private Pivot     _panelPivot;
+        private Stack       _panelBody;
+        private HTMLElement _panelBodyElement;
         private Stack       _outlineHost;
         private Stack       _thumbnailHost;
         private HTMLElement _outlineElement;
         private HTMLElement _thumbnailElement;
-        private TextBlock _panelSummary;
-        private Button    _panelAction;
-
-        private const string OUTLINE_TAB    = "outline";
-        private const string THUMBNAIL_TAB  = "thumbnails";
-
-        /// <summary>
-        /// Whether the panel has finished settling, and a navigation from the Pivot can be believed.
-        ///
-        /// <b>A Pivot reports its own initial selection as a navigation</b>, and reports it a frame or
-        /// two after it was built - so a chrome asked to open on Thumbnails is told, by its own panel
-        /// and after the fact, that the reader just chose Outline. A scope guard around the build
-        /// cannot catch that, because it has been released by the time the event arrives.
-        ///
-        /// So the panel ignores navigations until it has settled, which is a couple of frames. The
-        /// cost is a tab click in the first few milliseconds of opening the panel; the alternative
-        /// costs the host's choice of tab, every time.
-        /// </summary>
-        private bool _panelSettled;
-
-        private int _panelGeneration;
+        private TextBlock   _panelSummary;
+        private Button      _panelAction;
 
         /* -------------------------------------------------------------- assembly */
 
@@ -86,44 +70,24 @@ namespace Tesserae.Pdf
                     _panelRendered.parentElement.removeChild(_panelRendered);
                 }
 
-                _panelSettled     = false;
                 _panelElement     = null;
                 _panelRendered    = null;
+                _panelBody        = null;
+                _panelBodyElement = null;
                 _outlineHost      = null;
                 _thumbnailHost    = null;
                 _outlineElement   = null;
                 _thumbnailElement = null;
-                _panelPivot    = null;
-                _outlineHost   = null;
-                _thumbnailHost = null;
-                _panelSummary  = null;
-                _panelAction   = null;
+                _panelSummary     = null;
+                _panelAction      = null;
             }
 
             if (_panel == PdfChromePanel.None) return;
 
-            _panelPivot = Pivot().HideIfSingle();
-
-            // <b>The panes are built by the factories, not before them.</b> A Pivot renders a pane
-            // when that tab is first shown, so a host stack filled in ahead of time is filled while
-            // it is still detached - which is a panel of nothing, and was: thumbnails declared before
-            // the document loaded never appeared. Building inside the factory means the pane is
-            // populated exactly when the Pivot is about to show it, and the ordering cannot be wrong.
-            //
-            // Outline first, always: the tab order is the design's and is not a place to encode which
-            // one is selected. Which one that is, is Select's job - and the reason it needs help is
-            // below, on _panelSettled.
-            if (_showOutlineTab)   AppendOutlineTab();
-            if (_showThumbnailTab) AppendThumbnailTab();
-
-            // The toolbar's toggles and the panel's tabs are two faces of one piece of state, so a tab
-            // click goes through the same setter the toggles do.
-            _panelPivot.OnNavigate((_, e) =>
-            {
-                if (!_panelSettled) return;
-
-                Panel(e.TargetPivot == THUMBNAIL_TAB ? PdfChromePanel.Thumbnails : PdfChromePanel.Outline);
-            });
+            // The scroller, and the only thing between the panel and its pane. It is a Stack rather
+            // than a bare div so the pane goes in through Add and is rendered exactly once by it -
+            // see ShowPanelPane on why the element is read back out of the DOM afterwards.
+            _panelBody = VStack().WS().Class("tsspdf-panel-body");
 
             _panelSummary = TextBlock("").Class("tsspdf-panel-count");
 
@@ -139,92 +103,64 @@ namespace Tesserae.Pdf
             var footer = HStack().WS().Class("tsspdf-panel-foot").AlignItems(ItemAlign.Center).Gap(8.px())
                .Children(_panelSummary, VStack().Grow(), _panelAction);
 
-            _panelElement = VStack().HS().Class("tsspdf-panel").Children(_panelPivot.Grow(), footer);
+            _panelElement = VStack().HS().Class("tsspdf-panel").Children(_panelBody.Grow(), footer);
 
             _panelRendered = _panelElement.Render();
 
+            _panelBodyElement = Find(_panelRendered, ".tsspdf-panel-body");
+
             _body.insertBefore(_panelRendered, _view);
 
-            SelectPanelTab();
-
-            SettlePanelAsync(++_panelGeneration).FireAndForget();
+            ShowPanelPane();
         }
 
         /// <summary>
-        /// Lets the Pivot finish announcing its own initial selection, then starts believing it.
+        /// Puts the pane the toolbar's toggles chose into the panel, and takes the other one out.
         ///
-        /// Generation-checked, so a panel rebuilt while this was waiting does not have an older
-        /// panel's settling applied to it.
+        /// <b>Only ever one pane.</b> Keeping the other mounted would keep its thumbnail canvases
+        /// rendering pages nobody is looking at, which is the cost the panel is built to avoid.
+        ///
+        /// <b>Added first, then read back out of the DOM.</b> <c>Render()</c> on a Stack is not
+        /// idempotent - asked twice it can hand back a different element - so the host is added to a
+        /// scroller that is already mounted, which renders it exactly once, and the element that
+        /// actually went in is found afterwards. Rendering it here and adding it would be two calls
+        /// and, sooner or later, two elements.
         /// </summary>
-        private async Task SettlePanelAsync(int generation)
+        private void ShowPanelPane()
         {
-            for (var frames = 0; frames < PANEL_SETTLE_FRAMES; frames++)
+            if (_panelBody is null) return;
+
+            ResetThumbnails();
+
+            _panelBody.Clear();
+
+            _outlineHost      = null;
+            _outlineElement   = null;
+            _thumbnailHost    = null;
+            _thumbnailElement = null;
+
+            if (_panel == PdfChromePanel.Thumbnails)
             {
-                await Task.Delay(PANEL_SETTLE_MS);
+                _thumbnailHost = VStack().WS().Class("tsspdf-thumbs");
 
-                if (generation != _panelGeneration) return;
-            }
+                _panelBody.Add(_thumbnailHost);
 
-            _panelSettled = true;
-        }
+                _thumbnailElement = Find(_panelBodyElement, ".tsspdf-thumbs");
 
-        private const int PANEL_SETTLE_FRAMES = 3;
-        private const int PANEL_SETTLE_MS     = 16;
-
-        private void AppendOutlineTab()
-            => _panelPivot.Pivot(OUTLINE_TAB, () => TextBlock("Outline".t()), () => BuildOutlinePane());
-
-        private void AppendThumbnailTab()
-            => _panelPivot.Pivot(THUMBNAIL_TAB, () => TextBlock("Thumbnails".t()), () => BuildThumbnailPane());
-
-        /// <summary>
-        /// Points the Pivot at the tab the chrome is showing. The pane itself is built by the Pivot's
-        /// content factory, the first time it shows that tab.
-        /// </summary>
-        private void SelectPanelTab()
-        {
-            if (_panelPivot is null) return;
-
-            var thumbnails = _panel == PdfChromePanel.Thumbnails;
-
-            _panelPivot.Select(thumbnails ? THUMBNAIL_TAB : OUTLINE_TAB, true);
-
-            // The factory builds a pane the first time the Pivot shows it. A pane it has already
-            // shown is not built again - and the document may have arrived since - so a pane that is
-            // up gets refilled here. Checked by mounted-ness rather than by a flag, because the Pivot
-            // decides when a pane is in the DOM and this is the question that actually matters.
-            if (thumbnails)
-            {
-                if (_thumbnailElement is object && _thumbnailElement.IsMounted()) BuildThumbnails();
+                BuildThumbnails();
             }
             else
             {
-                if (_outlineElement is object && _outlineElement.IsMounted()) BuildOutlineTree();
+                _outlineHost = VStack().WS().Class("tsspdf-outline");
+
+                _panelBody.Add(_outlineHost);
+
+                _outlineElement = Find(_panelBodyElement, ".tsspdf-outline");
+
+                BuildOutlineTree();
             }
 
             UpdatePanelFooter();
-        }
-
-        /// <summary>The outline pane, built and filled on the Pivot's first show of that tab.</summary>
-        private IComponent BuildOutlinePane()
-        {
-            _outlineHost    = VStack().WS().Class("tsspdf-outline");
-            _outlineElement = _outlineHost.Render();
-
-            BuildOutlineTree();
-
-            return _outlineHost;
-        }
-
-        /// <summary>The thumbnail pane, built and filled on the Pivot's first show of that tab.</summary>
-        private IComponent BuildThumbnailPane()
-        {
-            _thumbnailHost    = VStack().WS().Class("tsspdf-thumbs");
-            _thumbnailElement = _thumbnailHost.Render();
-
-            BuildThumbnails();
-
-            return _thumbnailHost;
         }
 
         /// <summary>
@@ -509,7 +445,19 @@ namespace Tesserae.Pdf
 
                 _outlineRows.Add(row);
 
-                node.OnSelected(_ => OpenOutlineEntry(row));
+                // <b><c>OnClick</c>, not <c>OnSelected</c>.</b> A Tree.Item's click handler toggles
+                // the branch and raises OnClick; it only touches selection when the tree has
+                // SelectionEnabled *and* the click carried shift, or when the click landed on the
+                // checkbox - which this panel hides. So a row wired to OnSelected does nothing at
+                // all when a reader clicks it, which is exactly what the outline did.
+                //
+                // Selection is left off deliberately. The chrome already marks the current entry
+                // with a class of its own, because Tree's own Selected() scrolls the row into view
+                // with the native scrollIntoView - which walks every scrollable ancestor and takes
+                // the host page's scrollbar with it, the same bug PdfViewer.ScrollMatchIntoView
+                // exists to avoid. Turning selection on would put that back for shift-clicks and
+                // buy a second highlight competing with the one that tracks the page.
+                node.OnClick((_, __) => OpenOutlineEntry(row));
 
                 if (item.Children.Count > 0)
                 {
@@ -960,20 +908,13 @@ namespace Tesserae.Pdf
         private const int MARGIN = 12;
 
         /// <summary>
-        /// The element the panel's content scrolls in - the Pivot's content pane.
+        /// The element the panel's content scrolls in.
         ///
-        /// A coupling to a <c>tss-</c> class, and a shallow one: everything that reads it treats null
-        /// as "cannot scroll yet", so a rename costs the scroll-into-view rather than the panel.
+        /// The element the scroller was inserted as, not a fresh <c>Render()</c>: asking a Tesserae
+        /// component to render twice can hand back a second element. Everything that reads this
+        /// treats null as "cannot scroll yet", which is what it means before the panel is up.
         /// </summary>
-        /// <summary>
-        /// The element the panel's content scrolls in - the Pivot's content pane, looked up inside the
-        /// element the panel was inserted as.
-        ///
-        /// Inside <c>_panelRendered</c> rather than by re-rendering the Pivot: asking a Tesserae
-        /// component to render twice can hand back a second element, and doing that here produced a
-        /// second tab strip in the panel.
-        /// </summary>
-        private HTMLElement PanelScroller() => Find(_panelRendered, ".tss-pivot-content");
+        private HTMLElement PanelScroller() => _panelBodyElement;
 
         /* ------------------------------------------------------- matched pages */
 

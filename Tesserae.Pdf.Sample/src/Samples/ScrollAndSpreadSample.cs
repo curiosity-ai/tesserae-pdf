@@ -64,7 +64,7 @@ namespace Tesserae.Pdf.Sample
                         single.H(420).WS().MT(8),
                         SampleHint("Try Wrapped with fit-page, then Odd spreads: the first page sits alone on the right, as an open book's does.")
                     )).SetTitle("Usage")))
-               .SeeAlso(typeof(ZoomAndFitSample), typeof(DocumentViewerSample), typeof(ThumbnailsSample));
+               .SeeAlso(typeof(ZoomAndFitSample), typeof(ViewerChromeSample), typeof(ThumbnailsSample));
         }
 
         public HTMLElement Render() => _content.Render();

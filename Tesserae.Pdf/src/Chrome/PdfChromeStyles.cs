@@ -153,9 +153,10 @@ namespace Tesserae.Pdf
 
 /* --------------------------------------------------------- segmented control */
 
-/* No Tesserae component for this: SegmentedPivot is a scrollable tab strip that also hosts a
-   content pane, and PivotSelector collapses to a dropdown. The track is three declarations and the
-   two things inside it are ordinary Tesserae buttons. */
+/* One pill is left - Fuzzy | Precise, in the search row. No Tesserae component for it:
+   SegmentedPivot is a scrollable tab strip that also hosts a content pane, and PivotSelector
+   collapses to a dropdown. The track is three declarations and the two things inside it are
+   ordinary Tesserae buttons. */
 .tsspdf-seg{background:var(--tsspdf-track);border-radius:6px;padding:2px;flex-shrink:0}
 .tsspdf-chrome .tsspdf-seg-item.tss-btn{height:24px;min-height:24px;padding:0 9px;border-radius:4px;
   font-size:12px;font-weight:600;color:var(--tsspdf-fg-muted);background:transparent;gap:6px}
@@ -195,27 +196,40 @@ namespace Tesserae.Pdf
 /* The bands are measured on the chrome's own box and published as a class by ApplyWidthClass, not
    taken from a media query: the same page can hold one of these full-width and another in a 360px
    pane. Nothing disappears without somewhere else to reach it - what leaves the toolbar arrives in
-   the overflow menu, and the fit modes are in the zoom menu at every width. */
+   the overflow menu, and the fit modes are in the zoom menu at every width.
 
-/* narrow: the fit modes keep their icons and give up their labels. */
-.tsspdf-narrow .tsspdf-seg-item.tss-btn span:not(:empty){display:none}
-.tsspdf-chrome.tsspdf-narrow .tsspdf-seg-sm .tsspdf-seg-item.tss-btn span:not(:empty){display:inline}
+   There is no narrow band rule any more: what it used to do was strip the labels off the fit pill,
+   and the fit pill is gone from the toolbar. The class is still published, because the next control
+   that wants a first step out has somewhere to put it. */
 
-/* tight: the fit modes and the document's name leave the toolbar, and the search box gives up its
-   shortcut chip - which is a hint, not a control. */
-.tsspdf-tight .tsspdf-toolbar > .tsspdf-seg,
-.tsspdf-mini  .tsspdf-toolbar > .tsspdf-seg{display:none}
+/* tight: the document's name leaves the toolbar, and the search box gives up its shortcut chip -
+   which is a hint, not a control. */
 .tsspdf-tight .tsspdf-doctitle,
 .tsspdf-mini  .tsspdf-doctitle{display:none}
 .tsspdf-chrome.tsspdf-tight .tsspdf-search.tss-searchbox-container,
 .tsspdf-chrome.tsspdf-mini  .tsspdf-search.tss-searchbox-container{min-width:210px}
-.tsspdf-tight .tss-searchbox-shortcut,
-.tsspdf-mini  .tss-searchbox-shortcut{display:none}
+/* Two classes plus a type, because Tesserae's own rule for the chip
+   (.tss-searchbox-container.tss-searchbox-has-shortcut > .tss-searchbox-shortcut) scores two
+   classes plus one and would otherwise win on order. A one-class rule here loses silently. */
+.tsspdf-chrome.tsspdf-tight .tsspdf-search .tss-searchbox-shortcut,
+.tsspdf-chrome.tsspdf-mini  .tsspdf-search .tss-searchbox-shortcut{display:none}
 
 /* tight: the Fuzzy | Precise pill is 108px of a row that no longer has it, and the mode moves to the
    overflow menu with everything else that left. */
 .tsspdf-tight .tsspdf-seg-sm,
 .tsspdf-mini  .tsspdf-seg-sm{display:none}
+
+/* mini: the search box takes the second line.
+   A phone leaves about 330px for the toolbar, the controls that are left take 270 of it, and the
+   search box has a floor of 210 - so on one line it does not fit at any floor a reader could type
+   in, and the toolbar's horizontal scroll (the last resort, below) put the field off-screen at rest
+   on the one band whose whole point is that search is what a reader on a phone uses. So the row
+   wraps instead: controls above, search across the full width beneath, nothing scrolling and
+   nothing hidden. Which is what every reader on a phone does. */
+.tsspdf-chrome.tsspdf-mini .tsspdf-toolbar{height:auto;min-height:40px;flex-wrap:wrap;
+  padding-bottom:6px;align-content:flex-start}
+.tsspdf-chrome.tsspdf-mini .tsspdf-searchrow{flex-basis:100%;min-width:0;order:9}
+.tsspdf-chrome.tsspdf-mini .tsspdf-search.tss-searchbox-container{width:100%;min-width:0}
 
 /* mini: rotate, spread and the whole zoom stepper leave the toolbar, and the page total goes with
    them - the box still says which page, and its tooltip still says of how many. What is left is the
@@ -236,6 +250,7 @@ namespace Tesserae.Pdf
    suit rather than the buttons overlapping. */
 @media (pointer:coarse){
   .tsspdf-toolbar{height:48px}
+  .tsspdf-chrome.tsspdf-mini .tsspdf-toolbar{height:auto;min-height:48px}
   .tsspdf-chrome .tsspdf-iconbtn.tss-btn{width:40px;height:40px;min-width:40px;min-height:40px}
   .tsspdf-chrome .tsspdf-iconbtn.tss-btn i{font-size:18px}
   .tsspdf-rail{width:56px}
@@ -264,16 +279,9 @@ namespace Tesserae.Pdf
 .tsspdf-chrome .tsspdf-panel{width:var(--tsspdf-panel-width);min-width:var(--tsspdf-panel-width);
   flex-shrink:0;background:var(--tsspdf-surface);border-right:1px solid var(--tsspdf-border)}
 
-/* -- coupling: the panel's tabs are a Tesserae Pivot. The design puts them on the panel's own
-   border rather than on a bar of their own, and gives the strip the panel's padding. */
-.tsspdf-chrome .tsspdf-panel .tss-pivot{height:100%}
-.tsspdf-chrome .tsspdf-panel .tss-pivot-titlebar{padding:0 16px;gap:18px;flex-shrink:0;
-  border-bottom:1px solid var(--tsspdf-border)}
-/* Two tabs never need a scroller or an overflow affordance, and the design's strip has neither.
-   The buttons carry an inline display, so these have to be stronger than an inline declaration. */
-.tsspdf-chrome .tsspdf-panel .tss-pivot-titlebar-wrapper > .tss-btn{display:none !important}
-.tsspdf-chrome .tsspdf-panel .tss-pivot-titlebar-scroller{overflow:visible}
-.tsspdf-chrome .tsspdf-panel .tss-pivot-content{flex:1;min-height:0;overflow:auto;padding:0}
+/* The one scroller, holding whichever pane the toolbar's toggles chose. There is no tab strip: the
+   toggles are the switch, and a strip repeating them was one control too many. */
+.tsspdf-chrome .tsspdf-panel-body{flex:1;min-height:0;overflow:auto;padding:0}
 
 .tsspdf-panel-foot{padding:8px 12px;flex-shrink:0;border-top:1px solid var(--tsspdf-separator);
   font-size:11px;color:var(--tsspdf-fg-muted)}

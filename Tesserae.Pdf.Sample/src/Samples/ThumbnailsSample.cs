@@ -53,7 +53,7 @@ namespace Tesserae.Pdf.Sample
                         Raw(_host),
                         SampleHint("Click a thumbnail to jump to its page. Watch the network tab: the document is fetched once, not once per thumbnail.")
                     )).SetTitle("Usage")))
-               .SeeAlso(typeof(PageRenderSample), typeof(DocumentViewerSample), typeof(OutlineAndNavigationSample));
+               .SeeAlso(typeof(PageRenderSample), typeof(ViewerChromeSample), typeof(OutlineAndNavigationSample));
         }
 
         private async Task BuildRailAsync(PdfDocument document, PdfViewer viewer, TextBlock status)

@@ -106,7 +106,7 @@ namespace Tesserae.Pdf.Sample
                         host.MT(8),
                         SampleHint("Switch to Deutsch: the landmark becomes \"Seite 1\", and the line above it changes too - one dictionary, both sets of strings.")
                     )).SetTitle("Usage")))
-               .SeeAlso(typeof(DocumentViewerSample), typeof(FormsAndAnnotationsSample), typeof(TextSelectionSample));
+               .SeeAlso(typeof(ViewerChromeSample), typeof(FormsAndAnnotationsSample), typeof(TextSelectionSample));
         }
 
         /// <summary>

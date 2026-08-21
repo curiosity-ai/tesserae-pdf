@@ -5,11 +5,11 @@ using static Tesserae.Pdf.Sample.SamplesHelper;
 namespace Tesserae.Pdf.Sample
 {
     /// <summary>
-    /// The viewer with the toolbar already on it - the other end of the choice
-    /// <see cref="DocumentViewerSample"/> makes. Everything on this page is one call and a couple of
-    /// setters.
+    /// The viewer with the toolbar already on it. Everything on this page is one call and a couple of
+    /// setters - which is the point: the pages after it drive <c>PdfJs.Viewer()</c> directly and build
+    /// their own controls, and this one is what a host gets for not wanting to.
     /// </summary>
-    [SampleDetails(Group = "Viewer", Order = 5, Icon = UIcons.LayoutFluid)]
+    [SampleDetails(Group = "Viewer", Order = 10, Icon = UIcons.LayoutFluid)]
     public class ViewerChromeSample : IComponent, ISample
     {
         private readonly IComponent _content;
@@ -59,8 +59,8 @@ namespace Tesserae.Pdf.Sample
                .SampleTitle(typeof(ViewerChromeSample), UIcons.LayoutFluid, "The viewer, with a toolbar already on it")
                .FlatSection(VStack().Children(
                     Card(VStack().WS().Children(
-                        TextBlock("PdfJs.ViewerChrome() is PdfJs.Viewer() with the chrome a reader expects around it: panel toggles, page controls, a zoom stepper with a menu, the two fit modes, rotate and spread, an always-visible search box, and a tabbed outline / thumbnails panel."),
-                        TextBlock("It exists alongside the bare viewer rather than instead of it. A toolbar is the part that has to look like the rest of your application - which is why the package draws none by default - but an application that wants a document reader and no opinion about it should not have to build twelve buttons first. This is that reader.").MT(8),
+                        TextBlock("PdfJs.ViewerChrome() is PdfJs.Viewer() with the chrome a reader expects around it: panel toggles, page controls, a zoom stepper whose menu holds the fit modes, rotate and spread, an always-visible search box, and a side panel showing the outline or the page thumbnails."),
+                        TextBlock("PdfJs.Viewer() on its own draws no toolbar, and that is deliberate: a toolbar is the part that has to look like the rest of your application, and the same viewer is asked for by a full-page reader, a preview pane and a modal, which want three different sets of buttons. Every other page in this group builds its own controls out of ordinary Tesserae calling ordinary methods on the component. This page is the other end of that choice - an application that wants a document reader and no opinion about it should not have to build twelve buttons first.").MT(8),
                         TextBlock("Nothing is hidden behind it. Every control here calls a public method on the component underneath, and chrome.Viewer hands that component back with its whole surface: Options, Configure, the annotation editor, scripting, password handling. Starting with the chrome and replacing it later costs the toolbar and nothing else.").MT(8),
                         TextBlock("It follows the theme. Every colour resolves to a --tss- variable, so the toolbar you see here is the light theme and UI.Theme.Dark() is the whole of the dark one - try the theme switch in the top bar.").MT(8))).SetTitle("Overview")))
                .FlatSection(VStack().Children(
@@ -68,6 +68,7 @@ namespace Tesserae.Pdf.Sample
                         TextBlock("Give it a height, or a parent that has one. The chrome is a column - toolbar, then body - and the viewer inside it takes what is left, so in a container of no height it draws a toolbar above nothing."),
                         TextBlock("Search is two modes rather than three checkboxes. Fuzzy is pdf.js's defaults - case, accents and word boundaries all ignored - and Precise turns all three on at once, because a reader who wants one of them wants all of them. FindOptions is still there on the viewer for a host that needs them separately.").MT(8),
                         TextBlock("The panel earns its keep on long documents. Thumbnails are built as they scroll into view, so a 248-page document costs 248 empty frames and about a dozen renders; and the outline resolves each entry to a page number, which is what lets it show which section the reader is currently inside.").MT(8),
+                        TextBlock("The panel has no tab strip. The two toolbar toggles already say which pane is open and are what a reader reaches for, so a strip under them was the same answer twice - and the width it took is the outline\u0027s now. Panel() and TogglePanel() are the same switch from code.").MT(8),
                         TextBlock("Turn off what you do not want rather than rebuilding. ShowZoom(false), ShowSpread(false), Tabs(thumbnails: false) and their siblings each drop a control and re-close the gap, which is usually what a preview pane wants instead of a second component.").MT(8))).SetTitle("Best Practices")))
                .FlatSection(VStack().Children(
                     Card(VStack().WS().Children(
@@ -75,7 +76,7 @@ namespace Tesserae.Pdf.Sample
                         layoutChoice,
                         status.MT(8),
                         chrome.H(620).WS().MT(8),
-                        SampleHint("Type \"tesserae\" into the search box - it is on three pages of this document, so the count should settle on 3 / 3. Switch to Precise and it still finds them; search \"Tesserae\" in Precise and it goes red.")
+                        SampleHint("Type \"tesserae\" into the search box - it is on three pages of this document, so the count should settle on 3 / 3. Switch to Precise and it still finds them; search \"Tesserae\" in Precise and it goes red. Click an entry in the outline to jump to its section, and watch the entry you are inside stay marked as the document scrolls.")
                     )).SetTitle("Usage")))
                .FlatSection(VStack().Children(
                     Card(VStack().WS().Children(
@@ -95,7 +96,7 @@ namespace Tesserae.Pdf.Sample
                         compact.W(760).H(420).MT(8),
                         SampleHint("The search box shrinks before anything else in the toolbar does, so the controls survive a narrow container and the search field gives up width for them.")
                     )).SetTitle("Paring it back")))
-               .SeeAlso(typeof(DocumentViewerSample), typeof(SearchSample), typeof(OutlineAndNavigationSample));
+               .SeeAlso(typeof(SearchSample), typeof(OutlineAndNavigationSample), typeof(ZoomAndFitSample));
         }
 
         public HTMLElement Render() => _content.Render();
