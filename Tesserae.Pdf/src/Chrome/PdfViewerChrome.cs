@@ -108,6 +108,7 @@ namespace Tesserae.Pdf
 
         private string   _documentName;
         private double[] _zoomLevels = { 0.5, 1, 2, 4 };
+        private bool     _border;
 
         private Action<PdfChromePanel> _onPanelChanged;
         private Action<PdfSearchMode>  _onSearchModeChanged;
@@ -283,6 +284,42 @@ namespace Tesserae.Pdf
 
             return this;
         }
+
+        /// <summary>
+        /// Draws a 1px frame with rounded corners around the whole chrome, in the theme's border
+        /// colour. Off by default.
+        ///
+        /// <b>Why it is not the default.</b> The chrome's own lines are all internal - under the
+        /// toolbar, beside the panel - because the usual host already draws the outer one: filling a
+        /// window there is nothing to frame, and inside a modal or a Tesserae <c>Card</c> a second
+        /// line just inside the container's own reads as a seam. This is for the other case: a chrome
+        /// sitting on a page's background with nothing else to say where the document ends.
+        ///
+        /// The corner radius follows <see cref="CornerRadius"/>, and the root clips to it, so the
+        /// toolbar and the panel are rounded off by the frame rather than needing to know about it.
+        /// </summary>
+        public PdfViewerChrome Border(bool show = true)
+        {
+            _border = show;
+
+            Toggle(_root, PdfChromeStyles.BORDERED, show);
+
+            return this;
+        }
+
+        /// <summary>
+        /// How round the corners of <see cref="Border"/> are, in pixels. 6 by default - the radius
+        /// the chrome's own controls use. 0 squares the frame off.
+        /// </summary>
+        public PdfViewerChrome CornerRadius(int pixels)
+        {
+            _root.style.setProperty("--tsspdf-radius", pixels + "px");
+
+            return this;
+        }
+
+        /// <summary>Whether the frame is drawn. See <see cref="Border"/>.</summary>
+        public bool HasBorder => _border;
 
         /* -------------------------------------------------------- what is on show */
 

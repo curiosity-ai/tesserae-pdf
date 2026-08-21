@@ -32,7 +32,9 @@ nothing more. It is built from Tesserae's own components - `Button`, `TextBox`, 
 and every colour resolves to a `--tss-*` theme variable, so `UI.Theme.Dark()` and your own
 `Theme.Build()` come through with no work. It sheds controls into an overflow menu as it narrows
 rather than clipping them, wraps its search box onto a second row on a phone, and grows its touch
-targets on a coarse pointer.
+targets on a coarse pointer. `Border()` frames it in the theme's border colour for the case where
+nothing around it draws the edge - off by default, since a chrome filling a window or sitting in a
+`Card` has one already.
 
 **`PdfJs.PageCanvas()`** - one page painted into a canvas. A thumbnail, a preview tile, a page in a
 contact sheet. Give it a URL and it opens its own document; give it a `PdfDocument` and it borrows

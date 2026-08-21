@@ -333,6 +333,13 @@ and one wrong-tab bug, all the same shape, all worth knowing before wrapping one
   the chip stayed, silently. Chain the band to `.tsspdf-chrome` and the target to `.tsspdf-search`
   when overriding a component's own display.
 
+**The frame is opt-in.** `Border()` draws a 1px rounded box around the whole chrome and is off by
+default, because the chrome's own lines are all internal and the usual host already draws the outer
+one - a chrome filling a window has nothing to frame, and one inside a modal or a `Card` would put a
+second line just inside the container's own. It needs no rules for the corners of what is inside it:
+the root already clips, so the toolbar's top corners and the panel's bottom-left one round themselves
+to `--tsspdf-radius` (`CornerRadius()`, 6px - the radius the chrome's own controls use).
+
 **Nothing shifts as the reader moves.** Every label whose text changes has a reserved width - the
 zoom value, the page total, the match count, the rail's percentage - and the page total's *format* is
 decided once per document from the labels themselves rather than per page, because asking "does this
