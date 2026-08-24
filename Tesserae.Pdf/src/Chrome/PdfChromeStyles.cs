@@ -237,6 +237,7 @@ namespace Tesserae.Pdf
 .tsspdf-mini .tsspdf-rotate,
 .tsspdf-mini .tsspdf-spread,
 .tsspdf-mini .tsspdf-zoomgroup,
+.tsspdf-mini .tsspdf-actiongroup,
 .tsspdf-mini .tsspdf-pagetotal{display:none}
 .tsspdf-chrome.tsspdf-mini .tsspdf-count{min-width:0}
 

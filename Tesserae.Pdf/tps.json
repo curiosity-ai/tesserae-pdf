@@ -1,49 +1,30 @@
 {
-    // Always build both minified and non-minified versions of the code so that resources for both versions are always included in the binary and so referencing projects can decide whether
-    // to use the minified versions or the non-minified versions
-    "outputFormatting": "Both",
-    "resources": [
-        // Include the JS that is compiled from the C# in this project - be sure to include non-minified AND minified version (and to include the meta data files required for reflection)
-        // because Transpose will only include ".min.js" versions of resources when a project that references this is built in Release and will only include NON-".min.js" versions when built
-        // in Debug (this is the default behaviour for projects that don't have any external resources to build into the binary but when a "resources" section is present in a tps.json
-        // file then that default behaviour is lost and must be opted back into).
-        {
-            "name": "Tesserae.Pdf.js",
-            "files": [
-                "$(OutDir)tps/Tesserae.Pdf.js"
-            ]
-        },
-        {
-            "name": "Tesserae.Pdf.meta.js",
-            "files": [
-                "$(OutDir)tps/Tesserae.Pdf.meta.js"
-            ]
-        },
-        {
-            "name": "Tesserae.Pdf.min.js",
-            "files": [
-                "$(OutDir)tps/Tesserae.Pdf.min.js"
-            ]
-        },
-        {
-            "name": "Tesserae.Pdf.meta.min.js",
-            "files": [
-                "$(OutDir)tps/Tesserae.Pdf.meta.min.js"
-            ]
-        }
-        // NOTE: the pdf.js distribution itself is deliberately NOT a Transpose resource. It is
-        // packed into the NuGet package under pdfjs/ and copied into the consuming project's
-        // output by buildTransitive/Tesserae.Pdf.targets instead. Three reasons:
-        //   - Transpose emits a <script> tag for every ".js" resource. pdf.js is loaded on demand
-        //     by the components (nothing is fetched until a viewer mounts), and the worker and the
-        //     scripting sandbox must NOT be injected at all - they are loaded by pdf.js itself, as
-        //     a module worker and a dynamic import respectively.
-        //   - "outputFormatting": "Both" renames resources into ".min.js" variants, and both of
-        //     those files are located by a name their own loader expects.
-        //   - The "files" globs are single-level, so the asset tree (cmaps/, standard_fonts/,
-        //     wasm/, iccs/, images/ - some 260 files) cannot be expressed without one entry per
-        //     folder.
-    ],
+    // One ES module per chunk, plus an entry module - the shape every Tesserae/Curiosity front-end is
+    // built as. A chunk is a strongly-connected component of the reference graph, and because this
+    // project is IsPackable, tps publishes a chunk map rather than an entry that imports all of them:
+    // an application that references this package but never opens a PDF never fetches its JavaScript.
+    // A Debug build ignores this and emits one readable bundle, which is what stepping through is for.
+    "outputBy": "Module",
+
+    // NOTE: the compiled output of this project needs no "resources" entry. Every variant of it - the
+    // formatted bundle, the minified bundle, and the module entry with its chunks - is embedded
+    // automatically for a packable project, and the referencing application keeps the set its own
+    // configuration calls for. The four self-JS entries that used to be declared here (and the
+    // "outputFormatting": "Both" above them) were a Bridge-era workaround for a consumer that could
+    // not choose; "outputFormatting" no longer exists and is silently ignored.
+    //
+    // The pdf.js distribution itself is deliberately NOT a Transpose resource either. It is packed
+    // into the NuGet package under pdfjs/ and copied into the consuming project's output by
+    // buildTransitive/Tesserae.Pdf.targets instead. Three reasons:
+    //   - Transpose emits a <script> tag for every ".js" resource. pdf.js is loaded on demand by the
+    //     components (nothing is fetched until a viewer mounts), and the worker and the scripting
+    //     sandbox must NOT be injected at all - they are loaded by pdf.js itself, as a module worker
+    //     and a dynamic import respectively.
+    //   - A resource is renamed into a ".min.js" variant, and both of those files are located by a
+    //     name their own loader expects.
+    //   - The "files" globs are single-level, so the asset tree (cmaps/, standard_fonts/, wasm/,
+    //     iccs/, images/ - some 260 files) cannot be expressed without one entry per folder.
+
     "cleanOutputFolderBeforeBuildPattern": "*.*",
     "loader": {
         "type": "Global"

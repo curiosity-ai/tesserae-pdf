@@ -90,6 +90,21 @@ namespace Tesserae.Pdf
 
                 if (_showRotate) toolbar.Add(BuildRotateButton());
                 if (_showSpread) toolbar.Add(BuildSpreadToggle());
+
+                wroteGroup = true;
+            }
+
+            if (_actions.Count > 0)
+            {
+                // Separator inside the group, so the band that cannot fit the host's actions hides
+                // both with one rule rather than leaving a hairline against nothing.
+                var group = HStack().Class("tsspdf-actiongroup").AlignItems(ItemAlign.Center).Gap(2.px());
+
+                if (wroteGroup) group.Add(Separator());
+
+                AppendActions(group);
+
+                toolbar.Add(group);
             }
 
             toolbar.Add(BuildOverflowButton());
@@ -198,7 +213,37 @@ namespace Tesserae.Pdf
                 if (_showSpread) rail.Add(BuildSpreadToggle());
             }
 
+            if (_actions.Count > 0)
+            {
+                rail.Add(Raw(Box("tsspdf-rail-sep")));
+
+                AppendActions(rail);
+            }
+
             return rail;
+        }
+
+        /// <summary>
+        /// The host's own controls, in the order they were added. Ordinary icon buttons: an action the
+        /// application added is not a lesser control than one the chrome drew itself.
+        /// </summary>
+        private void AppendActions(Stack host)
+        {
+            foreach (var action in _actions)
+            {
+                var captured = action;
+
+                if (captured.SpinWhileRunning)
+                {
+                    // The button is asked for without a handler and given the awaitable one, so the
+                    // spinner is Tesserae's rather than something this chrome has to draw.
+                    host.Add(IconButton(captured.Icon, captured.Label, null).OnClickSpinWhile(() => captured.Run()));
+                }
+                else
+                {
+                    host.Add(IconButton(captured.Icon, captured.Label, () => captured.Run().FireAndForget()));
+                }
+            }
         }
 
         /* --------------------------------------------------------------- controls */
@@ -446,6 +491,20 @@ namespace Tesserae.Pdf
                 {
                     menu.Add(MenuRow("Two-page spread".t(), UIcons.TableColumns, _spreadMode != SpreadMode.None,
                         () => _viewer.Spread(_spreadMode == SpreadMode.None ? SpreadMode.Odd : SpreadMode.None)));
+                }
+
+                wrote = true;
+            }
+
+            if (_actions.Count > 0 && ActionsInOverflow)
+            {
+                if (wrote) menu.Add(ContextMenuItem("").Divider());
+
+                foreach (var action in _actions)
+                {
+                    var captured = action;
+
+                    menu.Add(MenuRow(captured.Label, captured.Icon, false, () => captured.Run().FireAndForget()));
                 }
 
                 wrote = true;

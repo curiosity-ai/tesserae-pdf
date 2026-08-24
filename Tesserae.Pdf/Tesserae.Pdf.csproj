@@ -1,4 +1,4 @@
-<Project Sdk="Transpose.Build.Target/26.7.3049">
+<Project Sdk="Transpose.Build.Target/26.8.4125">
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
     <DefineConstants>TRANSPOSE</DefineConstants>
@@ -10,12 +10,15 @@
     <DebugSymbols>false</DebugSymbols>
     <SkipResourcesExtraction>true</SkipResourcesExtraction>
     <MinifyLocalVariables>true</MinifyLocalVariables>
+    <!-- A library, not a runnable site: this is what makes tps emit a chunk map and defer the
+         chunks, so a consumer that never opens a PDF never fetches this package's JavaScript. -->
+    <IsPackable>true</IsPackable>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Transpose.BCL" Version="26.8.4275" />
+    <PackageReference Include="Transpose.BCL" Version="26.8.4500" />
     <PackageReference Include="Transpose.Core" Version="26.8.4176" />
-    <PackageReference Include="Tesserae" Version="2026.8.69740" />
+    <PackageReference Include="Tesserae" Version="2026.8.70056" />
   </ItemGroup>
 
   <PropertyGroup>
