@@ -16,7 +16,8 @@ Tesserae.Pdf/                       the package
   src/Components/                   PdfComponent (lifecycle base), PdfViewer, PdfPageCanvas
   src/Chrome/                       PdfViewerChrome - the ready-made toolbar, panel and search box,
                                     built from Tesserae's own components
-                                    (.Toolbar/.Search/.Panel partials, plus styles and elements)
+                                    (.Toolbar/.Search/.Panel partials, plus styles, elements,
+                                    and PdfChromeAction - a host's own toolbar control)
   src/Interop/                      [External] declarations of pdfjsLib and pdfjsViewer
   src/Types/                        [ObjectLiteral] payloads, enums, and the friendly wrappers
                                     (PdfSource, PdfDocument, PdfPage, PdfError, PdfAnnotation, ...)
@@ -110,12 +111,32 @@ when the pin moves**: if the modern build stops needing an unshipped proposal, s
 
 ### pdf.js assets are NOT Transpose resources
 
-`tps.json` declares only the four self-JS resources. pdf.js is packed into the nupkg under `pdfjs/`
-and copied into the consumer's output by `buildTransitive/Tesserae.Pdf.targets`. Three reasons it
-cannot be a `resources` entry: Transpose emits a `<script>` tag for every `.js` resource (and the
-worker and sandbox must not be injected at all); `"outputFormatting": "Both"` renames resources into
-`.min.js` variants, and both of those files are found by a name their own loader expects; and the
-`files` globs are single-level, so a tree of ~260 files across five folders cannot be expressed.
+`tps.json` declares no `resources` at all. pdf.js is packed into the nupkg under `pdfjs/` and copied
+into the consumer's output by `buildTransitive/Tesserae.Pdf.targets`. Three reasons it cannot be a
+`resources` entry: Transpose emits a `<script>` tag for every `.js` resource (and the worker and
+sandbox must not be injected at all); a resource is renamed into a `.min.js` variant, and both of
+those files are found by a name their own loader expects; and the `files` globs are single-level, so
+a tree of ~260 files across five folders cannot be expressed.
+
+### The package is built as JavaScript modules, and its chunks defer
+
+`tps.json` sets `"outputBy": "Module"` and the csproj sets `IsPackable`, which together are what make
+this package **lazy for its consumer**: tps treats a packable project as a library and publishes a
+chunk map, so an application that references Tesserae.Pdf but never opens a PDF never fetches its
+JavaScript. A Release build reports it — `3 chunk(s) — 0 loaded up front, 3 on demand` — and that
+ratio is the thing to check after touching the build, because nothing else says it out loud.
+
+The consumer still has to keep the reference soft on its own side: a chunk that is *imported* is
+fetched when the importing chunk loads, deferral or not. `[Transpose.LoadsTypeArguments]` on an
+`Activator.CreateInstanceAsync<T>()` helper is the tool (mosaik's `AppRouting.ActivateAsync<T>` is the
+worked example), and a host that reaches `PdfJs` from a type its boot closure already holds gets the
+package eagerly however this project is built.
+
+Two Bridge-era settings are **gone and must not come back**: the four self-JS `resources` entries
+(every variant of the compiled output — the formatted bundle, the minified bundle, the module entry
+and its chunks — is embedded automatically for a packable project) and `"outputFormatting"`, which no
+longer exists and is silently ignored. Module output needs `Transpose.BCL >= 26.8.4102`; this project
+pins 26.8.4500 to match the applications consuming it.
 
 Two gotchas in the targets file, both inherited from tesserae-monaco's: `$(OutDir)` is empty at
 import time, so the destination is computed **inside** the target; and a `ProjectReference` does not
@@ -293,6 +314,17 @@ and `PivotSelector` collapses into a dropdown), and the 1px group separator (`Ho
 a full-width rule with optional centred text). The outline row is 32px rather than the comp's 27.5
 on purpose: that is the `Tree`'s density, and matching the comp would make this one panel the odd one
 out in a Tesserae application.
+
+**`AddAction` is the one thing the chrome could not otherwise be asked for.** Every other control here
+calls a `PdfViewer` method a host could call itself, so a host that wants a different toolbar writes
+one — but an application-level action (download, print, open in the workspace) belongs to nothing in
+the viewer, and having to abandon the whole toolbar to add a download button is what made this chrome
+not quite enough for a real reader. Actions are drawn as ordinary icon buttons in a group of their
+own after the view controls (at the bottom of the rail in the other layout), and the `mini` band
+sheds them into the overflow menu with rotate and spread — so a host action is never *less* reachable
+than the chrome's own. The separator lives *inside* the group element rather than beside it, which is
+what stops the band leaving a hairline against nothing; `PdfChromeAction` is a description rather than
+a control for the same reason the toolbar is rebuilt rather than patched.
 
 **Two controls in the comp are gone, and both for the same reason: they said something twice.**
 The comp's `Fit page | Fit content` pill was the widest thing in the toolbar and repeated two of the

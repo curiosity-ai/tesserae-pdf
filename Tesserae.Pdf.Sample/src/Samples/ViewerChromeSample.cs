@@ -1,3 +1,5 @@
+using System.Threading.Tasks;
+using Transpose.Core;
 using static Transpose.Core.dom;
 using static Tesserae.UI;
 using static Tesserae.Pdf.Sample.SamplesHelper;
@@ -23,6 +25,11 @@ namespace Tesserae.Pdf.Sample
             chrome
                .Url(OUTLINE_PDF)
                .Panel(PdfChromePanel.Outline)
+               // A control of the application's own, in the toolbar beside the chrome's - and in the
+               // overflow menu on the band that sheds rotate and spread, so it is never less
+               // reachable than they are. The awaitable overload spins the button while it runs.
+               .AddAction(UIcons.Download, "Download", () => DownloadAsync(chrome, status))
+               .AddAction(UIcons.Link, "Copy a link to this page", () => status.Text = $"Copied a link to page {chrome.Page}.")
                .OnPanelChanged(panel => status.Text = $"Panel: {panel}, search: {chrome.CurrentSearchMode}")
                .OnSearchModeChanged(mode => status.Text = $"Panel: {chrome.CurrentPanel}, search: {mode}");
 
@@ -34,7 +41,8 @@ namespace Tesserae.Pdf.Sample
                .Layout(PdfChromeLayout.IconRail)
                .Url(OUTLINE_PDF)
                .DocumentName("Capacity-Planning-Guide-2026.pdf")
-               .Panel(PdfChromePanel.Thumbnails);
+               .Panel(PdfChromePanel.Thumbnails)
+               .AddAction(UIcons.Print, "Print", () => status.Text = "Print asked for from the rail.");
 
             rail.Viewer.FitPage();
 
@@ -78,14 +86,15 @@ namespace Tesserae.Pdf.Sample
                         TextBlock("The panel earns its keep on long documents. Thumbnails are built as they scroll into view, so a 248-page document costs 248 empty frames and about a dozen renders; and the outline resolves each entry to a page number, which is what lets it show which section the reader is currently inside.").MT(8),
                         TextBlock("The panel has no tab strip. The two toolbar toggles already say which pane is open and are what a reader reaches for, so a strip under them was the same answer twice - and the width it took is the outline\u0027s now. Panel() and TogglePanel() are the same switch from code.").MT(8),
                         TextBlock("Border() when nothing else draws the edge. The chrome\u0027s own lines are internal - under the toolbar, beside the panel - because a viewer filling a window has nothing to frame, and inside a modal or a Card a second line just inside the container\u0027s own reads as a seam. On a page\u0027s bare background it is the other way round, and the frame is what says where the document ends. CornerRadius() squares it off or rounds it further.").MT(8),
-                        TextBlock("Turn off what you do not want rather than rebuilding. ShowZoom(false), ShowSpread(false), Tabs(thumbnails: false) and their siblings each drop a control and re-close the gap, which is usually what a preview pane wants instead of a second component.").MT(8))).SetTitle("Best Practices")))
+                        TextBlock("Turn off what you do not want rather than rebuilding. ShowZoom(false), ShowSpread(false), Tabs(thumbnails: false) and their siblings each drop a control and re-close the gap, which is usually what a preview pane wants instead of a second component.").MT(8),
+                        TextBlock("Add what is yours with AddAction. Every other control in this toolbar calls a method the host could call itself, so a host that wants different buttons writes them - but an application-level action (download, print, open in the workspace) belongs to nothing in the viewer, and having to abandon the whole toolbar to add one was what made this chrome not quite enough for a real reader. Actions land in a group of their own after the view controls, and move into the overflow menu on the band that sheds rotate and spread.").MT(8))).SetTitle("Best Practices")))
                .FlatSection(VStack().Children(
                     Card(VStack().WS().Children(
                         SampleSubTitle("Try it"),
                         HStack().WS().Children(layoutChoice, borderChoice.ML(24)),
                         status.MT(8),
                         chrome.H(620).WS().MT(8),
-                        SampleHint("Type \"tesserae\" into the search box - it is on three pages of this document, so the count should settle on 3 / 3. Switch to Precise and it still finds them; search \"Tesserae\" in Precise and it goes red. Click an entry in the outline to jump to its section, and watch the entry you are inside stay marked as the document scrolls.")
+                        SampleHint("Type \"tesserae\" into the search box - it is on three pages of this document, so the count should settle on 3 / 3. Switch to Precise and it still finds them; search \"Tesserae\" in Precise and it goes red. Click an entry in the outline to jump to its section, and watch the entry you are inside stay marked as the document scrolls. The download and link buttons at the end of the toolbar are this page\u0027s own, added with AddAction - narrow the window until the toolbar wraps and they move into the overflow menu with rotate and spread.")
                     )).SetTitle("Usage")))
                .FlatSection(VStack().Children(
                     Card(VStack().WS().Children(
@@ -107,6 +116,37 @@ namespace Tesserae.Pdf.Sample
                         SampleHint("The search box shrinks before anything else in the toolbar does, so the controls survive a narrow container and the search field gives up width for them.")
                     )).SetTitle("Paring it back")))
                .SeeAlso(typeof(SearchSample), typeof(OutlineAndNavigationSample), typeof(ZoomAndFitSample));
+        }
+
+        /// <summary>
+        /// What the toolbar's Download action does. Nothing pdf.js-specific: the bytes come back as a
+        /// Uint8Array, which is what a Blob wants, which is what a download wants. The package
+        /// deliberately does not do this itself - how a file reaches a user is the host's decision,
+        /// which is the reason AddAction exists at all.
+        /// </summary>
+        private static async Task DownloadAsync(PdfViewerChrome chrome, TextBlock status)
+        {
+            var pdfDocument = chrome.Document;
+
+            if (pdfDocument is null)
+            {
+                status.Text = "No document to download yet.";
+                return;
+            }
+
+            var bytes = await pdfDocument.GetDataAsync();
+
+            var blob = new Blob(new object[] { bytes }, new BlobPropertyBag { type = "application/pdf" });
+            var url  = URL.createObjectURL(blob);
+            var link = (HTMLAnchorElement)document.createElement("a");
+
+            link.href     = url;
+            link.download = "sample-outline.pdf";
+            link.click();
+
+            URL.revokeObjectURL(url);
+
+            status.Text = $"Downloaded {bytes.length} bytes.";
         }
 
         public HTMLElement Render() => _content.Render();

@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using Transpose;
 using Transpose.Core;
 using Tesserae;
@@ -109,6 +110,8 @@ namespace Tesserae.Pdf
         private string   _documentName;
         private double[] _zoomLevels = { 0.5, 1, 2, 4 };
         private bool     _border;
+
+        private readonly List<PdfChromeAction> _actions = new List<PdfChromeAction>();
 
         private Action<PdfChromePanel> _onPanelChanged;
         private Action<PdfSearchMode>  _onSearchModeChanged;
@@ -361,6 +364,46 @@ namespace Tesserae.Pdf
 
             if (_panel == PdfChromePanel.Outline    && !outline)    _panel = PdfChromePanel.None;
             if (_panel == PdfChromePanel.Thumbnails && !thumbnails) _panel = PdfChromePanel.None;
+
+            BuildChrome();
+
+            return this;
+        }
+
+        /// <summary>
+        /// Adds a control of the host application's own to the chrome - a download, a print, an "open
+        /// in the workspace". Call it once per control; they are drawn in the order they were added,
+        /// in a group of their own after the view controls.
+        ///
+        /// <b>This is the one thing the chrome could not otherwise be asked for.</b> Every other
+        /// control here calls a <see cref="PdfViewer"/> method a host could call itself, so a host that
+        /// wants a different toolbar writes one. An application-level action is the opposite case:
+        /// nothing about it belongs to the viewer, and having to abandon the whole toolbar to add a
+        /// download button is what made this chrome not quite enough for a real reader.
+        ///
+        /// The band that sheds rotate and spread sheds these with them, into the overflow menu - so an
+        /// action is exactly as reachable as the chrome's own controls at every width, and never less.
+        /// </summary>
+        /// <param name="icon">The glyph, from Tesserae's own icon set.</param>
+        /// <param name="tooltip">The button's tooltip and accessible name, and the row's text in the
+        /// overflow menu. Write it as a label ("Download"), not a sentence.</param>
+        /// <param name="click">What the control does.</param>
+        public PdfViewerChrome AddAction(UIcons icon, string tooltip, Action click)
+            => AddAction(new PdfChromeAction(icon, tooltip, click is null ? (Func<Task>)null : () => { click(); return Task.CompletedTask; }, spinWhileRunning: false));
+
+        /// <summary>
+        /// <see cref="AddAction(UIcons, string, Action)"/> for a handler that does something the reader
+        /// has to wait for. The button spins until the task completes, so a slow download reads as
+        /// running rather than as a click that did nothing.
+        /// </summary>
+        public PdfViewerChrome AddAction(UIcons icon, string tooltip, Func<Task> click)
+            => AddAction(new PdfChromeAction(icon, tooltip, click, spinWhileRunning: true));
+
+        private PdfViewerChrome AddAction(PdfChromeAction action)
+        {
+            if (action.Run is null) return this;
+
+            _actions.Add(action);
 
             BuildChrome();
 
@@ -677,6 +720,12 @@ namespace Tesserae.Pdf
         /// <summary>Whether the band in force has taken rotate and spread out of the toolbar.</summary>
         private bool ViewControlsInOverflow => _widthClass == "tsspdf-mini";
 
+        /// <summary>
+        /// Whether the band in force has taken the host's own actions out of the toolbar. The same
+        /// band as rotate and spread: they are the same kind of thing to a reader on a phone.
+        /// </summary>
+        private bool ActionsInOverflow => _widthClass == "tsspdf-mini";
+
         /// <summary>Whether the band in force has taken the Fuzzy | Precise pill out of the search row.</summary>
         private bool SearchModeInOverflow => _widthClass == "tsspdf-tight" || _widthClass == "tsspdf-mini";
 
@@ -698,6 +747,7 @@ namespace Tesserae.Pdf
                       && ((_showZoom && ZoomInOverflow)
                        || (_showFitModes && FitModesInOverflow)
                        || ((_showRotate || _showSpread) && ViewControlsInOverflow)
+                       || (_actions.Count > 0 && ActionsInOverflow)
                        || (_showSearch && SearchModeInOverflow));
 
             PdfChromeElements.Show(_overflowButton, needed);

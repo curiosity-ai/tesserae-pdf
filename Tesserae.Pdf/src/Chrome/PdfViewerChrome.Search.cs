@@ -110,6 +110,31 @@ namespace Tesserae.Pdf
             return this;
         }
 
+        /// <summary>
+        /// Puts a query in the box <b>without</b> running it, ready for the reader to press Enter or
+        /// the next-match button.
+        ///
+        /// For the case a host has and this chrome cannot infer: a reader who arrived from a search
+        /// elsewhere in the application, at a particular page. The term is the context they came with,
+        /// but running it would scroll them to its first match and off the page they asked for - so the
+        /// box is filled and the document left alone. <see cref="Search"/> is the other half of that
+        /// choice, for when there is no page to protect.
+        /// </summary>
+        public PdfViewerChrome SearchQuery(string query)
+        {
+            _query = query ?? "";
+
+            WriteSearchBox(_query);
+
+            // A query that has not run is neither found nor not-found, and the previous one's counts
+            // do not describe it.
+            ResetSearchResults();
+
+            UpdateSearchState();
+
+            return this;
+        }
+
         /// <summary>Moves keyboard focus into the search box.</summary>
         public PdfViewerChrome FocusSearch()
         {
