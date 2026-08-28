@@ -136,7 +136,7 @@ Two Bridge-era settings are **gone and must not come back**: the four self-JS `r
 (every variant of the compiled output — the formatted bundle, the minified bundle, the module entry
 and its chunks — is embedded automatically for a packable project) and `"outputFormatting"`, which no
 longer exists and is silently ignored. Module output needs `Transpose.BCL >= 26.8.4102`; this project
-pins 26.8.4500 to match the applications consuming it.
+pins 26.8.4619 to match the applications consuming it.
 
 Two gotchas in the targets file, both inherited from tesserae-monaco's: `$(OutDir)` is empty at
 import time, so the destination is computed **inside** the target; and a `ProjectReference` does not
