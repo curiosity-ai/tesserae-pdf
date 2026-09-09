@@ -619,5 +619,5 @@ pdfjs-digital-signature-properties-sub-signatures =
   var src  = (document.currentScript && document.currentScript.src) || '';
   var base = src ? src.replace(/\/[^\/]*$/, '') : '.';
 
-  lib.GlobalWorkerOptions.workerSrc = base + '/pdf.worker.min.mjs';
+  lib.GlobalWorkerOptions.workerSrc = base + '/pdf.worker.min.mjs?v=' + "6.3.289";
 })();
