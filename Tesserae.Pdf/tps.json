@@ -6,6 +6,25 @@
     // A Debug build ignores this and emits one readable bundle, which is what stepping through is for.
     "outputBy": "Module",
 
+    // Not scripted by the consuming application's index.html. The chunks defer on their own (below),
+    // but the module entry - the chunk map plus the reflection metadata of every type in here, some
+    // 120 KB - would still be fetched and evaluated on every page load of an application whose users
+    // may never open a PDF. So the entry is fetched by the application itself, just before it needs it:
+    //
+    //     await Transpose.Require.RequireAsync(Transpose.RequireKind.Module, "./Tesserae.Pdf.js");
+    //
+    // (Tesserae.Pdf.Sample does it first thing in Main; an application does it on the way to its PDF
+    // view.) Every variant of the output is still embedded and still copied into the site - this only
+    // says "do not load it for me". Until that call has run, nothing in the Tesserae.Pdf namespace
+    // exists, so it has to come before the first reference to any type in this package.
+    "loadCompiledOutput": false,
+
+    // The reflection metadata rides inside the bundle rather than in a sibling .meta.js: the entry is
+    // fetched as one file by the call above, and a second file it does not know to ask for would never
+    // arrive. In Release the module entry carries its metadata inline anyway; this is what makes a
+    // Debug build behave the same.
+    "reflection": { "target": "inline" },
+
     // NOTE: the compiled output of this project needs no "resources" entry. Every variant of it - the
     // formatted bundle, the minified bundle, and the module entry with its chunks - is embedded
     // automatically for a packable project, and the referencing application keeps the set its own

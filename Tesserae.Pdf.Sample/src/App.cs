@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using Tesserae;
 using static Transpose.Core.dom;
 using static Tesserae.UI;
@@ -24,6 +25,31 @@ namespace Tesserae.Pdf.Sample
         private const string _sidebarOpenStateKey = "tss-pdf-sidebar-open-close";
 
         private static void Main()
+        {
+            StartAsync().FireAndForget();
+        }
+
+        /// <summary>
+        /// The package asks not to be scripted by index.html (its tps.json says
+        /// <c>loadCompiledOutput: false</c>), so that an application only pays for its JavaScript when a
+        /// document is opened. The gallery is nothing but documents, so it fetches the entry first thing
+        /// and builds the rest once the <c>Tesserae.Pdf</c> namespace exists.
+        /// </summary>
+        private static async Task StartAsync()
+        {
+            // Require falls back between the two spellings, so either name works - but this site is not built
+            // as modules, so its Release output holds only the minified bundle, and asking for the other name
+            // first is a 404 in the console on every load. A module site (mosaik) has Tesserae.Pdf.js in both.
+#if DEBUG
+            await Transpose.Require.RequireAsync(Transpose.RequireKind.Module, "./Tesserae.Pdf.js");
+#else
+            await Transpose.Require.RequireAsync(Transpose.RequireKind.Module, "./Tesserae.Pdf.min.js");
+#endif
+
+            Start();
+        }
+
+        private static void Start()
         {
             document.body.style.overflow = "hidden";
 

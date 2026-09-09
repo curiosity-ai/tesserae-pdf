@@ -23,7 +23,9 @@ leaves the buttons to you.
 
 **`PdfJs.ViewerChrome()`** - the same viewer with the toolbar already on it. Panel toggles, page
 controls, a zoom stepper whose menu holds the fit modes, rotate and spread, an always-visible search
-box with a `Fuzzy | Precise` switch, and a side panel showing the outline or the page thumbnails. For
+box with a `Fuzzy | Precise` switch (whose two meanings a host can redefine with `SearchOptions`, down
+to "any of these words" through `FindOptions.AnyWord`), and a side panel showing the outline or the page
+thumbnails. For
 an application that wants a document reader and does not want to have an opinion about what one looks
 like. It is a composition of `PdfJs.Viewer()`'s public surface and nothing else, and `chrome.Viewer`
 hands that component back - so starting here and replacing the toolbar later costs the toolbar and
@@ -54,6 +56,17 @@ The [sample gallery](https://curiosity-ai.github.io/tesserae-pdf/) has a page pe
 
 Add the package. Its build copies pdf.js into your app's output under `assets/js/pdf`, and the
 components load it from there on first use - nothing is fetched until a viewer mounts.
+
+The package's own JavaScript is on demand too, all the way down: `index.html` does not script it, so
+an application fetches the entry itself, just before the first `PdfJs` call - one line, and a
+natural place for it is the route or view that shows documents:
+
+```csharp
+await Transpose.Require.RequireAsync(Transpose.RequireKind.Module, "./Tesserae.Pdf.js");
+```
+
+Until that has run, nothing in the `Tesserae.Pdf` namespace exists. An application that shows a PDF on
+every page can make the call first thing in `Main`, which is what the sample gallery does.
 
 ```csharp
 var viewer = PdfJs.Viewer();

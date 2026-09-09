@@ -463,7 +463,25 @@ namespace Tesserae.Pdf
         /// reads the pages as it goes and reports a running count, so a long document has an answer
         /// before it has a total.
         /// </summary>
-        public PdfViewer Search(string query, FindOptions options = null) => Find(query, options, type: "");
+        public PdfViewer Search(string query, FindOptions options = null)
+        {
+            if (options is object && options.AnyWord && query is object) return Search(SplitWords(query), options);
+
+            return Find(query, options, type: "");
+        }
+
+        /// <summary>The words of a query, for <see cref="FindOptions.AnyWord"/>: split on whitespace, empties dropped.</summary>
+        internal static string[] SplitWords(string query)
+        {
+            var words = new List<string>();
+
+            foreach (var word in query.Split(new[] { ' ', '\t', '\r', '\n' }))
+            {
+                if (word.Length > 0) words.Add(word);
+            }
+
+            return words.ToArray();
+        }
 
         /// <summary>
         /// Searches for several terms at once, each matched independently. What a space-separated
@@ -1349,6 +1367,14 @@ namespace Tesserae.Pdf
         /// "café" - which is usually what a person searching means.
         /// </summary>
         public bool MatchDiacritics { get; set; }
+
+        /// <summary>
+        /// Split the query on whitespace and match each word on its own, so <c>alpha beta</c> highlights
+        /// every <c>alpha</c> and every <c>beta</c> rather than the phrase. This is pdf.js's array
+        /// query; a host that already has the words apart can call <see cref="PdfViewer.Search(string[], FindOptions)"/>
+        /// directly. Off by default: the phrase is what a reader typing into a box expects.
+        /// </summary>
+        public bool AnyWord { get; set; }
     }
 
     /// <summary>The outcome of a search, as pdf.js reports it.</summary>

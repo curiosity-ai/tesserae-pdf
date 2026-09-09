@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using Tesserae;
 using static Transpose.Core.dom;
 using static Tesserae.UI;
@@ -47,6 +48,10 @@ namespace Tesserae.Pdf
 
         private string    _query = "";
 
+        // What each pill segment searches for, when the host has said - see SearchOptions.
+        private readonly Dictionary<PdfSearchMode, FindOptions> _searchOptions = new Dictionary<PdfSearchMode, FindOptions>();
+        private readonly Dictionary<PdfSearchMode, string>      _searchHints   = new Dictionary<PdfSearchMode, string>();
+
         /// <summary>
         /// Set while the chrome is writing into the search box.
         ///
@@ -86,6 +91,64 @@ namespace Tesserae.Pdf
             _onSearchModeChanged = handler;
 
             return this;
+        }
+
+        /// <summary>
+        /// What a segment of the <c>Fuzzy | Precise</c> pill searches for, when the defaults are not what
+        /// your readers expect - an application that used to offer "any of these words" and "this exact
+        /// phrase" keeps those meanings behind the same two buttons. <paramref name="description"/>
+        /// replaces the segment's tooltip, which otherwise describes the default; pass null to keep it.
+        /// Passing null <paramref name="options"/> restores the default for that mode.
+        ///
+        /// The defaults: Fuzzy is pdf.js's own - case, accents and word boundaries all ignored -
+        /// and Precise turns all three on. See <see cref="FindOptions"/> for the switches, including
+        /// <see cref="FindOptions.AnyWord"/> for matching the words of a query independently.
+        /// </summary>
+        public PdfViewerChrome SearchOptions(PdfSearchMode mode, FindOptions options, string description = null)
+        {
+            if (options is null)
+            {
+                _searchOptions.Remove(mode);
+                _searchHints.Remove(mode);
+            }
+            else
+            {
+                _searchOptions[mode] = options;
+
+                if (description is null) _searchHints.Remove(mode);
+                else                     _searchHints[mode] = description;
+            }
+
+            // The tooltips are drawn with the row, so the row is drawn again.
+            BuildChrome();
+
+            if (_query.Length > 0 && _searchMode == mode) RunSearch();
+
+            return this;
+        }
+
+        private FindOptions OptionsFor(PdfSearchMode mode)
+        {
+            if (_searchOptions.TryGetValue(mode, out var options)) return options;
+
+            var precise = mode == PdfSearchMode.Precise;
+
+            return new FindOptions
+            {
+                CaseSensitive   = precise,
+                EntireWord      = precise,
+                MatchDiacritics = precise,
+                HighlightAll    = true,
+            };
+        }
+
+        private string HintFor(PdfSearchMode mode)
+        {
+            if (_searchHints.TryGetValue(mode, out var hint)) return hint;
+
+            return mode == PdfSearchMode.Precise
+                ? "Match case, whole words, diacritics respected".t()
+                : "Ignore case, accents and word boundaries".t();
         }
 
         /// <summary>
@@ -191,11 +254,8 @@ namespace Tesserae.Pdf
                 FocusSearch();
             });
 
-            _fuzzySegment = Segment("Fuzzy".t(), null,
-                "Ignore case, accents and word boundaries".t(), () => SearchMode(PdfSearchMode.Fuzzy));
-
-            _preciseSegment = Segment("Precise".t(), null,
-                "Match case, whole words, diacritics respected".t(), () => SearchMode(PdfSearchMode.Precise));
+            _fuzzySegment   = Segment("Fuzzy".t(),   null, HintFor(PdfSearchMode.Fuzzy),   () => SearchMode(PdfSearchMode.Fuzzy));
+            _preciseSegment = Segment("Precise".t(), null, HintFor(PdfSearchMode.Precise), () => SearchMode(PdfSearchMode.Precise));
 
             var modes = HStack().Class("tsspdf-seg tsspdf-seg-sm").AlignItems(ItemAlign.Center)
                .Gap(2.px()).Children(_fuzzySegment, _preciseSegment);
@@ -277,15 +337,7 @@ namespace Tesserae.Pdf
             _runningQuery  = _query;
             _searchSettled = false;
 
-            var precise = _searchMode == PdfSearchMode.Precise;
-
-            _viewer.Search(_query, new FindOptions
-            {
-                CaseSensitive   = precise,
-                EntireWord      = precise,
-                MatchDiacritics = precise,
-                HighlightAll    = true,
-            });
+            _viewer.Search(_query, OptionsFor(_searchMode));
         }
 
         /* ---------------------------------------------------------------- results */

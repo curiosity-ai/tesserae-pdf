@@ -126,6 +126,19 @@ chunk map, so an application that references Tesserae.Pdf but never opens a PDF 
 JavaScript. A Release build reports it — `3 chunk(s) — 0 loaded up front, 3 on demand` — and that
 ratio is the thing to check after touching the build, because nothing else says it out loud.
 
+**The entry is on demand as well.** `tps.json` also sets `"loadCompiledOutput": false`, so a consuming
+application's `index.html` does not script `Tesserae.Pdf.js` at all. The chunks defer on their own, but
+the entry — the chunk map plus the inline reflection metadata of every type in the package, some 120 KB
+minified — would otherwise be fetched and evaluated on every page load of an application whose users
+may never open a PDF. The price is one line in the consumer, before its first `PdfJs` reference:
+`await Transpose.Require.RequireAsync(Transpose.RequireKind.Module, "./Tesserae.Pdf.js")`. The sample
+does it first thing in `Main` (`StartAsync`), because the gallery is nothing but documents; mosaik does it
+on the way into its PDF view. `"reflection": { "target": "inline" }` goes with it, so the Debug bundle
+carries its metadata the way the Release entry already does — a sibling `.meta.js` would be a second file
+that call does not know to ask for. Until the call has run, nothing in the `Tesserae.Pdf` namespace
+exists, and a type in the consumer whose *definition* names one of ours (a base class, an interface — a
+field type is fine) has to live in a chunk that is not evaluated before it.
+
 The consumer still has to keep the reference soft on its own side: a chunk that is *imported* is
 fetched when the importing chunk loads, deferral or not. `[Transpose.LoadsTypeArguments]` on an
 `Activator.CreateInstanceAsync<T>()` helper is the tool (mosaik's `AppRouting.ActivateAsync<T>` is the
@@ -299,6 +312,13 @@ and danger are Tesserae's dark ones. So the light chrome is pixel-identical to t
 came free. Only three values have no theme equivalent (the icon-button hover wash, the faint glyph
 grey, the segmented track); they are declared as this sheet's own variables at the top so a host can
 override them without reaching into rules.
+
+**The `Fuzzy | Precise` pill's two meanings are the host's to define.** The defaults are pdf.js's own
+(Fuzzy: case, accents and word boundaries all ignored; Precise: all three on), and `SearchOptions(mode,
+options, description)` replaces either with any `FindOptions`, tooltip included — mosaik keeps the two
+searches its readers already knew, "any of these words" and "this exact phrase", behind the same two
+buttons. `FindOptions.AnyWord` is what "any of these words" is: `PdfViewer.Search(string)` splits the
+query on whitespace and hands pdf.js the array, which it matches word by word.
 
 **It is built from Tesserae's components**, not from raw DOM: `Button` for every button (with
 `UIcons` glyphs), `TextBox` for the page box, `SearchBox` for the search field - which brings the
