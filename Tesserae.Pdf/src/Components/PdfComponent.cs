@@ -89,7 +89,23 @@ namespace Tesserae.Pdf
 
         private async Task MountAsync()
         {
-            await PdfJs.LoadAsync();
+            try
+            {
+                await PdfJs.LoadAsync();
+            }
+            catch (Exception exception)
+            {
+                // pdf.js did not arrive - a network that is down, a site that does not serve it. The load is
+                // forgotten by the loader, so it can be tried again; what tries it is the host taking the
+                // component out of the DOM and putting it back, the same gesture that rebuilds a torn-down
+                // view. Not an immediate re-arm: the container is still mounted, so that would retry in a
+                // tight loop for as long as the network stays down.
+                console.error("Tesserae.Pdf: pdf.js could not be loaded", exception);
+
+                if (!_disposed) DomObserver.WhenRemoved(_container, HandleRemoved);
+
+                return;
+            }
 
             // The component can be discarded again, or torn down and remounted, while pdf.js loads.
             if (_disposed || !_container.IsMounted()) return;
@@ -191,6 +207,8 @@ namespace Tesserae.Pdf
         {
             if (_disposed) return;
 
+            // Teardown is a no-op for a view that never came up (pdf.js failed to load), which makes this the
+            // retry path for that case too: leaving and re-entering the DOM re-arms the mount.
             Teardown();
             ArmMountObserver();
         }

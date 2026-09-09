@@ -85,6 +85,20 @@ Write it **fully qualified**. `Tesserae.Pdf` is nested inside `Tesserae`, so a b
 `Tesserae.Require` - the enclosing namespace beats the `using Transpose;` - and compiles silently
 against the old loader. It needs `Transpose.BCL` >= 26.8.4275, the first release carrying `Require`.
 
+### A failed pdf.js load is retried by remounting, never by itself
+
+`PdfComponent.MountAsync` awaits `PdfJs.LoadAsync()` first, and if that rejects (the network is down, the
+site does not serve `assets/js/pdf/pdf.js`) the component logs it and arms only a *removal* observer that
+re-arms the mount. `PdfJs.LoadAsync` forgets the failed task too — `LoadCoreAsync` nulls `_loading` on the
+way out — because the loader forgetting *its* failed fetch is not enough when the package keeps handing out
+the same rejected `Task` for the life of the page. So the host's retry gesture is the same as for a torn-down view: take the element out of
+the DOM and put it back. It must not re-arm the mount straight away — the container is still mounted, so
+that would retry in a tight loop for as long as the network stays down — and it must arm *something*, or
+the component is dead for good: before this the removal hook was only registered after a successful
+`CreateCore`, so a viewer whose pdf.js never arrived ignored every later mount. mosaik's `PdfReader.Retry`
+is the worked example: it removes and re-inserts the chrome's element (after a tick, so the mutation
+observer sees both), then sets the source again.
+
 ### Use the `legacy/` build. This is load-bearing.
 
 pdf.js 6.2's **modern** build calls `Map.prototype.getOrInsertComputed` - a stage-3 proposal -

@@ -157,11 +157,23 @@ namespace Tesserae.Pdf
             // base, shares one fetch between concurrent callers, waits on a bundle index.html already
             // carries rather than fetching it twice, and forgets a failed load so a later mount
             // retries instead of inheriting the failure.
-            await Transpose.Require.RequireAsync(baseUrl + "/pdf.js");
-
-            if (!IsLoaded)
+            try
             {
-                throw new Exception("Loaded " + baseUrl + "/pdf.js but window.pdfjsLib / window.pdfjsViewer are not defined.");
+                await Transpose.Require.RequireAsync(baseUrl + "/pdf.js");
+
+                if (!IsLoaded)
+                {
+                    throw new Exception("Loaded " + baseUrl + "/pdf.js but window.pdfjsLib / window.pdfjsViewer are not defined.");
+                }
+            }
+            catch
+            {
+                // Forgotten, like the loader forgets its own failed fetch: the next LoadAsync starts over
+                // rather than handing out the same rejected task for the life of the page - which is what
+                // made a viewer whose pdf.js once failed to arrive unrecoverable without a reload.
+                _loading = null;
+
+                throw;
             }
 
             // Anything queued while pdf.js was still loading - a host's own pdf.js call, a worker
