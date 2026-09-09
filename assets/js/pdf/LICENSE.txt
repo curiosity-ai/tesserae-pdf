@@ -1,4 +1,4 @@
-pdfjs-dist 6.2.108
+pdfjs-dist 6.3.289
 https://github.com/mozilla/pdf.js
 
 The bundled code in pdf.js, pdf.worker.min.mjs and pdf.sandbox.min.mjs is covered by the
