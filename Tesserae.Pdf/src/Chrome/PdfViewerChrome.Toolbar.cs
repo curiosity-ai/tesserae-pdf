@@ -659,7 +659,7 @@ namespace Tesserae.Pdf
 
                 _pageBox.Disabled(_pageCount == 0);
 
-                if (input is object) input.title = _pageCount > 0 ? $"Page {_page} of {_pageCount}".t() : "";
+                if (input is object) input.title = _pageCount > 0 ? t($"Page {_page} of {_pageCount}") : "";
             }
 
             if (_pageTotal is object)
@@ -672,8 +672,8 @@ namespace Tesserae.Pdf
                 // page whether the label differs from the number makes the text - and so the width of
                 // everything after it - flip as the reader scrolls.
                 _pageTotal.Text = _pageCount == 0   ? ""
-                                : _documentHasLabels ? $"{_page} of {_pageCount}".t()
-                                                     : $"of {_pageCount}".t();
+                                : _documentHasLabels ? t($"{_page} of {_pageCount}")
+                                                     : t($"of {_pageCount}");
             }
 
             if (_previousPage is object) _previousPage.Disabled(_pageCount == 0 || _page <= 1);

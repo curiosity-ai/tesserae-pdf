@@ -179,11 +179,11 @@ namespace Tesserae.Pdf
 
             if (!searching)
             {
-                _panelSummary.Text = _pageCount > 0 ? $"{_pageCount} pages".t() : "";
+                _panelSummary.Text = _pageCount > 0 ? t($"{_pageCount} pages") : "";
             }
             else if (_matchTotal > 0)
             {
-                var summary = $"{_matchTotal} matches".t();
+                var summary = t($"{_matchTotal} matches");
 
                 if (_panel == PdfChromePanel.Thumbnails)
                 {
@@ -221,7 +221,7 @@ namespace Tesserae.Pdf
             {
                 if (shown == MATCH_PAGES_SHOWN)
                 {
-                    return $"pages {text} +{_matchPages.Count - shown} more".t();
+                    return t($"pages {text} +{_matchPages.Count - shown} more");
                 }
 
                 text = shown == 0 ? page.ToString() : text + ", " + page;
@@ -229,7 +229,7 @@ namespace Tesserae.Pdf
                 shown++;
             }
 
-            return $"pages {text}".t();
+            return t($"pages {text}");
         }
 
         private const int MATCH_PAGES_SHOWN = 8;
@@ -746,7 +746,7 @@ namespace Tesserae.Pdf
                    .NoPadding()
                    .NoBorder()
                    .Class("tsspdf-thumb")
-                   .SetTitle($"Page {captured}".t())
+                   .SetTitle(t($"Page {captured}"))
                    .ReplaceContent(VStack().WS().AlignItems(ItemAlign.Center).Gap(4.px()).Children(
                         Raw(tile.Frame),
                         TextBlock(captured.ToString()).Class("tsspdf-thumb-num")))

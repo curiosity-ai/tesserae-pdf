@@ -143,6 +143,22 @@ strings live in a NuGet package it never sees. **So add the keys below to your t
 (or to whatever merges into `TNT.T.SetTranslation`). They are the English text of every message
 pdf.js can ask for, and `{0}` is TNT's own placeholder convention.
 
+The usual way to do that is a file of your own, in a folder your extraction already scans, holding
+nothing but the same literals with `.t()` on them - dead code whose only job is to put the keys in
+your `.tnt` file, where the package's own call sites then find them. From a checkout of this
+repository, `scripts/list-translatable-strings.mjs` writes that file for you, so it is generated
+rather than transcribed:
+
+```bash
+node scripts/list-translatable-strings.mjs --csharp            # the lines, to paste
+node scripts/list-translatable-strings.mjs --update <yourfile> # rewrite them in place, between
+                                                               # that file's marker comments
+```
+
+Regenerate after upgrading the package, then re-run your `tnt` extract and translate steps. The two
+tables below are written by the same script (`--update Tesserae.Pdf/README.md`), from the call sites
+in `src/Chrome/` and `src/L10n/`.
+
 `PdfJs.Language` tells pdf.js which language it is looking at - which decides text direction, and
 how dates inside annotations are formatted. `L10n(customObject)` replaces the bridge entirely, and
 `WithoutOwnLocalization()` falls back to pdf.js's built-in English.
@@ -151,11 +167,14 @@ how dates inside annotations are formatted. `L10n(customObject)` replaces the br
 position - add these too if you use it.
 
 <details>
-<summary>The 38 strings the chrome uses</summary>
+<summary>The strings the chrome uses</summary>
 
+<!-- <tesserae-pdf-strings area="Chrome"> -->
 | Key |
 | --- |
-| `({0} of {1})` |
+| `{0} matches` |
+| `{0} of {1}` |
+| `{0} pages` |
 | `Actual size` |
 | `Automatic` |
 | `Clear` |
@@ -191,16 +210,17 @@ position - add these too if you use it.
 | `Zoom and fit` |
 | `Zoom in` |
 | `Zoom out` |
-| `{0} matches` |
-| `{0} pages` |
+<!-- </tesserae-pdf-strings> -->
 
 </details>
 
 <details>
-<summary>The 45 translatable strings pdf.js can ask for</summary>
+<summary>The strings pdf.js can ask for</summary>
 
+<!-- <tesserae-pdf-strings area="L10n"> -->
 | Key |
 | --- |
+| `Page {0}` |
 | `[{0} Annotation]` |
 | `Add comment` |
 | `Alt text` |
@@ -228,7 +248,6 @@ position - add these too if you use it.
 | `Middle left — resize` |
 | `Middle right — resize` |
 | `Missing alt text` |
-| `Page {0}` |
 | `Pink` |
 | `Red` |
 | `Remove drawing` |
@@ -246,6 +265,7 @@ position - add these too if you use it.
 | `Top middle — resize` |
 | `Top right corner — resize` |
 | `Yellow` |
+<!-- </tesserae-pdf-strings> -->
 
 </details>
 

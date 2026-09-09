@@ -18,8 +18,10 @@ namespace Tesserae.Pdf
     ///
     /// <b>What a host has to do about that.</b> A host's own <c>tnt extract</c> never sees this
     /// source - it lives in a NuGet package - so these keys will not appear in its translation file
-    /// on their own. The README lists them; add them to your translation source, or supply them
-    /// through whatever merges into <c>TNT.T.SetTranslation</c>.
+    /// on their own, and every one of them renders in English however many languages the host ships.
+    /// <c>scripts/list-translatable-strings.mjs</c> writes the list to repeat in a file the host's
+    /// extraction does read (see the README's Localization section); anything that merges into
+    /// <c>TNT.T.SetTranslation</c> works too.
     ///
     /// <b>Placeholders.</b> Fluent writes them <c>{ $page }</c>; TNT's own convention for a
     /// formattable key is <c>{0}</c>, which is what <c>t($"Page {page}")</c> produces. The five
