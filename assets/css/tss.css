@@ -126810,7 +126810,7 @@ line-height: inherit;
     --tss-disabled-foreground-color-root: 161, 159, 157;
     --tss-default-border-color-root: 224, 230, 235;
     --tss-dark-border-color-root: 138, 136, 134;
-    --tss-default-separator-color-root: 243, 242, 241;
+    --tss-default-separator-color-root: 224, 230, 235;
     --tss-invalid-border-color-root: 164, 38, 44;
     --tss-default-background-hover-color-root: 225, 224, 224;
     --tss-default-foreground-hover-color-root: 32, 31, 30;
@@ -128556,7 +128556,7 @@ a {
     filter: saturate(0) !important;
 }
 
-.tss-collapse {
+.tss-collapse.tss-collapse {
     display:none !important;
 }
 
@@ -129234,6 +129234,7 @@ i.tss-card-title-icon {
 
 .tss-icontile-glyph {
     line-height: 1;
+    transform: translateY(0.11em);
 }
 
 .tss-icontile-text {
@@ -129242,11 +129243,14 @@ i.tss-card-title-icon {
     text-transform: uppercase;
     line-height: 1;
     text-align: center;
+    text-box: trim-both cap alphabetic;
+    transform: scale(var(--tss-icontile-text-fit, 1));
 }
 
 :where(.tss-icontile-text) {
     font-size: calc(var(--tss-icontile-size) * 0.35);
 }
+
 
 .tss-icontile img {
     width: 100%;
@@ -131240,6 +131244,17 @@ i.tss-card-title-icon {
     border: 0;
 }
 
+.tss-contextmenu-item.tss-contextmenu-item-separator {
+    min-height: 0;
+    cursor: default;
+}
+
+    .tss-contextmenu-item.tss-contextmenu-item-separator:hover,
+    .tss-contextmenu-item.tss-contextmenu-item-separator:focus {
+        background-color: var(--tss-default-background-color);
+        border-color: transparent;
+    }
+
 .tss-contextmenu-item.tss-disabled {
     color: var(--tss-disabled-foreground-color);
 }
@@ -131263,50 +131278,57 @@ i.tss-card-title-icon {
 .tss-contextmenu-submenu-button-icon {
     padding-left: 15px;
 }
-.tss-horizontalseparator {
-    position: relative;
-    display: inline-block;
-    padding-top: 0px;
-    padding-right: 12px;
-    padding-bottom: 0px;
-    padding-left: 12px;
-    color: var(--tss-default-foreground-color);
-    background: var(--tss-default-background-color);
-}
-    .tss-horizontalseparator.tss-primary {
-        color: var(--tss-primary-background-color);
-    }
 
 .tss-horizontalseparator-container {
     font-size: 14px;
     font-weight: 400;
+    display: flex;
+    align-items: center;
+    box-sizing: border-box;
     position: relative;
-    text-align: center;
-    padding-top: 4px;
-    padding-right: 0px;
-    padding-bottom: 4px;
-    padding-left: 0px;
+    margin-top: 4px;
+    margin-bottom: 4px;
     -webkit-font-smoothing: antialiased;
 }
 
-    .tss-horizontalseparator-container::before {
-        background-color: var(--tss-default-separator-color);
-        height: 1px;
+    .tss-horizontalseparator-container::before,
+    .tss-horizontalseparator-container::after {
         content: "";
-        display: block;
-        position: absolute;
-        top: 50%;
-        bottom: 0px;
-        left: 0px;
-        right: 0px;
+        flex: 1 1 0;
+        min-width: 0;
+        height: 1px;
+        background-color: var(--tss-default-separator-color);
     }
 
-    .tss-horizontalseparator-container.tss-left {
+    .tss-horizontalseparator-container.tss-left::before,
+    .tss-horizontalseparator-container.tss-right::after {
+        display: none;
+    }
+
+    .tss-horizontalseparator-container.tss-left > .tss-horizontalseparator {
+        padding-left: 0;
         text-align: start;
     }
 
-    .tss-horizontalseparator-container.tss-right {
+    .tss-horizontalseparator-container.tss-right > .tss-horizontalseparator {
+        padding-right: 0;
         text-align: end;
+    }
+
+.tss-horizontalseparator {
+    flex: 0 1 auto;
+    min-width: 0;
+    padding: 0 12px;
+    text-align: center;
+    color: var(--tss-default-foreground-color);
+}
+
+    .tss-horizontalseparator:empty {
+        padding: 0;
+    }
+
+    .tss-horizontalseparator.tss-primary {
+        color: var(--tss-primary-background-color);
     }
 
 .tss-editablelabel {
@@ -133205,6 +133227,15 @@ body.tss-modal-dragging .tss-modal-draggable {
         opacity: 0.7;
     }
 
+    .tss-searchbox::-webkit-search-cancel-button,
+    .tss-searchbox::-webkit-search-decoration,
+    .tss-searchbox::-webkit-search-results-button,
+    .tss-searchbox::-webkit-search-results-decoration {
+        -webkit-appearance: none;
+        appearance: none;
+        display: none;
+    }
+
 .tss-searchbox-container {
     display: inline-flex;
     position: relative;
@@ -133285,6 +133316,44 @@ body.tss-modal-dragging .tss-modal-draggable {
     height: 16px;
 }
 
+.tss-searchbox-clear {
+    display: none;
+    align-items: center;
+    justify-content: center;
+    align-self: center;
+    width: 28px;
+    height: 28px;
+    max-height: 100%;
+    flex-shrink: 0;
+    border: none;
+    border-radius: 6px;
+    background: transparent;
+    color: var(--tss-secondary-foreground-color);
+    cursor: pointer;
+    padding: 0;
+    margin: 0;
+    font: inherit;
+}
+
+    .tss-searchbox-clear:hover {
+        background: var(--tss-default-background-hover-color);
+        color: var(--tss-default-foreground-color);
+    }
+
+    .tss-searchbox-clear:focus-visible {
+        outline: 2px solid var(--tss-primary-border-color);
+        outline-offset: -2px;
+    }
+
+.tss-searchbox-container.tss-searchbox-has-text:not(.tss-disabled) > .tss-searchbox-clear {
+    display: inline-flex;
+}
+
+.tss-searchbox-clear-icon {
+    font-size: 16px;
+    line-height: 1;
+}
+
 .tss-searchbox-shortcut {
     display: none;
     align-items: center;
@@ -133321,6 +133390,16 @@ body.tss-modal-dragging .tss-modal-draggable {
 .tss-searchable-list-no-match {
     opacity:0.4;
     filter:saturate(0);
+}
+
+
+::highlight(tss-marked) {
+    background-color: Mark;
+    color: MarkText;
+}
+
+::highlight(tss-marked-focused) {
+    background-color: var(--tss-danger-background-color);
 }
 
 .tss-omnibox-container {
@@ -133387,35 +133466,38 @@ body.tss-modal-dragging .tss-modal-draggable {
             background: transparent;
             border-left: 1px solid var(--tss-default-border-color);
             flex-shrink: 0;
+        }
+
+        .tss-omnibox-container:not(.tss-omnibox-chat-and-search) .tss-omnibox-search-container .tss-btn.tss-omnibox-search-trigger-btn {
             border-top-right-radius: var(--tss-omnibox-radius);
             border-bottom-right-radius: var(--tss-omnibox-radius);
             border-top-left-radius: 0;
             border-bottom-left-radius: 0;
         }
 
-.tss-omnibox-search-btn {
+.tss-omnibox-search-trigger-btn {
     position: relative;
 }
 
-    .tss-omnibox-search-btn > .tss-omnibox-search-spinner {
+    .tss-omnibox-search-trigger-btn > .tss-omnibox-search-spinner {
         display: none;
         position: absolute;
         inset: 0;
         margin-left: 8px;
     }
 
-.tss-omnibox-search-btn > .tss-omnibox-search-spinner .tss-spinner {
+.tss-omnibox-search-trigger-btn > .tss-omnibox-search-spinner .tss-spinner {
     --tss-spinner-size: 2px;
     width: 14px;
     height: 14px;
 }
 
-.tss-omnibox-searching .tss-omnibox-search-btn > .tss-omnibox-search-spinner {
+.tss-omnibox-searching .tss-omnibox-search-trigger-btn > .tss-omnibox-search-spinner {
     display: flex;
     animation: tss-omnibox-searching-in 120ms linear 140ms both;
 }
 
-.tss-omnibox-container.tss-omnibox-searching .tss-omnibox-search-btn > i {
+.tss-omnibox-container.tss-omnibox-searching .tss-omnibox-search-trigger-btn > i {
     animation: tss-omnibox-searching-out 120ms linear 140ms both;
 }
 
@@ -138540,6 +138622,7 @@ body.tss-mobile textarea {
 .tss-banner-title-text {
     overflow: hidden;
     text-overflow: ellipsis;
+    overflow-wrap: anywhere;
 }
 
 .tss-banner-badge {
@@ -138563,6 +138646,12 @@ body.tss-mobile textarea {
     font-size: var(--tss-font-size-small);
     line-height: 18px;
     color: var(--tss-banner-text-color);
+    overflow-wrap: anywhere;
+}
+
+.tss-banner-title > *,
+.tss-banner-text > * {
+    min-width: 0;
 }
 
 .tss-banner-title > .tss-textblock,
@@ -138627,6 +138716,10 @@ body.tss-mobile textarea {
     position: relative;
     display: flex;
     flex-direction: column;
+}
+
+.tss-tree-item.tss-tree-filtered-out {
+    display: none;
 }
 
 .tss-tree-item-content {
@@ -138763,6 +138856,8 @@ body.tss-mobile textarea {
     min-width: 20px;
     height: 20px;
     padding: 0 4px;
+    margin-top: 0;
+    margin-bottom: 0;
 }
 
 .tss-tree-children {
@@ -138828,6 +138923,7 @@ body.tss-mobile textarea {
     margin: 0px;
     padding: 0px 12px;
     min-width: 52px !important;
+    width: 100%;
     justify-content: flex-start;
 }
 
@@ -142650,6 +142746,7 @@ body.tss-mobile textarea {
 
 .tss-omniresult-icon-inline .tss-omniresult-icon > .tss-icontile-text {
     white-space: nowrap;
+    --tss-icontile-text-fit: 1;
 }
 
 .tss-omniresult-icon-inline .tss-omniresult-icon-badge {
@@ -142692,7 +142789,7 @@ body.tss-mobile textarea {
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
-    font-size: 16px;
+    font-size: var(--tss-font-size-smallplus);
     font-weight: 600;
     line-height: 22px;
     color: var(--tss-default-foreground-color);
@@ -142717,7 +142814,6 @@ body.tss-mobile textarea {
 }
 
 .tss-omniresult-id-value {
-    max-width: 140px;
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
@@ -142729,7 +142825,7 @@ body.tss-mobile textarea {
 }
 
 .tss-omniresult-id-chevron {
-    font-size: 11px;
+    font-size: var(--tss-font-size-xsmall);
     line-height: 1;
     color: var(--tss-secondary-foreground-color);
 }
@@ -142976,7 +143072,7 @@ body.tss-mobile textarea {
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
-    font-size: 16px;
+    font-size: var(--tss-font-size-smallplus);
     font-weight: 600;
     color: var(--tss-default-foreground-color);
 }
@@ -143062,7 +143158,7 @@ body.tss-mobile textarea {
     border: none;
     background: transparent;
     color: inherit;
-    font-size: 13px;
+    font-size: var(--tss-font-size-small);
     font-weight: 600;
     cursor: pointer;
 }
@@ -143086,7 +143182,7 @@ body.tss-mobile textarea {
     width: 14px;
     height: 14px;
     line-height: 0;
-    font-size: 13px;
+    font-size: var(--tss-font-size-small);
 }
 
 .tss-omniresult-modal-open-icon img,
@@ -143130,7 +143226,7 @@ body.tss-mobile textarea {
 
 .tss-modalstack-peek .tss-omniresult-modal-title-text,
 .tss-modalstack-peek .tss-omniresult-id-value {
-    font-size: 13px;
+    font-size: var(--tss-font-size-small);
     line-height: 18px;
 }
 
@@ -143145,7 +143241,7 @@ body.tss-mobile textarea {
     flex-wrap: wrap;
     gap: 4px 18px;
     padding: 6px 0;
-    font-size: 11px;
+    font-size: var(--tss-font-size-xsmall);
     line-height: 18px;
     color: var(--tss-secondary-foreground-color);
 }
