@@ -75,6 +75,10 @@ const legacy   = 'pdfjs-dist/legacy';
 await rm(outDir, { recursive: true, force: true });
 await mkdir(outDir, { recursive: true });
 
+// Read before anything is emitted: the epilogue below stamps it onto the worker URL, and
+// version.txt and LICENSE.txt name it further down.
+const version = JSON.parse(await readFile(join(distRoot, 'package.json'), 'utf8')).version;
+
 /**
  * pdf.js's stylesheet, built on its own so its ~20 relative `url(images/*.svg|gif)` references
  * resolve and inline. It is required in practice even for a bare canvas render plus a text layer:
@@ -150,7 +154,8 @@ const prelude = `(function () {
 `;
 
 /**
- * Defaults `GlobalWorkerOptions.workerSrc` to the worker sitting next to this script.
+ * Defaults `GlobalWorkerOptions.workerSrc` to the worker sitting next to this script, with the
+ * bundled pdf.js version as a query.
  *
  * pdf.js has no browser default - `PDFWorker.workerSrc` throws 'No "GlobalWorkerOptions.workerSrc"
  * specified' - and getting it wrong does not fail loudly: pdf.js falls back to importing the
@@ -158,6 +163,22 @@ const prelude = `(function () {
  * while it does. Deriving it from `document.currentScript.src` means the worker follows wherever
  * this bundle is served from, with no second setting to keep in sync, including a CDN (pdf.js
  * wraps a cross-origin workerSrc in a same-origin blob itself).
+ *
+ * WHY THE `?v=` - pdf.js checks the two halves against each other and refuses to open a document
+ * when they disagree: the display API sends its `apiVersion` with every GetDocRequest and the
+ * worker throws `The API version "A" does not match the Worker version "B".`, which reaches a host
+ * as an UnknownErrorException. The two halves are one bundle here and cannot disagree on disk, but
+ * they are fetched by completely different mechanisms - `pdf.js` through Transpose.Require, which
+ * appends a cache-busting token, and the worker by `new Worker()` from inside it, with no token at
+ * all - so the API is always the deployed one while the worker is whatever the browser (or a service
+ * worker) still holds, and the first load after the pin moves asks the previous worker to open a
+ * document.
+ * Reloading does not reliably clear it: a hard reload bypasses the cache for what the *page*
+ * fetches, not for a worker a script creates later. Stamping the version makes the worker's URL
+ * change whenever the pin does, so the previous worker is never what answers.
+ *
+ * A query is safe on all three paths pdf.js puts this through: `new Worker(src, {type:'module'})`,
+ * the cross-origin `new URL(src, location)` blob wrapper, and the fake-worker `import(src)`.
  *
  * Guarded on both options, so a host that installed its own workerSrc or handed pdf.js a
  * workerPort before loading this file keeps it.
@@ -172,7 +193,7 @@ const epilogue = `
   var src  = (document.currentScript && document.currentScript.src) || '';
   var base = src ? src.replace(/\\/[^\\/]*$/, '') : '.';
 
-  lib.GlobalWorkerOptions.workerSrc = base + '/pdf.worker.min.mjs';
+  lib.GlobalWorkerOptions.workerSrc = base + '/pdf.worker.min.mjs?v=' + ${JSON.stringify(version)};
 })();
 `;
 
@@ -204,7 +225,6 @@ await cp(join(distRoot, 'legacy/web/images'), join(outDir, 'images'), { recursiv
 
 // pdf.js is Apache-2.0; ship its license text alongside the code it covers, and point at the
 // sidecar licenses that travel inside the asset directories.
-const version = JSON.parse(await readFile(join(distRoot, 'package.json'), 'utf8')).version;
 const license = await readFile(join(distRoot, 'LICENSE'), 'utf8');
 
 await writeFile(

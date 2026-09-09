@@ -132,7 +132,14 @@ namespace Tesserae.Pdf
 
         /// <summary>
         /// Where pdf.js loads its worker from. The bundle points this at the worker sitting beside it,
-        /// so setting it is only needed to serve the worker from somewhere else entirely.
+        /// with the bundled pdf.js version as a <c>?v=</c> query, so setting it is only needed to
+        /// serve the worker from somewhere else entirely.
+        ///
+        /// Keep the query if you do. pdf.js refuses to open a document whose worker is a different
+        /// build from the display API (<see cref="PdfErrorKind.WorkerVersionMismatch"/>), and the
+        /// worker is fetched by <c>new Worker()</c> from inside pdf.js rather than by the page - so
+        /// without a version in its URL a cached worker from the previous version is what answers
+        /// after an upgrade, and a reload does not necessarily replace it.
         ///
         /// Getting this wrong does not fail loudly: pdf.js falls back to importing the worker on the
         /// main thread, which parses correctly and freezes the UI while it does. Watch the console for

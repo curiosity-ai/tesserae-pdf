@@ -50,6 +50,15 @@ namespace Tesserae.Pdf
         /// happens when the user scrolls away or zooms while a page is still painting.
         /// </summary>
         RenderingCancelled,
+
+        /// <summary>
+        /// pdf.js's display API and its worker are from two different builds, so pdf.js refused to
+        /// open the document. Nothing is wrong with the document and no host code can recover it: the
+        /// two halves ship as one bundle, so this means the browser (or a service worker) answered
+        /// with a cached worker from a previous version, or the deployed <c>assets/js/pdf</c> is a mix
+        /// of two. <see cref="PdfError.Message"/> carries both versions and what to do about it.
+        /// </summary>
+        WorkerVersionMismatch,
     }
 
     /// <summary>
@@ -125,6 +134,16 @@ namespace Tesserae.Pdf
             var status  = jsError is object ? jsError.status  : 0;
             var missing = jsError is object && jsError.missing;
 
+            // Checked before the name, because the version handshake is a bare `throw new Error` from
+            // inside the worker: what reaches a host is whichever catch-all pdf.js's message handler
+            // wrapped it in (UnknownErrorException today), which names nothing. The message is the
+            // only discriminator there is - matched on the two halves of its sentence rather than on
+            // the whole of it, since pdf.js has reworded it before now.
+            if (IsWorkerVersionMismatch(message))
+            {
+                return new PdfError(PdfErrorKind.WorkerVersionMismatch, name, message + WORKER_VERSION_MISMATCH_HINT, status, missing);
+            }
+
             // pdf.js renamed these in version 5: MissingPDFException and UnexpectedResponseException
             // both became ResponseException, which carries the status instead of encoding it in the
             // type. The old names are still matched so a host reading an error from an older pdf.js
@@ -150,5 +169,30 @@ namespace Tesserae.Pdf
 
             return new PdfError(PdfErrorKind.Unknown, name, message ?? (error is object ? error.ToString() : null), status, missing);
         }
+
+        /// <summary>
+        /// True for pdf.js's version handshake: the display API sends its <c>apiVersion</c> with
+        /// every document request and the worker throws
+        /// <c>The API version "A" does not match the Worker version "B".</c> when it is not its own.
+        /// </summary>
+        private static bool IsWorkerVersionMismatch(string message)
+        {
+            return !string.IsNullOrEmpty(message) && message.Contains("API version") && message.Contains("Worker version");
+        }
+
+        /// <summary>
+        /// Appended to pdf.js's own message, which names the two versions and stops there. Worth the
+        /// paragraph: the failure looks like a broken document and is not one, and the thing to reach
+        /// for - a cache, not the code - is not what anyone tries first.
+        /// </summary>
+        private const string WORKER_VERSION_MISMATCH_HINT =
+            " pdf.js's display API and its worker are from two different builds, so this is a"
+          + " deployment problem rather than a problem with the document. Tesserae.Pdf ships both"
+          + " halves as one bundle, so they cannot disagree on disk: what has almost always answered"
+          + " is a cached worker from the previous pdf.js. It is fetched by new Worker() from inside"
+          + " pdf.js rather than by the page, which a reload does not necessarily revalidate, so clear"
+          + " the browser cache and any service worker holding it. If it survives that, the"
+          + " assets/js/pdf being served is a mix of two builds - rebuild, and check that nothing else"
+          + " deploys a pdf.worker.min.mjs of its own.";
     }
 }

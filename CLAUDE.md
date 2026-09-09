@@ -123,6 +123,27 @@ when the pin moves**: if the modern build stops needing an unshipped proposal, s
   `${wasmUrl}quickjs-eval.js`, which finds its `.wasm` next to itself via `import.meta.url`. Folded
   into an IIFE, all three break.
 
+### Fixed: the worker URL carries the pdf.js version, or an upgrade breaks every document
+
+pdf.js checks its two halves against each other - the display API sends its `apiVersion` with every
+document request and the worker throws `The API version "6.3.289" does not match the Worker version
+"6.2.108".`, which arrives as an `UnknownErrorException` naming nothing. They are one bundle here and
+cannot disagree on disk, but they are fetched by completely different mechanisms: `pdf.js` through
+`Transpose.Require`, which appends a cache-busting token, and the worker by `new Worker()` from inside
+it, with no token at all. So the API is always the deployed one and the worker is whatever the browser
+(or a service worker) still holds - and the *first* load after the pin moves asks the previous worker
+to open a document. A reload does not reliably fix it either: a hard reload bypasses the cache for
+what the page fetches, not for a worker a script creates later.
+
+So `bundle-pdfjs.mjs` stamps the bundled version onto the default `workerSrc`
+(`pdf.worker.min.mjs?v=6.3.289`), which makes the URL change whenever the pin does. A query is safe on
+all three paths pdf.js puts that value through - `new Worker(src, { type: "module" })`, the
+cross-origin `new URL(src, location)` blob wrapper, and the fake-worker `import(src)` - and a host
+overriding `PdfJs.WorkerSrc` should keep one. The failure is also classified now rather than reported
+as `Unknown`: `PdfErrorKind.WorkerVersionMismatch`, whose message says it is a cache rather than a
+document. That classification is a *message* sniff, because the worker throws a bare `Error` and pdf.js
+wraps it in its catch-all - so it matches the two halves of the sentence rather than the whole of it.
+
 ### pdf.js assets are NOT Transpose resources
 
 `tps.json` declares no `resources` at all. pdf.js is packed into the nupkg under `pdfjs/` and copied
