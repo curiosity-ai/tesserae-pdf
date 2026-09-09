@@ -279,7 +279,10 @@ namespace Tesserae.Pdf
         /// <summary>Zooms out one step.</summary>
         public PdfViewer ZoomOut(double factor = 1.1)
         {
-            _viewer?.decreaseScale(new ScaleChangeParameters { scaleFactor = factor });
+            // pdf.js's updateScale() always multiplies by scaleFactor when one is given - it does
+            // not invert it for decreaseScale, whatever steps says. Passing the raw factor here
+            // zoomed in on zoom-out; the reciprocal is what makes this divide the current scale.
+            _viewer?.decreaseScale(new ScaleChangeParameters { scaleFactor = 1 / factor });
 
             return this;
         }
