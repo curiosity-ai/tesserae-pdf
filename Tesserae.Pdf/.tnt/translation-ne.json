@@ -1,0 +1,760 @@
+﻿[
+  {
+    "State": "ClaudeSkillGenerated",
+    "GeneratedBy": "claude-opus-5",
+    "OriginalString": "Actual size",
+    "TranslatedString": "वास्तविक आकार",
+    "SourceLocations": [
+      "src/Chrome/PdfViewerChrome.Toolbar.cs:476",
+      "src/Chrome/PdfViewerChrome.Toolbar.cs:580"
+    ]
+  },
+  {
+    "State": "ClaudeSkillGenerated",
+    "GeneratedBy": "claude-opus-5",
+    "OriginalString": "Add comment",
+    "TranslatedString": "टिप्पणी थप्नुहोस्",
+    "SourceLocations": [
+      "src/L10n/PdfL10nStrings.cs:50"
+    ]
+  },
+  {
+    "State": "ClaudeSkillGenerated",
+    "GeneratedBy": "claude-opus-5",
+    "OriginalString": "Alt text",
+    "TranslatedString": "वैकल्पिक पाठ",
+    "SourceLocations": [
+      "src/L10n/PdfL10nStrings.cs:53",
+      "src/L10n/PdfL10nStrings.cs:56"
+    ]
+  },
+  {
+    "State": "ClaudeSkillGenerated",
+    "GeneratedBy": "claude-opus-5",
+    "OriginalString": "Alt text added",
+    "TranslatedString": "वैकल्पिक पाठ थपियो",
+    "SourceLocations": [
+      "src/L10n/PdfL10nStrings.cs:107",
+      "src/L10n/PdfL10nStrings.cs:110"
+    ]
+  },
+  {
+    "State": "ClaudeSkillGenerated",
+    "GeneratedBy": "claude-opus-5",
+    "OriginalString": "Automatic",
+    "TranslatedString": "स्वचालित",
+    "SourceLocations": [
+      "src/Chrome/PdfViewerChrome.Toolbar.cs:581"
+    ]
+  },
+  {
+    "State": "ClaudeSkillGenerated",
+    "GeneratedBy": "claude-opus-5",
+    "OriginalString": "Blue",
+    "TranslatedString": "निलो",
+    "SourceLocations": [
+      "src/L10n/PdfL10nStrings.cs:71"
+    ]
+  },
+  {
+    "State": "ClaudeSkillGenerated",
+    "GeneratedBy": "claude-opus-5",
+    "OriginalString": "Bottom left corner — resize",
+    "TranslatedString": "तल्लो बायाँ कुना — आकार बदल्नुहोस्",
+    "SourceLocations": [
+      "src/L10n/PdfL10nStrings.cs:143"
+    ]
+  },
+  {
+    "State": "ClaudeSkillGenerated",
+    "GeneratedBy": "claude-opus-5",
+    "OriginalString": "Bottom middle — resize",
+    "TranslatedString": "तल बीचमा — आकार बदल्नुहोस्",
+    "SourceLocations": [
+      "src/L10n/PdfL10nStrings.cs:146"
+    ]
+  },
+  {
+    "State": "ClaudeSkillGenerated",
+    "GeneratedBy": "claude-opus-5",
+    "OriginalString": "Bottom right corner — resize",
+    "TranslatedString": "तल्लो दायाँ कुना — आकार बदल्नुहोस्",
+    "SourceLocations": [
+      "src/L10n/PdfL10nStrings.cs:149"
+    ]
+  },
+  {
+    "State": "ClaudeSkillGenerated",
+    "GeneratedBy": "claude-opus-5",
+    "OriginalString": "Change color",
+    "TranslatedString": "रङ बदल्नुहोस्",
+    "SourceLocations": [
+      "src/L10n/PdfL10nStrings.cs:74"
+    ]
+  },
+  {
+    "State": "ClaudeSkillGenerated",
+    "GeneratedBy": "claude-opus-5",
+    "OriginalString": "Change drawing color",
+    "TranslatedString": "चित्रको रङ बदल्नुहोस्",
+    "SourceLocations": [
+      "src/L10n/PdfL10nStrings.cs:68"
+    ]
+  },
+  {
+    "State": "ClaudeSkillGenerated",
+    "GeneratedBy": "claude-opus-5",
+    "OriginalString": "Change text color",
+    "TranslatedString": "पाठको रङ बदल्नुहोस्",
+    "SourceLocations": [
+      "src/L10n/PdfL10nStrings.cs:65"
+    ]
+  },
+  {
+    "State": "ClaudeSkillGenerated",
+    "GeneratedBy": "claude-opus-5",
+    "OriginalString": "Clear",
+    "TranslatedString": "खाली गर्नुहोस्",
+    "SourceLocations": [
+      "src/Chrome/PdfViewerChrome.Search.cs:251"
+    ]
+  },
+  {
+    "State": "ClaudeSkillGenerated",
+    "GeneratedBy": "claude-opus-5",
+    "OriginalString": "Color choices",
+    "TranslatedString": "रङ छनोट",
+    "SourceLocations": [
+      "src/L10n/PdfL10nStrings.cs:77"
+    ]
+  },
+  {
+    "State": "ClaudeSkillGenerated",
+    "GeneratedBy": "claude-opus-5",
+    "OriginalString": "Comment",
+    "TranslatedString": "टिप्पणी",
+    "SourceLocations": [
+      "src/L10n/PdfL10nStrings.cs:47"
+    ]
+  },
+  {
+    "State": "ClaudeSkillGenerated",
+    "GeneratedBy": "claude-opus-5",
+    "OriginalString": "Continued from the start of the document",
+    "TranslatedString": "कागजातको सुरुबाट जारी",
+    "SourceLocations": [
+      "src/Chrome/PdfViewerChrome.Search.cs:431"
+    ]
+  },
+  {
+    "State": "ClaudeSkillGenerated",
+    "GeneratedBy": "claude-opus-5",
+    "OriginalString": "Created automatically: {0}",
+    "TranslatedString": "स्वचालित रूपमा सिर्जना गरिएको: {0}",
+    "SourceLocations": [
+      "src/L10n/PdfL10nStrings.cs:113"
+    ]
+  },
+  {
+    "State": "ClaudeSkillGenerated",
+    "GeneratedBy": "claude-opus-5",
+    "OriginalString": "Document outline",
+    "TranslatedString": "कागजात रूपरेखा",
+    "SourceLocations": [
+      "src/Chrome/PdfViewerChrome.Toolbar.cs:255"
+    ]
+  },
+  {
+    "State": "ClaudeSkillGenerated",
+    "GeneratedBy": "claude-opus-5",
+    "OriginalString": "Drawing added",
+    "TranslatedString": "चित्र थपियो",
+    "SourceLocations": [
+      "src/L10n/PdfL10nStrings.cs:101"
+    ]
+  },
+  {
+    "State": "ClaudeSkillGenerated",
+    "GeneratedBy": "claude-opus-5",
+    "OriginalString": "Drawing editor",
+    "TranslatedString": "चित्र सम्पादक",
+    "SourceLocations": [
+      "src/L10n/PdfL10nStrings.cs:104"
+    ]
+  },
+  {
+    "State": "ClaudeSkillGenerated",
+    "GeneratedBy": "claude-opus-5",
+    "OriginalString": "Edit alt text",
+    "TranslatedString": "वैकल्पिक पाठ सम्पादन गर्नुहोस्",
+    "SourceLocations": [
+      "src/L10n/PdfL10nStrings.cs:62"
+    ]
+  },
+  {
+    "State": "ClaudeSkillGenerated",
+    "GeneratedBy": "claude-opus-5",
+    "OriginalString": "Find in document",
+    "TranslatedString": "कागजातमा खोज्नुहोस्",
+    "SourceLocations": [
+      "src/Chrome/PdfViewerChrome.Search.cs:232"
+    ]
+  },
+  {
+    "State": "ClaudeSkillGenerated",
+    "GeneratedBy": "claude-opus-5",
+    "OriginalString": "Fit content",
+    "TranslatedString": "पृष्ठको चौडाइ",
+    "SourceLocations": [
+      "src/Chrome/PdfViewerChrome.Toolbar.cs:202",
+      "src/Chrome/PdfViewerChrome.Toolbar.cs:475",
+      "src/Chrome/PdfViewerChrome.Toolbar.cs:579"
+    ]
+  },
+  {
+    "State": "ClaudeSkillGenerated",
+    "GeneratedBy": "claude-opus-5",
+    "OriginalString": "Fit page",
+    "TranslatedString": "पूरा पृष्ठ",
+    "SourceLocations": [
+      "src/Chrome/PdfViewerChrome.Toolbar.cs:201",
+      "src/Chrome/PdfViewerChrome.Toolbar.cs:474",
+      "src/Chrome/PdfViewerChrome.Toolbar.cs:578"
+    ]
+  },
+  {
+    "State": "ClaudeSkillGenerated",
+    "GeneratedBy": "claude-opus-5",
+    "OriginalString": "Fuzzy",
+    "TranslatedString": "अनुमानित",
+    "SourceLocations": [
+      "src/Chrome/PdfViewerChrome.Search.cs:257",
+      "src/Chrome/PdfViewerChrome.Toolbar.cs:517"
+    ]
+  },
+  {
+    "State": "ClaudeSkillGenerated",
+    "GeneratedBy": "claude-opus-5",
+    "OriginalString": "Green",
+    "TranslatedString": "हरियो",
+    "SourceLocations": [
+      "src/L10n/PdfL10nStrings.cs:80"
+    ]
+  },
+  {
+    "State": "ClaudeSkillGenerated",
+    "GeneratedBy": "claude-opus-5",
+    "OriginalString": "Highlight",
+    "TranslatedString": "हाइलाइट गर्नुहोस्",
+    "SourceLocations": [
+      "src/L10n/PdfL10nStrings.cs:182"
+    ]
+  },
+  {
+    "State": "ClaudeSkillGenerated",
+    "GeneratedBy": "claude-opus-5",
+    "OriginalString": "Highlight added",
+    "TranslatedString": "हाइलाइट थपियो",
+    "SourceLocations": [
+      "src/L10n/PdfL10nStrings.cs:95"
+    ]
+  },
+  {
+    "State": "ClaudeSkillGenerated",
+    "GeneratedBy": "claude-opus-5",
+    "OriginalString": "Highlight editor",
+    "TranslatedString": "हाइलाइट सम्पादक",
+    "SourceLocations": [
+      "src/L10n/PdfL10nStrings.cs:98"
+    ]
+  },
+  {
+    "State": "ClaudeSkillGenerated",
+    "GeneratedBy": "claude-opus-5",
+    "OriginalString": "Ignore case, accents and word boundaries",
+    "TranslatedString": "ठूला-साना अक्षर, चिन्ह र शब्द सिमाना बेवास्ता गर्नुहोस्",
+    "SourceLocations": [
+      "src/Chrome/PdfViewerChrome.Search.cs:151"
+    ]
+  },
+  {
+    "State": "ClaudeSkillGenerated",
+    "GeneratedBy": "claude-opus-5",
+    "OriginalString": "Image added",
+    "TranslatedString": "छवि थपियो",
+    "SourceLocations": [
+      "src/L10n/PdfL10nStrings.cs:173"
+    ]
+  },
+  {
+    "State": "ClaudeSkillGenerated",
+    "GeneratedBy": "claude-opus-5",
+    "OriginalString": "Image editor",
+    "TranslatedString": "छवि सम्पादक",
+    "SourceLocations": [
+      "src/L10n/PdfL10nStrings.cs:176"
+    ]
+  },
+  {
+    "State": "ClaudeSkillGenerated",
+    "GeneratedBy": "claude-opus-5",
+    "OriginalString": "Marked as decorative",
+    "TranslatedString": "सजावटीको रूपमा चिन्ह लगाइएको",
+    "SourceLocations": [
+      "src/L10n/PdfL10nStrings.cs:59"
+    ]
+  },
+  {
+    "State": "ClaudeSkillGenerated",
+    "GeneratedBy": "claude-opus-5",
+    "OriginalString": "Match case, whole words, diacritics respected",
+    "TranslatedString": "ठूला-साना अक्षर, पूरा शब्द र चिन्ह मिलाउनुहोस्",
+    "SourceLocations": [
+      "src/Chrome/PdfViewerChrome.Search.cs:150"
+    ]
+  },
+  {
+    "State": "ClaudeSkillGenerated",
+    "GeneratedBy": "claude-opus-5",
+    "OriginalString": "Middle left — resize",
+    "TranslatedString": "बीच बायाँ — आकार बदल्नुहोस्",
+    "SourceLocations": [
+      "src/L10n/PdfL10nStrings.cs:152"
+    ]
+  },
+  {
+    "State": "ClaudeSkillGenerated",
+    "GeneratedBy": "claude-opus-5",
+    "OriginalString": "Middle right — resize",
+    "TranslatedString": "बीच दायाँ — आकार बदल्नुहोस्",
+    "SourceLocations": [
+      "src/L10n/PdfL10nStrings.cs:155"
+    ]
+  },
+  {
+    "State": "ClaudeSkillGenerated",
+    "GeneratedBy": "claude-opus-5",
+    "OriginalString": "Missing alt text",
+    "TranslatedString": "वैकल्पिक पाठ छैन",
+    "SourceLocations": [
+      "src/L10n/PdfL10nStrings.cs:116",
+      "src/L10n/PdfL10nStrings.cs:119"
+    ]
+  },
+  {
+    "State": "ClaudeSkillGenerated",
+    "GeneratedBy": "claude-opus-5",
+    "OriginalString": "More controls",
+    "TranslatedString": "थप नियन्त्रणहरू",
+    "SourceLocations": [
+      "src/Chrome/PdfViewerChrome.Toolbar.cs:444"
+    ]
+  },
+  {
+    "State": "ClaudeSkillGenerated",
+    "GeneratedBy": "claude-opus-5",
+    "OriginalString": "Next match",
+    "TranslatedString": "अर्को नतिजा",
+    "SourceLocations": [
+      "src/Chrome/PdfViewerChrome.Search.cs:249"
+    ]
+  },
+  {
+    "State": "ClaudeSkillGenerated",
+    "GeneratedBy": "claude-opus-5",
+    "OriginalString": "Next page",
+    "TranslatedString": "अर्को पृष्ठ",
+    "SourceLocations": [
+      "src/Chrome/PdfViewerChrome.Toolbar.cs:279"
+    ]
+  },
+  {
+    "State": "ClaudeSkillGenerated",
+    "GeneratedBy": "claude-opus-5",
+    "OriginalString": "No document.",
+    "TranslatedString": "कुनै कागजात छैन।",
+    "SourceLocations": [
+      "src/Chrome/PdfViewerChrome.Panel.cs:395",
+      "src/Chrome/PdfViewerChrome.Panel.cs:722"
+    ]
+  },
+  {
+    "State": "ClaudeSkillGenerated",
+    "GeneratedBy": "claude-opus-5",
+    "OriginalString": "No matches",
+    "TranslatedString": "कुनै नतिजा छैन",
+    "SourceLocations": [
+      "src/Chrome/PdfViewerChrome.Search.cs:440",
+      "src/Chrome/PdfViewerChrome.Panel.cs:199"
+    ]
+  },
+  {
+    "State": "ClaudeSkillGenerated",
+    "GeneratedBy": "claude-opus-5",
+    "OriginalString": "No matches - try Fuzzy",
+    "TranslatedString": "कुनै नतिजा छैन - अनुमानित प्रयास गर्नुहोस्",
+    "SourceLocations": [
+      "src/Chrome/PdfViewerChrome.Search.cs:439"
+    ]
+  },
+  {
+    "State": "ClaudeSkillGenerated",
+    "GeneratedBy": "claude-opus-5",
+    "OriginalString": "Page",
+    "TranslatedString": "पृष्ठ",
+    "SourceLocations": [
+      "src/Chrome/PdfViewerChrome.Toolbar.cs:301"
+    ]
+  },
+  {
+    "State": "ClaudeSkillGenerated",
+    "GeneratedBy": "claude-opus-5",
+    "OriginalString": "Page {0}",
+    "TranslatedString": "पृष्ठ {0}",
+    "SourceLocations": [
+      "src/L10n/PdfL10nStrings.cs:185",
+      "src/Chrome/PdfViewerChrome.Panel.cs:749"
+    ]
+  },
+  {
+    "State": "ClaudeSkillGenerated",
+    "GeneratedBy": "claude-opus-5",
+    "OriginalString": "Page {0} of {1}",
+    "TranslatedString": "पृष्ठ {0} / {1}",
+    "SourceLocations": [
+      "src/Chrome/PdfViewerChrome.Toolbar.cs:662"
+    ]
+  },
+  {
+    "State": "ClaudeSkillGenerated",
+    "GeneratedBy": "claude-opus-5",
+    "OriginalString": "Pink",
+    "TranslatedString": "गुलाबी",
+    "SourceLocations": [
+      "src/L10n/PdfL10nStrings.cs:83"
+    ]
+  },
+  {
+    "State": "ClaudeSkillGenerated",
+    "GeneratedBy": "claude-opus-5",
+    "OriginalString": "Precise",
+    "TranslatedString": "सटीक",
+    "SourceLocations": [
+      "src/Chrome/PdfViewerChrome.Search.cs:258",
+      "src/Chrome/PdfViewerChrome.Toolbar.cs:520"
+    ]
+  },
+  {
+    "State": "ClaudeSkillGenerated",
+    "GeneratedBy": "claude-opus-5",
+    "OriginalString": "Previous match",
+    "TranslatedString": "अघिल्लो नतिजा",
+    "SourceLocations": [
+      "src/Chrome/PdfViewerChrome.Search.cs:248"
+    ]
+  },
+  {
+    "State": "ClaudeSkillGenerated",
+    "GeneratedBy": "claude-opus-5",
+    "OriginalString": "Previous page",
+    "TranslatedString": "अघिल्लो पृष्ठ",
+    "SourceLocations": [
+      "src/Chrome/PdfViewerChrome.Toolbar.cs:272"
+    ]
+  },
+  {
+    "State": "ClaudeSkillGenerated",
+    "GeneratedBy": "claude-opus-5",
+    "OriginalString": "Red",
+    "TranslatedString": "रातो",
+    "SourceLocations": [
+      "src/L10n/PdfL10nStrings.cs:86"
+    ]
+  },
+  {
+    "State": "ClaudeSkillGenerated",
+    "GeneratedBy": "claude-opus-5",
+    "OriginalString": "Remove drawing",
+    "TranslatedString": "चित्र हटाउनुहोस्",
+    "SourceLocations": [
+      "src/L10n/PdfL10nStrings.cs:134"
+    ]
+  },
+  {
+    "State": "ClaudeSkillGenerated",
+    "GeneratedBy": "claude-opus-5",
+    "OriginalString": "Remove highlight",
+    "TranslatedString": "हाइलाइट हटाउनुहोस्",
+    "SourceLocations": [
+      "src/L10n/PdfL10nStrings.cs:131"
+    ]
+  },
+  {
+    "State": "ClaudeSkillGenerated",
+    "GeneratedBy": "claude-opus-5",
+    "OriginalString": "Remove image",
+    "TranslatedString": "छवि हटाउनुहोस्",
+    "SourceLocations": [
+      "src/L10n/PdfL10nStrings.cs:140"
+    ]
+  },
+  {
+    "State": "ClaudeSkillGenerated",
+    "GeneratedBy": "claude-opus-5",
+    "OriginalString": "Remove signature",
+    "TranslatedString": "हस्ताक्षर हटाउनुहोस्",
+    "SourceLocations": [
+      "src/L10n/PdfL10nStrings.cs:137"
+    ]
+  },
+  {
+    "State": "ClaudeSkillGenerated",
+    "GeneratedBy": "claude-opus-5",
+    "OriginalString": "Remove text",
+    "TranslatedString": "पाठ हटाउनुहोस्",
+    "SourceLocations": [
+      "src/L10n/PdfL10nStrings.cs:128"
+    ]
+  },
+  {
+    "State": "ClaudeSkillGenerated",
+    "GeneratedBy": "claude-opus-5",
+    "OriginalString": "Review alt text",
+    "TranslatedString": "वैकल्पिक पाठ जाँच्नुहोस्",
+    "SourceLocations": [
+      "src/L10n/PdfL10nStrings.cs:122",
+      "src/L10n/PdfL10nStrings.cs:125"
+    ]
+  },
+  {
+    "State": "ClaudeSkillGenerated",
+    "GeneratedBy": "claude-opus-5",
+    "OriginalString": "Rotate right",
+    "TranslatedString": "दायाँ घुमाउनुहोस्",
+    "SourceLocations": [
+      "src/Chrome/PdfViewerChrome.Toolbar.cs:416",
+      "src/Chrome/PdfViewerChrome.Toolbar.cs:487"
+    ]
+  },
+  {
+    "State": "ClaudeSkillGenerated",
+    "GeneratedBy": "claude-opus-5",
+    "OriginalString": "Searching...",
+    "TranslatedString": "खोज्दै...",
+    "SourceLocations": [
+      "src/Chrome/PdfViewerChrome.Panel.cs:199"
+    ]
+  },
+  {
+    "State": "ClaudeSkillGenerated",
+    "GeneratedBy": "claude-opus-5",
+    "OriginalString": "Show comment",
+    "TranslatedString": "टिप्पणी देखाउनुहोस्",
+    "SourceLocations": [
+      "src/L10n/PdfL10nStrings.cs:188"
+    ]
+  },
+  {
+    "State": "ClaudeSkillGenerated",
+    "GeneratedBy": "claude-opus-5",
+    "OriginalString": "Show in outline",
+    "TranslatedString": "रूपरेखामा देखाउनुहोस्",
+    "SourceLocations": [
+      "src/Chrome/PdfViewerChrome.Panel.cs:94"
+    ]
+  },
+  {
+    "State": "ClaudeSkillGenerated",
+    "GeneratedBy": "claude-opus-5",
+    "OriginalString": "Signature added",
+    "TranslatedString": "हस्ताक्षर थपियो",
+    "SourceLocations": [
+      "src/L10n/PdfL10nStrings.cs:167"
+    ]
+  },
+  {
+    "State": "ClaudeSkillGenerated",
+    "GeneratedBy": "claude-opus-5",
+    "OriginalString": "Signature editor: {0}",
+    "TranslatedString": "हस्ताक्षर सम्पादक: {0}",
+    "SourceLocations": [
+      "src/L10n/PdfL10nStrings.cs:170"
+    ]
+  },
+  {
+    "State": "ClaudeSkillGenerated",
+    "GeneratedBy": "claude-opus-5",
+    "OriginalString": "Text Editor",
+    "TranslatedString": "पाठ सम्पादक",
+    "SourceLocations": [
+      "src/L10n/PdfL10nStrings.cs:179"
+    ]
+  },
+  {
+    "State": "ClaudeSkillGenerated",
+    "GeneratedBy": "claude-opus-5",
+    "OriginalString": "Text added",
+    "TranslatedString": "पाठ थपियो",
+    "SourceLocations": [
+      "src/L10n/PdfL10nStrings.cs:92"
+    ]
+  },
+  {
+    "State": "ClaudeSkillGenerated",
+    "GeneratedBy": "claude-opus-5",
+    "OriginalString": "This document has no outline.",
+    "TranslatedString": "यो कागजातमा रूपरेखा छैन।",
+    "SourceLocations": [
+      "src/Chrome/PdfViewerChrome.Panel.cs:396"
+    ]
+  },
+  {
+    "State": "ClaudeSkillGenerated",
+    "GeneratedBy": "claude-opus-5",
+    "OriginalString": "Thumbnails",
+    "TranslatedString": "थम्बनेल",
+    "SourceLocations": [
+      "src/Chrome/PdfViewerChrome.Toolbar.cs:263"
+    ]
+  },
+  {
+    "State": "ClaudeSkillGenerated",
+    "GeneratedBy": "claude-opus-5",
+    "OriginalString": "Top left corner — resize",
+    "TranslatedString": "माथिल्लो बायाँ कुना — आकार बदल्नुहोस्",
+    "SourceLocations": [
+      "src/L10n/PdfL10nStrings.cs:158"
+    ]
+  },
+  {
+    "State": "ClaudeSkillGenerated",
+    "GeneratedBy": "claude-opus-5",
+    "OriginalString": "Top middle — resize",
+    "TranslatedString": "माथि बीचमा — आकार बदल्नुहोस्",
+    "SourceLocations": [
+      "src/L10n/PdfL10nStrings.cs:161"
+    ]
+  },
+  {
+    "State": "ClaudeSkillGenerated",
+    "GeneratedBy": "claude-opus-5",
+    "OriginalString": "Top right corner — resize",
+    "TranslatedString": "माथिल्लो दायाँ कुना — आकार बदल्नुहोस्",
+    "SourceLocations": [
+      "src/L10n/PdfL10nStrings.cs:164"
+    ]
+  },
+  {
+    "State": "ClaudeSkillGenerated",
+    "GeneratedBy": "claude-opus-5",
+    "OriginalString": "Two-page spread",
+    "TranslatedString": "दुई-पृष्ठ दृश्य",
+    "SourceLocations": [
+      "src/Chrome/PdfViewerChrome.Toolbar.cs:429",
+      "src/Chrome/PdfViewerChrome.Toolbar.cs:492"
+    ]
+  },
+  {
+    "State": "ClaudeSkillGenerated",
+    "GeneratedBy": "claude-opus-5",
+    "OriginalString": "Yellow",
+    "TranslatedString": "पहेँलो",
+    "SourceLocations": [
+      "src/L10n/PdfL10nStrings.cs:89"
+    ]
+  },
+  {
+    "State": "ClaudeSkillGenerated",
+    "GeneratedBy": "claude-opus-5",
+    "OriginalString": "Zoom and fit",
+    "TranslatedString": "जुम र मिलान",
+    "SourceLocations": [
+      "src/Chrome/PdfViewerChrome.Toolbar.cs:561"
+    ]
+  },
+  {
+    "State": "ClaudeSkillGenerated",
+    "GeneratedBy": "claude-opus-5",
+    "OriginalString": "Zoom in",
+    "TranslatedString": "जुम इन",
+    "SourceLocations": [
+      "src/Chrome/PdfViewerChrome.Toolbar.cs:77",
+      "src/Chrome/PdfViewerChrome.Toolbar.cs:186",
+      "src/Chrome/PdfViewerChrome.Toolbar.cs:464"
+    ]
+  },
+  {
+    "State": "ClaudeSkillGenerated",
+    "GeneratedBy": "claude-opus-5",
+    "OriginalString": "Zoom out",
+    "TranslatedString": "जुम आउट",
+    "SourceLocations": [
+      "src/Chrome/PdfViewerChrome.Toolbar.cs:75",
+      "src/Chrome/PdfViewerChrome.Toolbar.cs:191",
+      "src/Chrome/PdfViewerChrome.Toolbar.cs:465"
+    ]
+  },
+  {
+    "State": "ClaudeSkillGenerated",
+    "GeneratedBy": "claude-opus-5",
+    "OriginalString": "[{0} Annotation]",
+    "TranslatedString": "[टिप्पणी: {0}]",
+    "SourceLocations": [
+      "src/L10n/PdfL10nStrings.cs:191"
+    ]
+  },
+  {
+    "State": "ClaudeSkillGenerated",
+    "GeneratedBy": "claude-opus-5",
+    "OriginalString": "of {0}",
+    "TranslatedString": "/ {0}",
+    "SourceLocations": [
+      "src/Chrome/PdfViewerChrome.Toolbar.cs:676"
+    ]
+  },
+  {
+    "State": "ClaudeSkillGenerated",
+    "GeneratedBy": "claude-opus-5",
+    "OriginalString": "pages {0}",
+    "TranslatedString": "पृष्ठ {0}",
+    "SourceLocations": [
+      "src/Chrome/PdfViewerChrome.Panel.cs:232"
+    ]
+  },
+  {
+    "State": "ClaudeSkillGenerated",
+    "GeneratedBy": "claude-opus-5",
+    "OriginalString": "pages {0} +{1} more",
+    "TranslatedString": "पृष्ठ {0} +{1} थप",
+    "SourceLocations": [
+      "src/Chrome/PdfViewerChrome.Panel.cs:224"
+    ]
+  },
+  {
+    "State": "ClaudeSkillGenerated",
+    "GeneratedBy": "claude-opus-5",
+    "OriginalString": "{0} matches",
+    "TranslatedString": "{0} नतिजा",
+    "SourceLocations": [
+      "src/Chrome/PdfViewerChrome.Panel.cs:186"
+    ]
+  },
+  {
+    "State": "ClaudeSkillGenerated",
+    "GeneratedBy": "claude-opus-5",
+    "OriginalString": "{0} of {1}",
+    "TranslatedString": "{0} / {1}",
+    "SourceLocations": [
+      "src/Chrome/PdfViewerChrome.Toolbar.cs:675"
+    ]
+  },
+  {
+    "State": "ClaudeSkillGenerated",
+    "GeneratedBy": "claude-opus-5",
+    "OriginalString": "{0} pages",
+    "TranslatedString": "{0} पृष्ठ",
+    "SourceLocations": [
+      "src/Chrome/PdfViewerChrome.Panel.cs:182"
+    ]
+  }
+]

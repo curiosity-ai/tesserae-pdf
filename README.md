@@ -33,7 +33,7 @@ and [`TODO.md`](TODO.md) for what is deliberately not in it.
 | `Tesserae.Pdf.Sample/` | the sample gallery — 22 pages, one per feature |
 | `scripts/make-sample-pdfs.mjs` | generates the gallery's PDF fixtures |
 | `scripts/stage-samples.mjs` | stages a Release build for GitHub Pages |
-| `scripts/list-translatable-strings.mjs` | the English keys a host's `tnt extract` has to be given |
+| `Tesserae.Pdf/.tnt*` | the package's own translations, managed with [TNTC](https://www.nuget.org/packages/TNTC) |
 
 ## Building
 

@@ -1,0 +1,330 @@
+﻿[
+  [
+    "Actual size",
+    "Verklig storlek"
+  ],
+  [
+    "Add comment",
+    "Lägg till kommentar"
+  ],
+  [
+    "Alt text",
+    "Alternativtext"
+  ],
+  [
+    "Alt text added",
+    "Alternativtext tillagd"
+  ],
+  [
+    "Automatic",
+    "Automatisk"
+  ],
+  [
+    "Blue",
+    "Blå"
+  ],
+  [
+    "Bottom left corner — resize",
+    "Nedre vänstra hörnet — ändra storlek"
+  ],
+  [
+    "Bottom middle — resize",
+    "Nederkant mitten — ändra storlek"
+  ],
+  [
+    "Bottom right corner — resize",
+    "Nedre högra hörnet — ändra storlek"
+  ],
+  [
+    "Change color",
+    "Ändra färg"
+  ],
+  [
+    "Change drawing color",
+    "Ändra ritfärg"
+  ],
+  [
+    "Change text color",
+    "Ändra textfärg"
+  ],
+  [
+    "Clear",
+    "Rensa"
+  ],
+  [
+    "Color choices",
+    "Färgval"
+  ],
+  [
+    "Comment",
+    "Kommentar"
+  ],
+  [
+    "Continued from the start of the document",
+    "Fortsatt från dokumentets början"
+  ],
+  [
+    "Created automatically: {0}",
+    "Skapad automatiskt: {0}"
+  ],
+  [
+    "Document outline",
+    "Dokumentöversikt"
+  ],
+  [
+    "Drawing added",
+    "Teckning tillagd"
+  ],
+  [
+    "Drawing editor",
+    "Ritverktyg"
+  ],
+  [
+    "Edit alt text",
+    "Redigera alternativtext"
+  ],
+  [
+    "Find in document",
+    "Sök i dokumentet"
+  ],
+  [
+    "Fit content",
+    "Sidbredd"
+  ],
+  [
+    "Fit page",
+    "Hela sidan"
+  ],
+  [
+    "Fuzzy",
+    "Ungefärlig"
+  ],
+  [
+    "Green",
+    "Grön"
+  ],
+  [
+    "Highlight",
+    "Markera"
+  ],
+  [
+    "Highlight added",
+    "Markering tillagd"
+  ],
+  [
+    "Highlight editor",
+    "Markeringsverktyg"
+  ],
+  [
+    "Ignore case, accents and word boundaries",
+    "Ignorera versaler, accenter och ordgränser"
+  ],
+  [
+    "Image added",
+    "Bild tillagd"
+  ],
+  [
+    "Image editor",
+    "Bildverktyg"
+  ],
+  [
+    "Marked as decorative",
+    "Markerad som dekorativ"
+  ],
+  [
+    "Match case, whole words, diacritics respected",
+    "Matcha versaler, hela ord och accenter"
+  ],
+  [
+    "Middle left — resize",
+    "Mitten vänster — ändra storlek"
+  ],
+  [
+    "Middle right — resize",
+    "Mitten höger — ändra storlek"
+  ],
+  [
+    "Missing alt text",
+    "Saknad alternativtext"
+  ],
+  [
+    "More controls",
+    "Fler kontroller"
+  ],
+  [
+    "Next match",
+    "Nästa träff"
+  ],
+  [
+    "Next page",
+    "Nästa sida"
+  ],
+  [
+    "No document.",
+    "Inget dokument."
+  ],
+  [
+    "No matches",
+    "Inga träffar"
+  ],
+  [
+    "No matches - try Fuzzy",
+    "Inga träffar - prova Ungefärlig"
+  ],
+  [
+    "Page",
+    "Sida"
+  ],
+  [
+    "Page {0}",
+    "Sida {0}"
+  ],
+  [
+    "Page {0} of {1}",
+    "Sida {0} av {1}"
+  ],
+  [
+    "Pink",
+    "Rosa"
+  ],
+  [
+    "Precise",
+    "Exakt"
+  ],
+  [
+    "Previous match",
+    "Föregående träff"
+  ],
+  [
+    "Previous page",
+    "Föregående sida"
+  ],
+  [
+    "Red",
+    "Röd"
+  ],
+  [
+    "Remove drawing",
+    "Ta bort teckning"
+  ],
+  [
+    "Remove highlight",
+    "Ta bort markering"
+  ],
+  [
+    "Remove image",
+    "Ta bort bild"
+  ],
+  [
+    "Remove signature",
+    "Ta bort signatur"
+  ],
+  [
+    "Remove text",
+    "Ta bort text"
+  ],
+  [
+    "Review alt text",
+    "Granska alternativtext"
+  ],
+  [
+    "Rotate right",
+    "Rotera åt höger"
+  ],
+  [
+    "Searching...",
+    "Söker..."
+  ],
+  [
+    "Show comment",
+    "Visa kommentar"
+  ],
+  [
+    "Show in outline",
+    "Visa i översikten"
+  ],
+  [
+    "Signature added",
+    "Signatur tillagd"
+  ],
+  [
+    "Signature editor: {0}",
+    "Signaturverktyg: {0}"
+  ],
+  [
+    "Text Editor",
+    "Textredigerare"
+  ],
+  [
+    "Text added",
+    "Text tillagd"
+  ],
+  [
+    "This document has no outline.",
+    "Det här dokumentet har ingen översikt."
+  ],
+  [
+    "Thumbnails",
+    "Miniatyrer"
+  ],
+  [
+    "Top left corner — resize",
+    "Övre vänstra hörnet — ändra storlek"
+  ],
+  [
+    "Top middle — resize",
+    "Överkant mitten — ändra storlek"
+  ],
+  [
+    "Top right corner — resize",
+    "Övre högra hörnet — ändra storlek"
+  ],
+  [
+    "Two-page spread",
+    "Uppslag med två sidor"
+  ],
+  [
+    "Yellow",
+    "Gul"
+  ],
+  [
+    "Zoom and fit",
+    "Zoom och anpassning"
+  ],
+  [
+    "Zoom in",
+    "Zooma in"
+  ],
+  [
+    "Zoom out",
+    "Zooma ut"
+  ],
+  [
+    "[{0} Annotation]",
+    "[Anteckning: {0}]"
+  ],
+  [
+    "of {0}",
+    "av {0}"
+  ],
+  [
+    "pages {0}",
+    "sidor {0}"
+  ],
+  [
+    "pages {0} +{1} more",
+    "sidor {0} +{1} till"
+  ],
+  [
+    "{0} matches",
+    "{0} träffar"
+  ],
+  [
+    "{0} of {1}",
+    "{0} av {1}"
+  ],
+  [
+    "{0} pages",
+    "{0} sidor"
+  ]
+]

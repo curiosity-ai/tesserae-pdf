@@ -1,0 +1,760 @@
+﻿[
+  {
+    "State": "ClaudeSkillGenerated",
+    "GeneratedBy": "claude-opus-5",
+    "OriginalString": "Actual size",
+    "TranslatedString": "실제 크기",
+    "SourceLocations": [
+      "src/Chrome/PdfViewerChrome.Toolbar.cs:476",
+      "src/Chrome/PdfViewerChrome.Toolbar.cs:580"
+    ]
+  },
+  {
+    "State": "ClaudeSkillGenerated",
+    "GeneratedBy": "claude-opus-5",
+    "OriginalString": "Add comment",
+    "TranslatedString": "주석 추가",
+    "SourceLocations": [
+      "src/L10n/PdfL10nStrings.cs:50"
+    ]
+  },
+  {
+    "State": "ClaudeSkillGenerated",
+    "GeneratedBy": "claude-opus-5",
+    "OriginalString": "Alt text",
+    "TranslatedString": "대체 텍스트",
+    "SourceLocations": [
+      "src/L10n/PdfL10nStrings.cs:53",
+      "src/L10n/PdfL10nStrings.cs:56"
+    ]
+  },
+  {
+    "State": "ClaudeSkillGenerated",
+    "GeneratedBy": "claude-opus-5",
+    "OriginalString": "Alt text added",
+    "TranslatedString": "대체 텍스트가 추가됨",
+    "SourceLocations": [
+      "src/L10n/PdfL10nStrings.cs:107",
+      "src/L10n/PdfL10nStrings.cs:110"
+    ]
+  },
+  {
+    "State": "ClaudeSkillGenerated",
+    "GeneratedBy": "claude-opus-5",
+    "OriginalString": "Automatic",
+    "TranslatedString": "자동",
+    "SourceLocations": [
+      "src/Chrome/PdfViewerChrome.Toolbar.cs:581"
+    ]
+  },
+  {
+    "State": "ClaudeSkillGenerated",
+    "GeneratedBy": "claude-opus-5",
+    "OriginalString": "Blue",
+    "TranslatedString": "파랑",
+    "SourceLocations": [
+      "src/L10n/PdfL10nStrings.cs:71"
+    ]
+  },
+  {
+    "State": "ClaudeSkillGenerated",
+    "GeneratedBy": "claude-opus-5",
+    "OriginalString": "Bottom left corner — resize",
+    "TranslatedString": "왼쪽 아래 모서리 — 크기 조정",
+    "SourceLocations": [
+      "src/L10n/PdfL10nStrings.cs:143"
+    ]
+  },
+  {
+    "State": "ClaudeSkillGenerated",
+    "GeneratedBy": "claude-opus-5",
+    "OriginalString": "Bottom middle — resize",
+    "TranslatedString": "아래쪽 가운데 — 크기 조정",
+    "SourceLocations": [
+      "src/L10n/PdfL10nStrings.cs:146"
+    ]
+  },
+  {
+    "State": "ClaudeSkillGenerated",
+    "GeneratedBy": "claude-opus-5",
+    "OriginalString": "Bottom right corner — resize",
+    "TranslatedString": "오른쪽 아래 모서리 — 크기 조정",
+    "SourceLocations": [
+      "src/L10n/PdfL10nStrings.cs:149"
+    ]
+  },
+  {
+    "State": "ClaudeSkillGenerated",
+    "GeneratedBy": "claude-opus-5",
+    "OriginalString": "Change color",
+    "TranslatedString": "색상 변경",
+    "SourceLocations": [
+      "src/L10n/PdfL10nStrings.cs:74"
+    ]
+  },
+  {
+    "State": "ClaudeSkillGenerated",
+    "GeneratedBy": "claude-opus-5",
+    "OriginalString": "Change drawing color",
+    "TranslatedString": "그리기 색상 변경",
+    "SourceLocations": [
+      "src/L10n/PdfL10nStrings.cs:68"
+    ]
+  },
+  {
+    "State": "ClaudeSkillGenerated",
+    "GeneratedBy": "claude-opus-5",
+    "OriginalString": "Change text color",
+    "TranslatedString": "텍스트 색상 변경",
+    "SourceLocations": [
+      "src/L10n/PdfL10nStrings.cs:65"
+    ]
+  },
+  {
+    "State": "ClaudeSkillGenerated",
+    "GeneratedBy": "claude-opus-5",
+    "OriginalString": "Clear",
+    "TranslatedString": "지우기",
+    "SourceLocations": [
+      "src/Chrome/PdfViewerChrome.Search.cs:251"
+    ]
+  },
+  {
+    "State": "ClaudeSkillGenerated",
+    "GeneratedBy": "claude-opus-5",
+    "OriginalString": "Color choices",
+    "TranslatedString": "색상 선택",
+    "SourceLocations": [
+      "src/L10n/PdfL10nStrings.cs:77"
+    ]
+  },
+  {
+    "State": "ClaudeSkillGenerated",
+    "GeneratedBy": "claude-opus-5",
+    "OriginalString": "Comment",
+    "TranslatedString": "주석",
+    "SourceLocations": [
+      "src/L10n/PdfL10nStrings.cs:47"
+    ]
+  },
+  {
+    "State": "ClaudeSkillGenerated",
+    "GeneratedBy": "claude-opus-5",
+    "OriginalString": "Continued from the start of the document",
+    "TranslatedString": "문서 처음부터 계속 검색함",
+    "SourceLocations": [
+      "src/Chrome/PdfViewerChrome.Search.cs:431"
+    ]
+  },
+  {
+    "State": "ClaudeSkillGenerated",
+    "GeneratedBy": "claude-opus-5",
+    "OriginalString": "Created automatically: {0}",
+    "TranslatedString": "자동 생성됨: {0}",
+    "SourceLocations": [
+      "src/L10n/PdfL10nStrings.cs:113"
+    ]
+  },
+  {
+    "State": "ClaudeSkillGenerated",
+    "GeneratedBy": "claude-opus-5",
+    "OriginalString": "Document outline",
+    "TranslatedString": "문서 개요",
+    "SourceLocations": [
+      "src/Chrome/PdfViewerChrome.Toolbar.cs:255"
+    ]
+  },
+  {
+    "State": "ClaudeSkillGenerated",
+    "GeneratedBy": "claude-opus-5",
+    "OriginalString": "Drawing added",
+    "TranslatedString": "그리기가 추가됨",
+    "SourceLocations": [
+      "src/L10n/PdfL10nStrings.cs:101"
+    ]
+  },
+  {
+    "State": "ClaudeSkillGenerated",
+    "GeneratedBy": "claude-opus-5",
+    "OriginalString": "Drawing editor",
+    "TranslatedString": "그리기 편집기",
+    "SourceLocations": [
+      "src/L10n/PdfL10nStrings.cs:104"
+    ]
+  },
+  {
+    "State": "ClaudeSkillGenerated",
+    "GeneratedBy": "claude-opus-5",
+    "OriginalString": "Edit alt text",
+    "TranslatedString": "대체 텍스트 편집",
+    "SourceLocations": [
+      "src/L10n/PdfL10nStrings.cs:62"
+    ]
+  },
+  {
+    "State": "ClaudeSkillGenerated",
+    "GeneratedBy": "claude-opus-5",
+    "OriginalString": "Find in document",
+    "TranslatedString": "문서에서 찾기",
+    "SourceLocations": [
+      "src/Chrome/PdfViewerChrome.Search.cs:232"
+    ]
+  },
+  {
+    "State": "ClaudeSkillGenerated",
+    "GeneratedBy": "claude-opus-5",
+    "OriginalString": "Fit content",
+    "TranslatedString": "페이지 너비",
+    "SourceLocations": [
+      "src/Chrome/PdfViewerChrome.Toolbar.cs:202",
+      "src/Chrome/PdfViewerChrome.Toolbar.cs:475",
+      "src/Chrome/PdfViewerChrome.Toolbar.cs:579"
+    ]
+  },
+  {
+    "State": "ClaudeSkillGenerated",
+    "GeneratedBy": "claude-opus-5",
+    "OriginalString": "Fit page",
+    "TranslatedString": "전체 페이지",
+    "SourceLocations": [
+      "src/Chrome/PdfViewerChrome.Toolbar.cs:201",
+      "src/Chrome/PdfViewerChrome.Toolbar.cs:474",
+      "src/Chrome/PdfViewerChrome.Toolbar.cs:578"
+    ]
+  },
+  {
+    "State": "ClaudeSkillGenerated",
+    "GeneratedBy": "claude-opus-5",
+    "OriginalString": "Fuzzy",
+    "TranslatedString": "유사 일치",
+    "SourceLocations": [
+      "src/Chrome/PdfViewerChrome.Search.cs:257",
+      "src/Chrome/PdfViewerChrome.Toolbar.cs:517"
+    ]
+  },
+  {
+    "State": "ClaudeSkillGenerated",
+    "GeneratedBy": "claude-opus-5",
+    "OriginalString": "Green",
+    "TranslatedString": "초록",
+    "SourceLocations": [
+      "src/L10n/PdfL10nStrings.cs:80"
+    ]
+  },
+  {
+    "State": "ClaudeSkillGenerated",
+    "GeneratedBy": "claude-opus-5",
+    "OriginalString": "Highlight",
+    "TranslatedString": "강조",
+    "SourceLocations": [
+      "src/L10n/PdfL10nStrings.cs:182"
+    ]
+  },
+  {
+    "State": "ClaudeSkillGenerated",
+    "GeneratedBy": "claude-opus-5",
+    "OriginalString": "Highlight added",
+    "TranslatedString": "강조가 추가됨",
+    "SourceLocations": [
+      "src/L10n/PdfL10nStrings.cs:95"
+    ]
+  },
+  {
+    "State": "ClaudeSkillGenerated",
+    "GeneratedBy": "claude-opus-5",
+    "OriginalString": "Highlight editor",
+    "TranslatedString": "강조 편집기",
+    "SourceLocations": [
+      "src/L10n/PdfL10nStrings.cs:98"
+    ]
+  },
+  {
+    "State": "ClaudeSkillGenerated",
+    "GeneratedBy": "claude-opus-5",
+    "OriginalString": "Ignore case, accents and word boundaries",
+    "TranslatedString": "대소문자, 발음 기호, 단어 경계 무시",
+    "SourceLocations": [
+      "src/Chrome/PdfViewerChrome.Search.cs:151"
+    ]
+  },
+  {
+    "State": "ClaudeSkillGenerated",
+    "GeneratedBy": "claude-opus-5",
+    "OriginalString": "Image added",
+    "TranslatedString": "이미지가 추가됨",
+    "SourceLocations": [
+      "src/L10n/PdfL10nStrings.cs:173"
+    ]
+  },
+  {
+    "State": "ClaudeSkillGenerated",
+    "GeneratedBy": "claude-opus-5",
+    "OriginalString": "Image editor",
+    "TranslatedString": "이미지 편집기",
+    "SourceLocations": [
+      "src/L10n/PdfL10nStrings.cs:176"
+    ]
+  },
+  {
+    "State": "ClaudeSkillGenerated",
+    "GeneratedBy": "claude-opus-5",
+    "OriginalString": "Marked as decorative",
+    "TranslatedString": "장식용으로 표시됨",
+    "SourceLocations": [
+      "src/L10n/PdfL10nStrings.cs:59"
+    ]
+  },
+  {
+    "State": "ClaudeSkillGenerated",
+    "GeneratedBy": "claude-opus-5",
+    "OriginalString": "Match case, whole words, diacritics respected",
+    "TranslatedString": "대소문자, 전체 단어, 발음 기호 일치",
+    "SourceLocations": [
+      "src/Chrome/PdfViewerChrome.Search.cs:150"
+    ]
+  },
+  {
+    "State": "ClaudeSkillGenerated",
+    "GeneratedBy": "claude-opus-5",
+    "OriginalString": "Middle left — resize",
+    "TranslatedString": "왼쪽 가운데 — 크기 조정",
+    "SourceLocations": [
+      "src/L10n/PdfL10nStrings.cs:152"
+    ]
+  },
+  {
+    "State": "ClaudeSkillGenerated",
+    "GeneratedBy": "claude-opus-5",
+    "OriginalString": "Middle right — resize",
+    "TranslatedString": "오른쪽 가운데 — 크기 조정",
+    "SourceLocations": [
+      "src/L10n/PdfL10nStrings.cs:155"
+    ]
+  },
+  {
+    "State": "ClaudeSkillGenerated",
+    "GeneratedBy": "claude-opus-5",
+    "OriginalString": "Missing alt text",
+    "TranslatedString": "대체 텍스트 없음",
+    "SourceLocations": [
+      "src/L10n/PdfL10nStrings.cs:116",
+      "src/L10n/PdfL10nStrings.cs:119"
+    ]
+  },
+  {
+    "State": "ClaudeSkillGenerated",
+    "GeneratedBy": "claude-opus-5",
+    "OriginalString": "More controls",
+    "TranslatedString": "기타 컨트롤",
+    "SourceLocations": [
+      "src/Chrome/PdfViewerChrome.Toolbar.cs:444"
+    ]
+  },
+  {
+    "State": "ClaudeSkillGenerated",
+    "GeneratedBy": "claude-opus-5",
+    "OriginalString": "Next match",
+    "TranslatedString": "다음 일치",
+    "SourceLocations": [
+      "src/Chrome/PdfViewerChrome.Search.cs:249"
+    ]
+  },
+  {
+    "State": "ClaudeSkillGenerated",
+    "GeneratedBy": "claude-opus-5",
+    "OriginalString": "Next page",
+    "TranslatedString": "다음 페이지",
+    "SourceLocations": [
+      "src/Chrome/PdfViewerChrome.Toolbar.cs:279"
+    ]
+  },
+  {
+    "State": "ClaudeSkillGenerated",
+    "GeneratedBy": "claude-opus-5",
+    "OriginalString": "No document.",
+    "TranslatedString": "문서 없음.",
+    "SourceLocations": [
+      "src/Chrome/PdfViewerChrome.Panel.cs:395",
+      "src/Chrome/PdfViewerChrome.Panel.cs:722"
+    ]
+  },
+  {
+    "State": "ClaudeSkillGenerated",
+    "GeneratedBy": "claude-opus-5",
+    "OriginalString": "No matches",
+    "TranslatedString": "일치 항목 없음",
+    "SourceLocations": [
+      "src/Chrome/PdfViewerChrome.Search.cs:440",
+      "src/Chrome/PdfViewerChrome.Panel.cs:199"
+    ]
+  },
+  {
+    "State": "ClaudeSkillGenerated",
+    "GeneratedBy": "claude-opus-5",
+    "OriginalString": "No matches - try Fuzzy",
+    "TranslatedString": "일치 항목 없음 - 유사 일치로 검색",
+    "SourceLocations": [
+      "src/Chrome/PdfViewerChrome.Search.cs:439"
+    ]
+  },
+  {
+    "State": "ClaudeSkillGenerated",
+    "GeneratedBy": "claude-opus-5",
+    "OriginalString": "Page",
+    "TranslatedString": "페이지",
+    "SourceLocations": [
+      "src/Chrome/PdfViewerChrome.Toolbar.cs:301"
+    ]
+  },
+  {
+    "State": "ClaudeSkillGenerated",
+    "GeneratedBy": "claude-opus-5",
+    "OriginalString": "Page {0}",
+    "TranslatedString": "{0} 페이지",
+    "SourceLocations": [
+      "src/L10n/PdfL10nStrings.cs:185",
+      "src/Chrome/PdfViewerChrome.Panel.cs:749"
+    ]
+  },
+  {
+    "State": "ClaudeSkillGenerated",
+    "GeneratedBy": "claude-opus-5",
+    "OriginalString": "Page {0} of {1}",
+    "TranslatedString": "{0} / {1} 페이지",
+    "SourceLocations": [
+      "src/Chrome/PdfViewerChrome.Toolbar.cs:662"
+    ]
+  },
+  {
+    "State": "ClaudeSkillGenerated",
+    "GeneratedBy": "claude-opus-5",
+    "OriginalString": "Pink",
+    "TranslatedString": "분홍",
+    "SourceLocations": [
+      "src/L10n/PdfL10nStrings.cs:83"
+    ]
+  },
+  {
+    "State": "ClaudeSkillGenerated",
+    "GeneratedBy": "claude-opus-5",
+    "OriginalString": "Precise",
+    "TranslatedString": "정확히 일치",
+    "SourceLocations": [
+      "src/Chrome/PdfViewerChrome.Search.cs:258",
+      "src/Chrome/PdfViewerChrome.Toolbar.cs:520"
+    ]
+  },
+  {
+    "State": "ClaudeSkillGenerated",
+    "GeneratedBy": "claude-opus-5",
+    "OriginalString": "Previous match",
+    "TranslatedString": "이전 일치",
+    "SourceLocations": [
+      "src/Chrome/PdfViewerChrome.Search.cs:248"
+    ]
+  },
+  {
+    "State": "ClaudeSkillGenerated",
+    "GeneratedBy": "claude-opus-5",
+    "OriginalString": "Previous page",
+    "TranslatedString": "이전 페이지",
+    "SourceLocations": [
+      "src/Chrome/PdfViewerChrome.Toolbar.cs:272"
+    ]
+  },
+  {
+    "State": "ClaudeSkillGenerated",
+    "GeneratedBy": "claude-opus-5",
+    "OriginalString": "Red",
+    "TranslatedString": "빨강",
+    "SourceLocations": [
+      "src/L10n/PdfL10nStrings.cs:86"
+    ]
+  },
+  {
+    "State": "ClaudeSkillGenerated",
+    "GeneratedBy": "claude-opus-5",
+    "OriginalString": "Remove drawing",
+    "TranslatedString": "그리기 삭제",
+    "SourceLocations": [
+      "src/L10n/PdfL10nStrings.cs:134"
+    ]
+  },
+  {
+    "State": "ClaudeSkillGenerated",
+    "GeneratedBy": "claude-opus-5",
+    "OriginalString": "Remove highlight",
+    "TranslatedString": "강조 삭제",
+    "SourceLocations": [
+      "src/L10n/PdfL10nStrings.cs:131"
+    ]
+  },
+  {
+    "State": "ClaudeSkillGenerated",
+    "GeneratedBy": "claude-opus-5",
+    "OriginalString": "Remove image",
+    "TranslatedString": "이미지 삭제",
+    "SourceLocations": [
+      "src/L10n/PdfL10nStrings.cs:140"
+    ]
+  },
+  {
+    "State": "ClaudeSkillGenerated",
+    "GeneratedBy": "claude-opus-5",
+    "OriginalString": "Remove signature",
+    "TranslatedString": "서명 삭제",
+    "SourceLocations": [
+      "src/L10n/PdfL10nStrings.cs:137"
+    ]
+  },
+  {
+    "State": "ClaudeSkillGenerated",
+    "GeneratedBy": "claude-opus-5",
+    "OriginalString": "Remove text",
+    "TranslatedString": "텍스트 삭제",
+    "SourceLocations": [
+      "src/L10n/PdfL10nStrings.cs:128"
+    ]
+  },
+  {
+    "State": "ClaudeSkillGenerated",
+    "GeneratedBy": "claude-opus-5",
+    "OriginalString": "Review alt text",
+    "TranslatedString": "대체 텍스트 검토",
+    "SourceLocations": [
+      "src/L10n/PdfL10nStrings.cs:122",
+      "src/L10n/PdfL10nStrings.cs:125"
+    ]
+  },
+  {
+    "State": "ClaudeSkillGenerated",
+    "GeneratedBy": "claude-opus-5",
+    "OriginalString": "Rotate right",
+    "TranslatedString": "오른쪽으로 회전",
+    "SourceLocations": [
+      "src/Chrome/PdfViewerChrome.Toolbar.cs:416",
+      "src/Chrome/PdfViewerChrome.Toolbar.cs:487"
+    ]
+  },
+  {
+    "State": "ClaudeSkillGenerated",
+    "GeneratedBy": "claude-opus-5",
+    "OriginalString": "Searching...",
+    "TranslatedString": "검색 중...",
+    "SourceLocations": [
+      "src/Chrome/PdfViewerChrome.Panel.cs:199"
+    ]
+  },
+  {
+    "State": "ClaudeSkillGenerated",
+    "GeneratedBy": "claude-opus-5",
+    "OriginalString": "Show comment",
+    "TranslatedString": "주석 표시",
+    "SourceLocations": [
+      "src/L10n/PdfL10nStrings.cs:188"
+    ]
+  },
+  {
+    "State": "ClaudeSkillGenerated",
+    "GeneratedBy": "claude-opus-5",
+    "OriginalString": "Show in outline",
+    "TranslatedString": "개요에 표시",
+    "SourceLocations": [
+      "src/Chrome/PdfViewerChrome.Panel.cs:94"
+    ]
+  },
+  {
+    "State": "ClaudeSkillGenerated",
+    "GeneratedBy": "claude-opus-5",
+    "OriginalString": "Signature added",
+    "TranslatedString": "서명이 추가됨",
+    "SourceLocations": [
+      "src/L10n/PdfL10nStrings.cs:167"
+    ]
+  },
+  {
+    "State": "ClaudeSkillGenerated",
+    "GeneratedBy": "claude-opus-5",
+    "OriginalString": "Signature editor: {0}",
+    "TranslatedString": "서명 편집기: {0}",
+    "SourceLocations": [
+      "src/L10n/PdfL10nStrings.cs:170"
+    ]
+  },
+  {
+    "State": "ClaudeSkillGenerated",
+    "GeneratedBy": "claude-opus-5",
+    "OriginalString": "Text Editor",
+    "TranslatedString": "텍스트 편집기",
+    "SourceLocations": [
+      "src/L10n/PdfL10nStrings.cs:179"
+    ]
+  },
+  {
+    "State": "ClaudeSkillGenerated",
+    "GeneratedBy": "claude-opus-5",
+    "OriginalString": "Text added",
+    "TranslatedString": "텍스트가 추가됨",
+    "SourceLocations": [
+      "src/L10n/PdfL10nStrings.cs:92"
+    ]
+  },
+  {
+    "State": "ClaudeSkillGenerated",
+    "GeneratedBy": "claude-opus-5",
+    "OriginalString": "This document has no outline.",
+    "TranslatedString": "이 문서에는 개요가 없습니다.",
+    "SourceLocations": [
+      "src/Chrome/PdfViewerChrome.Panel.cs:396"
+    ]
+  },
+  {
+    "State": "ClaudeSkillGenerated",
+    "GeneratedBy": "claude-opus-5",
+    "OriginalString": "Thumbnails",
+    "TranslatedString": "축소판",
+    "SourceLocations": [
+      "src/Chrome/PdfViewerChrome.Toolbar.cs:263"
+    ]
+  },
+  {
+    "State": "ClaudeSkillGenerated",
+    "GeneratedBy": "claude-opus-5",
+    "OriginalString": "Top left corner — resize",
+    "TranslatedString": "왼쪽 위 모서리 — 크기 조정",
+    "SourceLocations": [
+      "src/L10n/PdfL10nStrings.cs:158"
+    ]
+  },
+  {
+    "State": "ClaudeSkillGenerated",
+    "GeneratedBy": "claude-opus-5",
+    "OriginalString": "Top middle — resize",
+    "TranslatedString": "위쪽 가운데 — 크기 조정",
+    "SourceLocations": [
+      "src/L10n/PdfL10nStrings.cs:161"
+    ]
+  },
+  {
+    "State": "ClaudeSkillGenerated",
+    "GeneratedBy": "claude-opus-5",
+    "OriginalString": "Top right corner — resize",
+    "TranslatedString": "오른쪽 위 모서리 — 크기 조정",
+    "SourceLocations": [
+      "src/L10n/PdfL10nStrings.cs:164"
+    ]
+  },
+  {
+    "State": "ClaudeSkillGenerated",
+    "GeneratedBy": "claude-opus-5",
+    "OriginalString": "Two-page spread",
+    "TranslatedString": "두 페이지 보기",
+    "SourceLocations": [
+      "src/Chrome/PdfViewerChrome.Toolbar.cs:429",
+      "src/Chrome/PdfViewerChrome.Toolbar.cs:492"
+    ]
+  },
+  {
+    "State": "ClaudeSkillGenerated",
+    "GeneratedBy": "claude-opus-5",
+    "OriginalString": "Yellow",
+    "TranslatedString": "노랑",
+    "SourceLocations": [
+      "src/L10n/PdfL10nStrings.cs:89"
+    ]
+  },
+  {
+    "State": "ClaudeSkillGenerated",
+    "GeneratedBy": "claude-opus-5",
+    "OriginalString": "Zoom and fit",
+    "TranslatedString": "확대/축소 및 맞춤",
+    "SourceLocations": [
+      "src/Chrome/PdfViewerChrome.Toolbar.cs:561"
+    ]
+  },
+  {
+    "State": "ClaudeSkillGenerated",
+    "GeneratedBy": "claude-opus-5",
+    "OriginalString": "Zoom in",
+    "TranslatedString": "확대",
+    "SourceLocations": [
+      "src/Chrome/PdfViewerChrome.Toolbar.cs:77",
+      "src/Chrome/PdfViewerChrome.Toolbar.cs:186",
+      "src/Chrome/PdfViewerChrome.Toolbar.cs:464"
+    ]
+  },
+  {
+    "State": "ClaudeSkillGenerated",
+    "GeneratedBy": "claude-opus-5",
+    "OriginalString": "Zoom out",
+    "TranslatedString": "축소",
+    "SourceLocations": [
+      "src/Chrome/PdfViewerChrome.Toolbar.cs:75",
+      "src/Chrome/PdfViewerChrome.Toolbar.cs:191",
+      "src/Chrome/PdfViewerChrome.Toolbar.cs:465"
+    ]
+  },
+  {
+    "State": "ClaudeSkillGenerated",
+    "GeneratedBy": "claude-opus-5",
+    "OriginalString": "[{0} Annotation]",
+    "TranslatedString": "[주석: {0}]",
+    "SourceLocations": [
+      "src/L10n/PdfL10nStrings.cs:191"
+    ]
+  },
+  {
+    "State": "ClaudeSkillGenerated",
+    "GeneratedBy": "claude-opus-5",
+    "OriginalString": "of {0}",
+    "TranslatedString": "/ {0}",
+    "SourceLocations": [
+      "src/Chrome/PdfViewerChrome.Toolbar.cs:676"
+    ]
+  },
+  {
+    "State": "ClaudeSkillGenerated",
+    "GeneratedBy": "claude-opus-5",
+    "OriginalString": "pages {0}",
+    "TranslatedString": "페이지 {0}",
+    "SourceLocations": [
+      "src/Chrome/PdfViewerChrome.Panel.cs:232"
+    ]
+  },
+  {
+    "State": "ClaudeSkillGenerated",
+    "GeneratedBy": "claude-opus-5",
+    "OriginalString": "pages {0} +{1} more",
+    "TranslatedString": "페이지 {0} 외 {1}개",
+    "SourceLocations": [
+      "src/Chrome/PdfViewerChrome.Panel.cs:224"
+    ]
+  },
+  {
+    "State": "ClaudeSkillGenerated",
+    "GeneratedBy": "claude-opus-5",
+    "OriginalString": "{0} matches",
+    "TranslatedString": "일치 {0}개",
+    "SourceLocations": [
+      "src/Chrome/PdfViewerChrome.Panel.cs:186"
+    ]
+  },
+  {
+    "State": "ClaudeSkillGenerated",
+    "GeneratedBy": "claude-opus-5",
+    "OriginalString": "{0} of {1}",
+    "TranslatedString": "{0} / {1}",
+    "SourceLocations": [
+      "src/Chrome/PdfViewerChrome.Toolbar.cs:675"
+    ]
+  },
+  {
+    "State": "ClaudeSkillGenerated",
+    "GeneratedBy": "claude-opus-5",
+    "OriginalString": "{0} pages",
+    "TranslatedString": "{0}페이지",
+    "SourceLocations": [
+      "src/Chrome/PdfViewerChrome.Panel.cs:182"
+    ]
+  }
+]

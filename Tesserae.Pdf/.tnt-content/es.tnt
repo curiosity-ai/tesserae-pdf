@@ -1,0 +1,330 @@
+﻿[
+  [
+    "Actual size",
+    "Tamaño real"
+  ],
+  [
+    "Add comment",
+    "Añadir comentario"
+  ],
+  [
+    "Alt text",
+    "Texto alternativo"
+  ],
+  [
+    "Alt text added",
+    "Texto alternativo añadido"
+  ],
+  [
+    "Automatic",
+    "Automático"
+  ],
+  [
+    "Blue",
+    "Azul"
+  ],
+  [
+    "Bottom left corner — resize",
+    "Esquina inferior izquierda — redimensionar"
+  ],
+  [
+    "Bottom middle — resize",
+    "Centro inferior — redimensionar"
+  ],
+  [
+    "Bottom right corner — resize",
+    "Esquina inferior derecha — redimensionar"
+  ],
+  [
+    "Change color",
+    "Cambiar color"
+  ],
+  [
+    "Change drawing color",
+    "Cambiar color del dibujo"
+  ],
+  [
+    "Change text color",
+    "Cambiar color del texto"
+  ],
+  [
+    "Clear",
+    "Borrar"
+  ],
+  [
+    "Color choices",
+    "Selección de color"
+  ],
+  [
+    "Comment",
+    "Comentario"
+  ],
+  [
+    "Continued from the start of the document",
+    "Continuado desde el principio del documento"
+  ],
+  [
+    "Created automatically: {0}",
+    "Creado automáticamente: {0}"
+  ],
+  [
+    "Document outline",
+    "Esquema del documento"
+  ],
+  [
+    "Drawing added",
+    "Dibujo añadido"
+  ],
+  [
+    "Drawing editor",
+    "Editor de dibujo"
+  ],
+  [
+    "Edit alt text",
+    "Editar texto alternativo"
+  ],
+  [
+    "Find in document",
+    "Buscar en el documento"
+  ],
+  [
+    "Fit content",
+    "Ancho de página"
+  ],
+  [
+    "Fit page",
+    "Página completa"
+  ],
+  [
+    "Fuzzy",
+    "Aproximada"
+  ],
+  [
+    "Green",
+    "Verde"
+  ],
+  [
+    "Highlight",
+    "Resaltar"
+  ],
+  [
+    "Highlight added",
+    "Resaltado añadido"
+  ],
+  [
+    "Highlight editor",
+    "Editor de resaltado"
+  ],
+  [
+    "Ignore case, accents and word boundaries",
+    "Ignorar mayúsculas, acentos y límites de palabra"
+  ],
+  [
+    "Image added",
+    "Imagen añadida"
+  ],
+  [
+    "Image editor",
+    "Editor de imagen"
+  ],
+  [
+    "Marked as decorative",
+    "Marcado como decorativo"
+  ],
+  [
+    "Match case, whole words, diacritics respected",
+    "Distinguir mayúsculas, palabras completas y acentos"
+  ],
+  [
+    "Middle left — resize",
+    "Centro izquierda — redimensionar"
+  ],
+  [
+    "Middle right — resize",
+    "Centro derecha — redimensionar"
+  ],
+  [
+    "Missing alt text",
+    "Falta el texto alternativo"
+  ],
+  [
+    "More controls",
+    "Más controles"
+  ],
+  [
+    "Next match",
+    "Coincidencia siguiente"
+  ],
+  [
+    "Next page",
+    "Página siguiente"
+  ],
+  [
+    "No document.",
+    "Ningún documento."
+  ],
+  [
+    "No matches",
+    "Sin coincidencias"
+  ],
+  [
+    "No matches - try Fuzzy",
+    "Sin coincidencias - prueba Aproximada"
+  ],
+  [
+    "Page",
+    "Página"
+  ],
+  [
+    "Page {0}",
+    "Página {0}"
+  ],
+  [
+    "Page {0} of {1}",
+    "Página {0} de {1}"
+  ],
+  [
+    "Pink",
+    "Rosa"
+  ],
+  [
+    "Precise",
+    "Exacta"
+  ],
+  [
+    "Previous match",
+    "Coincidencia anterior"
+  ],
+  [
+    "Previous page",
+    "Página anterior"
+  ],
+  [
+    "Red",
+    "Rojo"
+  ],
+  [
+    "Remove drawing",
+    "Eliminar dibujo"
+  ],
+  [
+    "Remove highlight",
+    "Eliminar resaltado"
+  ],
+  [
+    "Remove image",
+    "Eliminar imagen"
+  ],
+  [
+    "Remove signature",
+    "Eliminar firma"
+  ],
+  [
+    "Remove text",
+    "Eliminar texto"
+  ],
+  [
+    "Review alt text",
+    "Revisar texto alternativo"
+  ],
+  [
+    "Rotate right",
+    "Girar a la derecha"
+  ],
+  [
+    "Searching...",
+    "Buscando..."
+  ],
+  [
+    "Show comment",
+    "Mostrar comentario"
+  ],
+  [
+    "Show in outline",
+    "Mostrar en el esquema"
+  ],
+  [
+    "Signature added",
+    "Firma añadida"
+  ],
+  [
+    "Signature editor: {0}",
+    "Editor de firma: {0}"
+  ],
+  [
+    "Text Editor",
+    "Editor de texto"
+  ],
+  [
+    "Text added",
+    "Texto añadido"
+  ],
+  [
+    "This document has no outline.",
+    "Este documento no tiene esquema."
+  ],
+  [
+    "Thumbnails",
+    "Miniaturas"
+  ],
+  [
+    "Top left corner — resize",
+    "Esquina superior izquierda — redimensionar"
+  ],
+  [
+    "Top middle — resize",
+    "Centro superior — redimensionar"
+  ],
+  [
+    "Top right corner — resize",
+    "Esquina superior derecha — redimensionar"
+  ],
+  [
+    "Two-page spread",
+    "Doble página"
+  ],
+  [
+    "Yellow",
+    "Amarillo"
+  ],
+  [
+    "Zoom and fit",
+    "Zoom y ajuste"
+  ],
+  [
+    "Zoom in",
+    "Acercar"
+  ],
+  [
+    "Zoom out",
+    "Alejar"
+  ],
+  [
+    "[{0} Annotation]",
+    "[Anotación: {0}]"
+  ],
+  [
+    "of {0}",
+    "de {0}"
+  ],
+  [
+    "pages {0}",
+    "páginas {0}"
+  ],
+  [
+    "pages {0} +{1} more",
+    "páginas {0} +{1} más"
+  ],
+  [
+    "{0} matches",
+    "{0} coincidencias"
+  ],
+  [
+    "{0} of {1}",
+    "{0} de {1}"
+  ],
+  [
+    "{0} pages",
+    "{0} páginas"
+  ]
+]

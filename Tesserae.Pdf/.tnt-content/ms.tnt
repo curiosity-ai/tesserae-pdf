@@ -1,0 +1,330 @@
+﻿[
+  [
+    "Actual size",
+    "Saiz sebenar"
+  ],
+  [
+    "Add comment",
+    "Tambah komen"
+  ],
+  [
+    "Alt text",
+    "Teks alternatif"
+  ],
+  [
+    "Alt text added",
+    "Teks alternatif ditambah"
+  ],
+  [
+    "Automatic",
+    "Automatik"
+  ],
+  [
+    "Blue",
+    "Biru"
+  ],
+  [
+    "Bottom left corner — resize",
+    "Sudut kiri bawah — ubah saiz"
+  ],
+  [
+    "Bottom middle — resize",
+    "Tengah bawah — ubah saiz"
+  ],
+  [
+    "Bottom right corner — resize",
+    "Sudut kanan bawah — ubah saiz"
+  ],
+  [
+    "Change color",
+    "Tukar warna"
+  ],
+  [
+    "Change drawing color",
+    "Tukar warna lukisan"
+  ],
+  [
+    "Change text color",
+    "Tukar warna teks"
+  ],
+  [
+    "Clear",
+    "Kosongkan"
+  ],
+  [
+    "Color choices",
+    "Pilihan warna"
+  ],
+  [
+    "Comment",
+    "Komen"
+  ],
+  [
+    "Continued from the start of the document",
+    "Diteruskan dari permulaan dokumen"
+  ],
+  [
+    "Created automatically: {0}",
+    "Dicipta secara automatik: {0}"
+  ],
+  [
+    "Document outline",
+    "Rangka dokumen"
+  ],
+  [
+    "Drawing added",
+    "Lukisan ditambah"
+  ],
+  [
+    "Drawing editor",
+    "Editor lukisan"
+  ],
+  [
+    "Edit alt text",
+    "Edit teks alternatif"
+  ],
+  [
+    "Find in document",
+    "Cari dalam dokumen"
+  ],
+  [
+    "Fit content",
+    "Lebar halaman"
+  ],
+  [
+    "Fit page",
+    "Halaman penuh"
+  ],
+  [
+    "Fuzzy",
+    "Anggaran"
+  ],
+  [
+    "Green",
+    "Hijau"
+  ],
+  [
+    "Highlight",
+    "Sorot"
+  ],
+  [
+    "Highlight added",
+    "Sorotan ditambah"
+  ],
+  [
+    "Highlight editor",
+    "Editor sorotan"
+  ],
+  [
+    "Ignore case, accents and word boundaries",
+    "Abaikan huruf besar/kecil, tanda diakritik dan sempadan perkataan"
+  ],
+  [
+    "Image added",
+    "Imej ditambah"
+  ],
+  [
+    "Image editor",
+    "Editor imej"
+  ],
+  [
+    "Marked as decorative",
+    "Ditandakan sebagai hiasan"
+  ],
+  [
+    "Match case, whole words, diacritics respected",
+    "Padankan huruf besar/kecil, perkataan penuh dan tanda diakritik"
+  ],
+  [
+    "Middle left — resize",
+    "Tengah kiri — ubah saiz"
+  ],
+  [
+    "Middle right — resize",
+    "Tengah kanan — ubah saiz"
+  ],
+  [
+    "Missing alt text",
+    "Teks alternatif tiada"
+  ],
+  [
+    "More controls",
+    "Lagi kawalan"
+  ],
+  [
+    "Next match",
+    "Padanan seterusnya"
+  ],
+  [
+    "Next page",
+    "Halaman seterusnya"
+  ],
+  [
+    "No document.",
+    "Tiada dokumen."
+  ],
+  [
+    "No matches",
+    "Tiada padanan"
+  ],
+  [
+    "No matches - try Fuzzy",
+    "Tiada padanan - cuba Anggaran"
+  ],
+  [
+    "Page",
+    "Halaman"
+  ],
+  [
+    "Page {0}",
+    "Halaman {0}"
+  ],
+  [
+    "Page {0} of {1}",
+    "Halaman {0} daripada {1}"
+  ],
+  [
+    "Pink",
+    "Merah jambu"
+  ],
+  [
+    "Precise",
+    "Tepat"
+  ],
+  [
+    "Previous match",
+    "Padanan sebelumnya"
+  ],
+  [
+    "Previous page",
+    "Halaman sebelumnya"
+  ],
+  [
+    "Red",
+    "Merah"
+  ],
+  [
+    "Remove drawing",
+    "Buang lukisan"
+  ],
+  [
+    "Remove highlight",
+    "Buang sorotan"
+  ],
+  [
+    "Remove image",
+    "Buang imej"
+  ],
+  [
+    "Remove signature",
+    "Buang tandatangan"
+  ],
+  [
+    "Remove text",
+    "Buang teks"
+  ],
+  [
+    "Review alt text",
+    "Semak teks alternatif"
+  ],
+  [
+    "Rotate right",
+    "Putar ke kanan"
+  ],
+  [
+    "Searching...",
+    "Mencari..."
+  ],
+  [
+    "Show comment",
+    "Tunjukkan komen"
+  ],
+  [
+    "Show in outline",
+    "Tunjukkan dalam rangka"
+  ],
+  [
+    "Signature added",
+    "Tandatangan ditambah"
+  ],
+  [
+    "Signature editor: {0}",
+    "Editor tandatangan: {0}"
+  ],
+  [
+    "Text Editor",
+    "Editor teks"
+  ],
+  [
+    "Text added",
+    "Teks ditambah"
+  ],
+  [
+    "This document has no outline.",
+    "Dokumen ini tiada rangka."
+  ],
+  [
+    "Thumbnails",
+    "Imej kecil"
+  ],
+  [
+    "Top left corner — resize",
+    "Sudut kiri atas — ubah saiz"
+  ],
+  [
+    "Top middle — resize",
+    "Tengah atas — ubah saiz"
+  ],
+  [
+    "Top right corner — resize",
+    "Sudut kanan atas — ubah saiz"
+  ],
+  [
+    "Two-page spread",
+    "Dua halaman bersebelahan"
+  ],
+  [
+    "Yellow",
+    "Kuning"
+  ],
+  [
+    "Zoom and fit",
+    "Zum dan muat"
+  ],
+  [
+    "Zoom in",
+    "Zum masuk"
+  ],
+  [
+    "Zoom out",
+    "Zum keluar"
+  ],
+  [
+    "[{0} Annotation]",
+    "[Anotasi: {0}]"
+  ],
+  [
+    "of {0}",
+    "daripada {0}"
+  ],
+  [
+    "pages {0}",
+    "halaman {0}"
+  ],
+  [
+    "pages {0} +{1} more",
+    "halaman {0} +{1} lagi"
+  ],
+  [
+    "{0} matches",
+    "{0} padanan"
+  ],
+  [
+    "{0} of {1}",
+    "{0} daripada {1}"
+  ],
+  [
+    "{0} pages",
+    "{0} halaman"
+  ]
+]

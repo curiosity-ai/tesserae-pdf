@@ -130,144 +130,45 @@ replaces that one call with the bounded equivalent, so you do not have to do any
 **Watch for "Setting up fake worker" in the console.** It means the worker could not be loaded and
 pdf.js is parsing on the main thread - documents still render, and the UI freezes while they do.
 
-## Localizing pdf.js's own strings
+## Localization
 
-pdf.js puts `data-l10n-id` attributes on the elements it builds - page landmarks a screen reader
-announces, alt text on annotation icons, tooltips on the editor's buttons - and expects something to
-turn them into text. This package answers them through **TNT**, the same translation table Tesserae
-itself uses, so a German application gets a German viewer from the dictionary that already
-translates its own buttons. There is nothing to configure.
+Everything this package puts on screen is translated, in twenty languages, and a consuming
+application needs one line to switch it on.
 
-There is one gap a package cannot close by itself: your `tnt extract` scans your source, and these
-strings live in a NuGet package it never sees. **So add the keys below to your translation source**
-(or to whatever merges into `TNT.T.SetTranslation`). They are the English text of every message
-pdf.js can ask for, and `{0}` is TNT's own placeholder convention.
+The chrome's own labels, and the text pdf.js expects a localization implementation to supply - page
+landmarks a screen reader announces, alt text on annotation icons, tooltips on the editor's buttons,
+written as `data-l10n-id` attributes on the elements it builds - all go through **TNT**, the same
+translation table Tesserae itself uses. The package extracts its own strings with
+[TNTC](https://www.nuget.org/packages/TNTC) and ships the result beside pdf.js, so a German
+application gets a German viewer without translating anything of ours.
 
-The usual way to do that is a file of your own, in a folder your extraction already scans, holding
-nothing but the same literals with `.t()` on them - dead code whose only job is to put the keys in
-your `.tnt` file, where the package's own call sites then find them. From a checkout of this
-repository, `scripts/list-translatable-strings.mjs` writes that file for you, so it is generated
-rather than transcribed:
+**Merge our table into yours; the package cannot install it.** `TNT.T.SetTranslation` takes one
+dictionary for the whole application and replaces what was there, and TNT has no way to read it
+back - so a package that called it would throw away its host's translations. Load ours first and put
+yours over it, and anything you word differently stays yours:
 
-```bash
-node scripts/list-translatable-strings.mjs --csharp            # the lines, to paste
-node scripts/list-translatable-strings.mjs --update <yourfile> # rewrite them in place, between
-                                                               # that file's marker comments
+```csharp
+var table = await PdfJs.LoadTranslationsAsync("de");   // or your current language
+
+foreach (var entry in myOwnTranslations) table[entry.Key] = entry.Value;
+
+TNT.T.SetTranslation(table);
 ```
 
-Regenerate after upgrading the package, then re-run your `tnt` extract and translate steps. The two
-tables below are written by the same script (`--update Tesserae.Pdf/README.md`), from the call sites
-in `src/Chrome/` and `src/L10n/`.
+The tables are JSON files next to the pdf.js bundle - `assets/js/pdf/l10n/de.json`, put there by the
+package's build targets - so they move with `PdfJs.AssetsPath` and need no content-type mapping of
+their own. Each is a flat array of `[english, translated]` pairs, which is also all
+`LoadTranslationsAsync` does with it, so an application whose own translations are loaded before any
+`Tesserae.Pdf` type exists (a host that keeps the package out of its boot payload) can fetch and
+merge that file itself instead.
 
-`PdfJs.Language` tells pdf.js which language it is looking at - which decides text direction, and
-how dates inside annotations are formatted. `L10n(customObject)` replaces the bridge entirely, and
-`WithoutOwnLocalization()` falls back to pdf.js's built-in English.
+A language we have no table for answers an empty dictionary rather than throwing, and every key then
+falls back to its English text - which is what TNT does with a key it cannot find. The twenty are
+`cs, de, el, es, fr, he, hi, it, ja, ko, ms, ne, nl, pl, pt, ru, sr, sv, uk, zh`.
 
-`PdfJs.ViewerChrome()` labels its own controls through the same table, and they are in the same
-position - add these too if you use it.
-
-<details>
-<summary>The strings the chrome uses</summary>
-
-<!-- <tesserae-pdf-strings area="Chrome"> -->
-| Key |
-| --- |
-| `{0} matches` |
-| `{0} of {1}` |
-| `{0} pages` |
-| `Actual size` |
-| `Automatic` |
-| `Clear` |
-| `Continued from the start of the document` |
-| `Document outline` |
-| `Find in document` |
-| `Fit content` |
-| `Fit page` |
-| `Fuzzy` |
-| `Ignore case, accents and word boundaries` |
-| `Match case, whole words, diacritics respected` |
-| `More controls` |
-| `Next match` |
-| `Next page` |
-| `No document.` |
-| `No matches` |
-| `No matches - try Fuzzy` |
-| `of {0}` |
-| `Page` |
-| `Page {0}` |
-| `Page {0} of {1}` |
-| `pages {0}` |
-| `pages {0} +{1} more` |
-| `Precise` |
-| `Previous match` |
-| `Previous page` |
-| `Rotate right` |
-| `Searching...` |
-| `Show in outline` |
-| `This document has no outline.` |
-| `Thumbnails` |
-| `Two-page spread` |
-| `Zoom and fit` |
-| `Zoom in` |
-| `Zoom out` |
-<!-- </tesserae-pdf-strings> -->
-
-</details>
-
-<details>
-<summary>The strings pdf.js can ask for</summary>
-
-<!-- <tesserae-pdf-strings area="L10n"> -->
-| Key |
-| --- |
-| `Page {0}` |
-| `[{0} Annotation]` |
-| `Add comment` |
-| `Alt text` |
-| `Alt text added` |
-| `Blue` |
-| `Bottom left corner — resize` |
-| `Bottom middle — resize` |
-| `Bottom right corner — resize` |
-| `Change color` |
-| `Change drawing color` |
-| `Change text color` |
-| `Color choices` |
-| `Comment` |
-| `Created automatically: {0}` |
-| `Drawing added` |
-| `Drawing editor` |
-| `Edit alt text` |
-| `Green` |
-| `Highlight` |
-| `Highlight added` |
-| `Highlight editor` |
-| `Image added` |
-| `Image editor` |
-| `Marked as decorative` |
-| `Middle left — resize` |
-| `Middle right — resize` |
-| `Missing alt text` |
-| `Pink` |
-| `Red` |
-| `Remove drawing` |
-| `Remove highlight` |
-| `Remove image` |
-| `Remove signature` |
-| `Remove text` |
-| `Review alt text` |
-| `Show comment` |
-| `Signature added` |
-| `Signature editor: {0}` |
-| `Text added` |
-| `Text Editor` |
-| `Top left corner — resize` |
-| `Top middle — resize` |
-| `Top right corner — resize` |
-| `Yellow` |
-<!-- </tesserae-pdf-strings> -->
-
-</details>
+`PdfJs.Language` is a separate thing: it tells pdf.js which language it is looking at, which decides
+text direction and how dates inside annotations are formatted. `L10n(customObject)` replaces the
+bridge entirely, and `WithoutOwnLocalization()` falls back to pdf.js's built-in English.
 
 ## Requirements
 

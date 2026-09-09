@@ -1,0 +1,760 @@
+﻿[
+  {
+    "State": "ClaudeSkillGenerated",
+    "GeneratedBy": "claude-opus-5",
+    "OriginalString": "Actual size",
+    "TranslatedString": "Taille réelle",
+    "SourceLocations": [
+      "src/Chrome/PdfViewerChrome.Toolbar.cs:476",
+      "src/Chrome/PdfViewerChrome.Toolbar.cs:580"
+    ]
+  },
+  {
+    "State": "ClaudeSkillGenerated",
+    "GeneratedBy": "claude-opus-5",
+    "OriginalString": "Add comment",
+    "TranslatedString": "Ajouter un commentaire",
+    "SourceLocations": [
+      "src/L10n/PdfL10nStrings.cs:50"
+    ]
+  },
+  {
+    "State": "ClaudeSkillGenerated",
+    "GeneratedBy": "claude-opus-5",
+    "OriginalString": "Alt text",
+    "TranslatedString": "Texte alternatif",
+    "SourceLocations": [
+      "src/L10n/PdfL10nStrings.cs:53",
+      "src/L10n/PdfL10nStrings.cs:56"
+    ]
+  },
+  {
+    "State": "ClaudeSkillGenerated",
+    "GeneratedBy": "claude-opus-5",
+    "OriginalString": "Alt text added",
+    "TranslatedString": "Texte alternatif ajouté",
+    "SourceLocations": [
+      "src/L10n/PdfL10nStrings.cs:107",
+      "src/L10n/PdfL10nStrings.cs:110"
+    ]
+  },
+  {
+    "State": "ClaudeSkillGenerated",
+    "GeneratedBy": "claude-opus-5",
+    "OriginalString": "Automatic",
+    "TranslatedString": "Automatique",
+    "SourceLocations": [
+      "src/Chrome/PdfViewerChrome.Toolbar.cs:581"
+    ]
+  },
+  {
+    "State": "ClaudeSkillGenerated",
+    "GeneratedBy": "claude-opus-5",
+    "OriginalString": "Blue",
+    "TranslatedString": "Bleu",
+    "SourceLocations": [
+      "src/L10n/PdfL10nStrings.cs:71"
+    ]
+  },
+  {
+    "State": "ClaudeSkillGenerated",
+    "GeneratedBy": "claude-opus-5",
+    "OriginalString": "Bottom left corner — resize",
+    "TranslatedString": "Coin inférieur gauche — redimensionner",
+    "SourceLocations": [
+      "src/L10n/PdfL10nStrings.cs:143"
+    ]
+  },
+  {
+    "State": "ClaudeSkillGenerated",
+    "GeneratedBy": "claude-opus-5",
+    "OriginalString": "Bottom middle — resize",
+    "TranslatedString": "Bord inférieur au centre — redimensionner",
+    "SourceLocations": [
+      "src/L10n/PdfL10nStrings.cs:146"
+    ]
+  },
+  {
+    "State": "ClaudeSkillGenerated",
+    "GeneratedBy": "claude-opus-5",
+    "OriginalString": "Bottom right corner — resize",
+    "TranslatedString": "Coin inférieur droit — redimensionner",
+    "SourceLocations": [
+      "src/L10n/PdfL10nStrings.cs:149"
+    ]
+  },
+  {
+    "State": "ClaudeSkillGenerated",
+    "GeneratedBy": "claude-opus-5",
+    "OriginalString": "Change color",
+    "TranslatedString": "Modifier la couleur",
+    "SourceLocations": [
+      "src/L10n/PdfL10nStrings.cs:74"
+    ]
+  },
+  {
+    "State": "ClaudeSkillGenerated",
+    "GeneratedBy": "claude-opus-5",
+    "OriginalString": "Change drawing color",
+    "TranslatedString": "Modifier la couleur du dessin",
+    "SourceLocations": [
+      "src/L10n/PdfL10nStrings.cs:68"
+    ]
+  },
+  {
+    "State": "ClaudeSkillGenerated",
+    "GeneratedBy": "claude-opus-5",
+    "OriginalString": "Change text color",
+    "TranslatedString": "Modifier la couleur du texte",
+    "SourceLocations": [
+      "src/L10n/PdfL10nStrings.cs:65"
+    ]
+  },
+  {
+    "State": "ClaudeSkillGenerated",
+    "GeneratedBy": "claude-opus-5",
+    "OriginalString": "Clear",
+    "TranslatedString": "Effacer",
+    "SourceLocations": [
+      "src/Chrome/PdfViewerChrome.Search.cs:251"
+    ]
+  },
+  {
+    "State": "ClaudeSkillGenerated",
+    "GeneratedBy": "claude-opus-5",
+    "OriginalString": "Color choices",
+    "TranslatedString": "Choix de couleurs",
+    "SourceLocations": [
+      "src/L10n/PdfL10nStrings.cs:77"
+    ]
+  },
+  {
+    "State": "ClaudeSkillGenerated",
+    "GeneratedBy": "claude-opus-5",
+    "OriginalString": "Comment",
+    "TranslatedString": "Commentaire",
+    "SourceLocations": [
+      "src/L10n/PdfL10nStrings.cs:47"
+    ]
+  },
+  {
+    "State": "ClaudeSkillGenerated",
+    "GeneratedBy": "claude-opus-5",
+    "OriginalString": "Continued from the start of the document",
+    "TranslatedString": "Recherche reprise au début du document",
+    "SourceLocations": [
+      "src/Chrome/PdfViewerChrome.Search.cs:431"
+    ]
+  },
+  {
+    "State": "ClaudeSkillGenerated",
+    "GeneratedBy": "claude-opus-5",
+    "OriginalString": "Created automatically: {0}",
+    "TranslatedString": "Créé automatiquement : {0}",
+    "SourceLocations": [
+      "src/L10n/PdfL10nStrings.cs:113"
+    ]
+  },
+  {
+    "State": "ClaudeSkillGenerated",
+    "GeneratedBy": "claude-opus-5",
+    "OriginalString": "Document outline",
+    "TranslatedString": "Sommaire du document",
+    "SourceLocations": [
+      "src/Chrome/PdfViewerChrome.Toolbar.cs:255"
+    ]
+  },
+  {
+    "State": "ClaudeSkillGenerated",
+    "GeneratedBy": "claude-opus-5",
+    "OriginalString": "Drawing added",
+    "TranslatedString": "Dessin ajouté",
+    "SourceLocations": [
+      "src/L10n/PdfL10nStrings.cs:101"
+    ]
+  },
+  {
+    "State": "ClaudeSkillGenerated",
+    "GeneratedBy": "claude-opus-5",
+    "OriginalString": "Drawing editor",
+    "TranslatedString": "Éditeur de dessin",
+    "SourceLocations": [
+      "src/L10n/PdfL10nStrings.cs:104"
+    ]
+  },
+  {
+    "State": "ClaudeSkillGenerated",
+    "GeneratedBy": "claude-opus-5",
+    "OriginalString": "Edit alt text",
+    "TranslatedString": "Modifier le texte alternatif",
+    "SourceLocations": [
+      "src/L10n/PdfL10nStrings.cs:62"
+    ]
+  },
+  {
+    "State": "ClaudeSkillGenerated",
+    "GeneratedBy": "claude-opus-5",
+    "OriginalString": "Find in document",
+    "TranslatedString": "Rechercher dans le document",
+    "SourceLocations": [
+      "src/Chrome/PdfViewerChrome.Search.cs:232"
+    ]
+  },
+  {
+    "State": "ClaudeSkillGenerated",
+    "GeneratedBy": "claude-opus-5",
+    "OriginalString": "Fit content",
+    "TranslatedString": "Largeur de page",
+    "SourceLocations": [
+      "src/Chrome/PdfViewerChrome.Toolbar.cs:202",
+      "src/Chrome/PdfViewerChrome.Toolbar.cs:475",
+      "src/Chrome/PdfViewerChrome.Toolbar.cs:579"
+    ]
+  },
+  {
+    "State": "ClaudeSkillGenerated",
+    "GeneratedBy": "claude-opus-5",
+    "OriginalString": "Fit page",
+    "TranslatedString": "Page entière",
+    "SourceLocations": [
+      "src/Chrome/PdfViewerChrome.Toolbar.cs:201",
+      "src/Chrome/PdfViewerChrome.Toolbar.cs:474",
+      "src/Chrome/PdfViewerChrome.Toolbar.cs:578"
+    ]
+  },
+  {
+    "State": "ClaudeSkillGenerated",
+    "GeneratedBy": "claude-opus-5",
+    "OriginalString": "Fuzzy",
+    "TranslatedString": "Approximatif",
+    "SourceLocations": [
+      "src/Chrome/PdfViewerChrome.Search.cs:257",
+      "src/Chrome/PdfViewerChrome.Toolbar.cs:517"
+    ]
+  },
+  {
+    "State": "ClaudeSkillGenerated",
+    "GeneratedBy": "claude-opus-5",
+    "OriginalString": "Green",
+    "TranslatedString": "Vert",
+    "SourceLocations": [
+      "src/L10n/PdfL10nStrings.cs:80"
+    ]
+  },
+  {
+    "State": "ClaudeSkillGenerated",
+    "GeneratedBy": "claude-opus-5",
+    "OriginalString": "Highlight",
+    "TranslatedString": "Surligner",
+    "SourceLocations": [
+      "src/L10n/PdfL10nStrings.cs:182"
+    ]
+  },
+  {
+    "State": "ClaudeSkillGenerated",
+    "GeneratedBy": "claude-opus-5",
+    "OriginalString": "Highlight added",
+    "TranslatedString": "Surlignage ajouté",
+    "SourceLocations": [
+      "src/L10n/PdfL10nStrings.cs:95"
+    ]
+  },
+  {
+    "State": "ClaudeSkillGenerated",
+    "GeneratedBy": "claude-opus-5",
+    "OriginalString": "Highlight editor",
+    "TranslatedString": "Éditeur de surlignage",
+    "SourceLocations": [
+      "src/L10n/PdfL10nStrings.cs:98"
+    ]
+  },
+  {
+    "State": "ClaudeSkillGenerated",
+    "GeneratedBy": "claude-opus-5",
+    "OriginalString": "Ignore case, accents and word boundaries",
+    "TranslatedString": "Ignorer la casse, les accents et les limites de mots",
+    "SourceLocations": [
+      "src/Chrome/PdfViewerChrome.Search.cs:151"
+    ]
+  },
+  {
+    "State": "ClaudeSkillGenerated",
+    "GeneratedBy": "claude-opus-5",
+    "OriginalString": "Image added",
+    "TranslatedString": "Image ajoutée",
+    "SourceLocations": [
+      "src/L10n/PdfL10nStrings.cs:173"
+    ]
+  },
+  {
+    "State": "ClaudeSkillGenerated",
+    "GeneratedBy": "claude-opus-5",
+    "OriginalString": "Image editor",
+    "TranslatedString": "Éditeur d'image",
+    "SourceLocations": [
+      "src/L10n/PdfL10nStrings.cs:176"
+    ]
+  },
+  {
+    "State": "ClaudeSkillGenerated",
+    "GeneratedBy": "claude-opus-5",
+    "OriginalString": "Marked as decorative",
+    "TranslatedString": "Marqué comme décoratif",
+    "SourceLocations": [
+      "src/L10n/PdfL10nStrings.cs:59"
+    ]
+  },
+  {
+    "State": "ClaudeSkillGenerated",
+    "GeneratedBy": "claude-opus-5",
+    "OriginalString": "Match case, whole words, diacritics respected",
+    "TranslatedString": "Respecter la casse, les mots entiers et les accents",
+    "SourceLocations": [
+      "src/Chrome/PdfViewerChrome.Search.cs:150"
+    ]
+  },
+  {
+    "State": "ClaudeSkillGenerated",
+    "GeneratedBy": "claude-opus-5",
+    "OriginalString": "Middle left — resize",
+    "TranslatedString": "Milieu gauche — redimensionner",
+    "SourceLocations": [
+      "src/L10n/PdfL10nStrings.cs:152"
+    ]
+  },
+  {
+    "State": "ClaudeSkillGenerated",
+    "GeneratedBy": "claude-opus-5",
+    "OriginalString": "Middle right — resize",
+    "TranslatedString": "Milieu droit — redimensionner",
+    "SourceLocations": [
+      "src/L10n/PdfL10nStrings.cs:155"
+    ]
+  },
+  {
+    "State": "ClaudeSkillGenerated",
+    "GeneratedBy": "claude-opus-5",
+    "OriginalString": "Missing alt text",
+    "TranslatedString": "Texte alternatif manquant",
+    "SourceLocations": [
+      "src/L10n/PdfL10nStrings.cs:116",
+      "src/L10n/PdfL10nStrings.cs:119"
+    ]
+  },
+  {
+    "State": "ClaudeSkillGenerated",
+    "GeneratedBy": "claude-opus-5",
+    "OriginalString": "More controls",
+    "TranslatedString": "Plus de commandes",
+    "SourceLocations": [
+      "src/Chrome/PdfViewerChrome.Toolbar.cs:444"
+    ]
+  },
+  {
+    "State": "ClaudeSkillGenerated",
+    "GeneratedBy": "claude-opus-5",
+    "OriginalString": "Next match",
+    "TranslatedString": "Résultat suivant",
+    "SourceLocations": [
+      "src/Chrome/PdfViewerChrome.Search.cs:249"
+    ]
+  },
+  {
+    "State": "ClaudeSkillGenerated",
+    "GeneratedBy": "claude-opus-5",
+    "OriginalString": "Next page",
+    "TranslatedString": "Page suivante",
+    "SourceLocations": [
+      "src/Chrome/PdfViewerChrome.Toolbar.cs:279"
+    ]
+  },
+  {
+    "State": "ClaudeSkillGenerated",
+    "GeneratedBy": "claude-opus-5",
+    "OriginalString": "No document.",
+    "TranslatedString": "Aucun document.",
+    "SourceLocations": [
+      "src/Chrome/PdfViewerChrome.Panel.cs:395",
+      "src/Chrome/PdfViewerChrome.Panel.cs:722"
+    ]
+  },
+  {
+    "State": "ClaudeSkillGenerated",
+    "GeneratedBy": "claude-opus-5",
+    "OriginalString": "No matches",
+    "TranslatedString": "Aucun résultat",
+    "SourceLocations": [
+      "src/Chrome/PdfViewerChrome.Search.cs:440",
+      "src/Chrome/PdfViewerChrome.Panel.cs:199"
+    ]
+  },
+  {
+    "State": "ClaudeSkillGenerated",
+    "GeneratedBy": "claude-opus-5",
+    "OriginalString": "No matches - try Fuzzy",
+    "TranslatedString": "Aucun résultat - essayez Approximatif",
+    "SourceLocations": [
+      "src/Chrome/PdfViewerChrome.Search.cs:439"
+    ]
+  },
+  {
+    "State": "ClaudeSkillGenerated",
+    "GeneratedBy": "claude-opus-5",
+    "OriginalString": "Page",
+    "TranslatedString": "Page",
+    "SourceLocations": [
+      "src/Chrome/PdfViewerChrome.Toolbar.cs:301"
+    ]
+  },
+  {
+    "State": "ClaudeSkillGenerated",
+    "GeneratedBy": "claude-opus-5",
+    "OriginalString": "Page {0}",
+    "TranslatedString": "Page {0}",
+    "SourceLocations": [
+      "src/L10n/PdfL10nStrings.cs:185",
+      "src/Chrome/PdfViewerChrome.Panel.cs:749"
+    ]
+  },
+  {
+    "State": "ClaudeSkillGenerated",
+    "GeneratedBy": "claude-opus-5",
+    "OriginalString": "Page {0} of {1}",
+    "TranslatedString": "Page {0} sur {1}",
+    "SourceLocations": [
+      "src/Chrome/PdfViewerChrome.Toolbar.cs:662"
+    ]
+  },
+  {
+    "State": "ClaudeSkillGenerated",
+    "GeneratedBy": "claude-opus-5",
+    "OriginalString": "Pink",
+    "TranslatedString": "Rose",
+    "SourceLocations": [
+      "src/L10n/PdfL10nStrings.cs:83"
+    ]
+  },
+  {
+    "State": "ClaudeSkillGenerated",
+    "GeneratedBy": "claude-opus-5",
+    "OriginalString": "Precise",
+    "TranslatedString": "Précis",
+    "SourceLocations": [
+      "src/Chrome/PdfViewerChrome.Search.cs:258",
+      "src/Chrome/PdfViewerChrome.Toolbar.cs:520"
+    ]
+  },
+  {
+    "State": "ClaudeSkillGenerated",
+    "GeneratedBy": "claude-opus-5",
+    "OriginalString": "Previous match",
+    "TranslatedString": "Résultat précédent",
+    "SourceLocations": [
+      "src/Chrome/PdfViewerChrome.Search.cs:248"
+    ]
+  },
+  {
+    "State": "ClaudeSkillGenerated",
+    "GeneratedBy": "claude-opus-5",
+    "OriginalString": "Previous page",
+    "TranslatedString": "Page précédente",
+    "SourceLocations": [
+      "src/Chrome/PdfViewerChrome.Toolbar.cs:272"
+    ]
+  },
+  {
+    "State": "ClaudeSkillGenerated",
+    "GeneratedBy": "claude-opus-5",
+    "OriginalString": "Red",
+    "TranslatedString": "Rouge",
+    "SourceLocations": [
+      "src/L10n/PdfL10nStrings.cs:86"
+    ]
+  },
+  {
+    "State": "ClaudeSkillGenerated",
+    "GeneratedBy": "claude-opus-5",
+    "OriginalString": "Remove drawing",
+    "TranslatedString": "Supprimer le dessin",
+    "SourceLocations": [
+      "src/L10n/PdfL10nStrings.cs:134"
+    ]
+  },
+  {
+    "State": "ClaudeSkillGenerated",
+    "GeneratedBy": "claude-opus-5",
+    "OriginalString": "Remove highlight",
+    "TranslatedString": "Supprimer le surlignage",
+    "SourceLocations": [
+      "src/L10n/PdfL10nStrings.cs:131"
+    ]
+  },
+  {
+    "State": "ClaudeSkillGenerated",
+    "GeneratedBy": "claude-opus-5",
+    "OriginalString": "Remove image",
+    "TranslatedString": "Supprimer l'image",
+    "SourceLocations": [
+      "src/L10n/PdfL10nStrings.cs:140"
+    ]
+  },
+  {
+    "State": "ClaudeSkillGenerated",
+    "GeneratedBy": "claude-opus-5",
+    "OriginalString": "Remove signature",
+    "TranslatedString": "Supprimer la signature",
+    "SourceLocations": [
+      "src/L10n/PdfL10nStrings.cs:137"
+    ]
+  },
+  {
+    "State": "ClaudeSkillGenerated",
+    "GeneratedBy": "claude-opus-5",
+    "OriginalString": "Remove text",
+    "TranslatedString": "Supprimer le texte",
+    "SourceLocations": [
+      "src/L10n/PdfL10nStrings.cs:128"
+    ]
+  },
+  {
+    "State": "ClaudeSkillGenerated",
+    "GeneratedBy": "claude-opus-5",
+    "OriginalString": "Review alt text",
+    "TranslatedString": "Vérifier le texte alternatif",
+    "SourceLocations": [
+      "src/L10n/PdfL10nStrings.cs:122",
+      "src/L10n/PdfL10nStrings.cs:125"
+    ]
+  },
+  {
+    "State": "ClaudeSkillGenerated",
+    "GeneratedBy": "claude-opus-5",
+    "OriginalString": "Rotate right",
+    "TranslatedString": "Pivoter à droite",
+    "SourceLocations": [
+      "src/Chrome/PdfViewerChrome.Toolbar.cs:416",
+      "src/Chrome/PdfViewerChrome.Toolbar.cs:487"
+    ]
+  },
+  {
+    "State": "ClaudeSkillGenerated",
+    "GeneratedBy": "claude-opus-5",
+    "OriginalString": "Searching...",
+    "TranslatedString": "Recherche en cours...",
+    "SourceLocations": [
+      "src/Chrome/PdfViewerChrome.Panel.cs:199"
+    ]
+  },
+  {
+    "State": "ClaudeSkillGenerated",
+    "GeneratedBy": "claude-opus-5",
+    "OriginalString": "Show comment",
+    "TranslatedString": "Afficher le commentaire",
+    "SourceLocations": [
+      "src/L10n/PdfL10nStrings.cs:188"
+    ]
+  },
+  {
+    "State": "ClaudeSkillGenerated",
+    "GeneratedBy": "claude-opus-5",
+    "OriginalString": "Show in outline",
+    "TranslatedString": "Afficher dans le sommaire",
+    "SourceLocations": [
+      "src/Chrome/PdfViewerChrome.Panel.cs:94"
+    ]
+  },
+  {
+    "State": "ClaudeSkillGenerated",
+    "GeneratedBy": "claude-opus-5",
+    "OriginalString": "Signature added",
+    "TranslatedString": "Signature ajoutée",
+    "SourceLocations": [
+      "src/L10n/PdfL10nStrings.cs:167"
+    ]
+  },
+  {
+    "State": "ClaudeSkillGenerated",
+    "GeneratedBy": "claude-opus-5",
+    "OriginalString": "Signature editor: {0}",
+    "TranslatedString": "Éditeur de signature : {0}",
+    "SourceLocations": [
+      "src/L10n/PdfL10nStrings.cs:170"
+    ]
+  },
+  {
+    "State": "ClaudeSkillGenerated",
+    "GeneratedBy": "claude-opus-5",
+    "OriginalString": "Text Editor",
+    "TranslatedString": "Éditeur de texte",
+    "SourceLocations": [
+      "src/L10n/PdfL10nStrings.cs:179"
+    ]
+  },
+  {
+    "State": "ClaudeSkillGenerated",
+    "GeneratedBy": "claude-opus-5",
+    "OriginalString": "Text added",
+    "TranslatedString": "Texte ajouté",
+    "SourceLocations": [
+      "src/L10n/PdfL10nStrings.cs:92"
+    ]
+  },
+  {
+    "State": "ClaudeSkillGenerated",
+    "GeneratedBy": "claude-opus-5",
+    "OriginalString": "This document has no outline.",
+    "TranslatedString": "Ce document n'a pas de sommaire.",
+    "SourceLocations": [
+      "src/Chrome/PdfViewerChrome.Panel.cs:396"
+    ]
+  },
+  {
+    "State": "ClaudeSkillGenerated",
+    "GeneratedBy": "claude-opus-5",
+    "OriginalString": "Thumbnails",
+    "TranslatedString": "Miniatures",
+    "SourceLocations": [
+      "src/Chrome/PdfViewerChrome.Toolbar.cs:263"
+    ]
+  },
+  {
+    "State": "ClaudeSkillGenerated",
+    "GeneratedBy": "claude-opus-5",
+    "OriginalString": "Top left corner — resize",
+    "TranslatedString": "Coin supérieur gauche — redimensionner",
+    "SourceLocations": [
+      "src/L10n/PdfL10nStrings.cs:158"
+    ]
+  },
+  {
+    "State": "ClaudeSkillGenerated",
+    "GeneratedBy": "claude-opus-5",
+    "OriginalString": "Top middle — resize",
+    "TranslatedString": "Bord supérieur au centre — redimensionner",
+    "SourceLocations": [
+      "src/L10n/PdfL10nStrings.cs:161"
+    ]
+  },
+  {
+    "State": "ClaudeSkillGenerated",
+    "GeneratedBy": "claude-opus-5",
+    "OriginalString": "Top right corner — resize",
+    "TranslatedString": "Coin supérieur droit — redimensionner",
+    "SourceLocations": [
+      "src/L10n/PdfL10nStrings.cs:164"
+    ]
+  },
+  {
+    "State": "ClaudeSkillGenerated",
+    "GeneratedBy": "claude-opus-5",
+    "OriginalString": "Two-page spread",
+    "TranslatedString": "Double page",
+    "SourceLocations": [
+      "src/Chrome/PdfViewerChrome.Toolbar.cs:429",
+      "src/Chrome/PdfViewerChrome.Toolbar.cs:492"
+    ]
+  },
+  {
+    "State": "ClaudeSkillGenerated",
+    "GeneratedBy": "claude-opus-5",
+    "OriginalString": "Yellow",
+    "TranslatedString": "Jaune",
+    "SourceLocations": [
+      "src/L10n/PdfL10nStrings.cs:89"
+    ]
+  },
+  {
+    "State": "ClaudeSkillGenerated",
+    "GeneratedBy": "claude-opus-5",
+    "OriginalString": "Zoom and fit",
+    "TranslatedString": "Zoom et ajustement",
+    "SourceLocations": [
+      "src/Chrome/PdfViewerChrome.Toolbar.cs:561"
+    ]
+  },
+  {
+    "State": "ClaudeSkillGenerated",
+    "GeneratedBy": "claude-opus-5",
+    "OriginalString": "Zoom in",
+    "TranslatedString": "Zoom avant",
+    "SourceLocations": [
+      "src/Chrome/PdfViewerChrome.Toolbar.cs:77",
+      "src/Chrome/PdfViewerChrome.Toolbar.cs:186",
+      "src/Chrome/PdfViewerChrome.Toolbar.cs:464"
+    ]
+  },
+  {
+    "State": "ClaudeSkillGenerated",
+    "GeneratedBy": "claude-opus-5",
+    "OriginalString": "Zoom out",
+    "TranslatedString": "Zoom arrière",
+    "SourceLocations": [
+      "src/Chrome/PdfViewerChrome.Toolbar.cs:75",
+      "src/Chrome/PdfViewerChrome.Toolbar.cs:191",
+      "src/Chrome/PdfViewerChrome.Toolbar.cs:465"
+    ]
+  },
+  {
+    "State": "ClaudeSkillGenerated",
+    "GeneratedBy": "claude-opus-5",
+    "OriginalString": "[{0} Annotation]",
+    "TranslatedString": "[Annotation : {0}]",
+    "SourceLocations": [
+      "src/L10n/PdfL10nStrings.cs:191"
+    ]
+  },
+  {
+    "State": "ClaudeSkillGenerated",
+    "GeneratedBy": "claude-opus-5",
+    "OriginalString": "of {0}",
+    "TranslatedString": "sur {0}",
+    "SourceLocations": [
+      "src/Chrome/PdfViewerChrome.Toolbar.cs:676"
+    ]
+  },
+  {
+    "State": "ClaudeSkillGenerated",
+    "GeneratedBy": "claude-opus-5",
+    "OriginalString": "pages {0}",
+    "TranslatedString": "pages {0}",
+    "SourceLocations": [
+      "src/Chrome/PdfViewerChrome.Panel.cs:232"
+    ]
+  },
+  {
+    "State": "ClaudeSkillGenerated",
+    "GeneratedBy": "claude-opus-5",
+    "OriginalString": "pages {0} +{1} more",
+    "TranslatedString": "pages {0} +{1} autres",
+    "SourceLocations": [
+      "src/Chrome/PdfViewerChrome.Panel.cs:224"
+    ]
+  },
+  {
+    "State": "ClaudeSkillGenerated",
+    "GeneratedBy": "claude-opus-5",
+    "OriginalString": "{0} matches",
+    "TranslatedString": "{0} résultats",
+    "SourceLocations": [
+      "src/Chrome/PdfViewerChrome.Panel.cs:186"
+    ]
+  },
+  {
+    "State": "ClaudeSkillGenerated",
+    "GeneratedBy": "claude-opus-5",
+    "OriginalString": "{0} of {1}",
+    "TranslatedString": "{0} sur {1}",
+    "SourceLocations": [
+      "src/Chrome/PdfViewerChrome.Toolbar.cs:675"
+    ]
+  },
+  {
+    "State": "ClaudeSkillGenerated",
+    "GeneratedBy": "claude-opus-5",
+    "OriginalString": "{0} pages",
+    "TranslatedString": "{0} pages",
+    "SourceLocations": [
+      "src/Chrome/PdfViewerChrome.Panel.cs:182"
+    ]
+  }
+]

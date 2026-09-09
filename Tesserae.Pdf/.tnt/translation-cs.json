@@ -1,0 +1,760 @@
+﻿[
+  {
+    "State": "ClaudeSkillGenerated",
+    "GeneratedBy": "claude-opus-5",
+    "OriginalString": "Actual size",
+    "TranslatedString": "Skutečná velikost",
+    "SourceLocations": [
+      "src/Chrome/PdfViewerChrome.Toolbar.cs:476",
+      "src/Chrome/PdfViewerChrome.Toolbar.cs:580"
+    ]
+  },
+  {
+    "State": "ClaudeSkillGenerated",
+    "GeneratedBy": "claude-opus-5",
+    "OriginalString": "Add comment",
+    "TranslatedString": "Přidat komentář",
+    "SourceLocations": [
+      "src/L10n/PdfL10nStrings.cs:50"
+    ]
+  },
+  {
+    "State": "ClaudeSkillGenerated",
+    "GeneratedBy": "claude-opus-5",
+    "OriginalString": "Alt text",
+    "TranslatedString": "Alternativní text",
+    "SourceLocations": [
+      "src/L10n/PdfL10nStrings.cs:53",
+      "src/L10n/PdfL10nStrings.cs:56"
+    ]
+  },
+  {
+    "State": "ClaudeSkillGenerated",
+    "GeneratedBy": "claude-opus-5",
+    "OriginalString": "Alt text added",
+    "TranslatedString": "Alternativní text přidán",
+    "SourceLocations": [
+      "src/L10n/PdfL10nStrings.cs:107",
+      "src/L10n/PdfL10nStrings.cs:110"
+    ]
+  },
+  {
+    "State": "ClaudeSkillGenerated",
+    "GeneratedBy": "claude-opus-5",
+    "OriginalString": "Automatic",
+    "TranslatedString": "Automaticky",
+    "SourceLocations": [
+      "src/Chrome/PdfViewerChrome.Toolbar.cs:581"
+    ]
+  },
+  {
+    "State": "ClaudeSkillGenerated",
+    "GeneratedBy": "claude-opus-5",
+    "OriginalString": "Blue",
+    "TranslatedString": "Modrá",
+    "SourceLocations": [
+      "src/L10n/PdfL10nStrings.cs:71"
+    ]
+  },
+  {
+    "State": "ClaudeSkillGenerated",
+    "GeneratedBy": "claude-opus-5",
+    "OriginalString": "Bottom left corner — resize",
+    "TranslatedString": "Levý dolní roh — změnit velikost",
+    "SourceLocations": [
+      "src/L10n/PdfL10nStrings.cs:143"
+    ]
+  },
+  {
+    "State": "ClaudeSkillGenerated",
+    "GeneratedBy": "claude-opus-5",
+    "OriginalString": "Bottom middle — resize",
+    "TranslatedString": "Dole uprostřed — změnit velikost",
+    "SourceLocations": [
+      "src/L10n/PdfL10nStrings.cs:146"
+    ]
+  },
+  {
+    "State": "ClaudeSkillGenerated",
+    "GeneratedBy": "claude-opus-5",
+    "OriginalString": "Bottom right corner — resize",
+    "TranslatedString": "Pravý dolní roh — změnit velikost",
+    "SourceLocations": [
+      "src/L10n/PdfL10nStrings.cs:149"
+    ]
+  },
+  {
+    "State": "ClaudeSkillGenerated",
+    "GeneratedBy": "claude-opus-5",
+    "OriginalString": "Change color",
+    "TranslatedString": "Změnit barvu",
+    "SourceLocations": [
+      "src/L10n/PdfL10nStrings.cs:74"
+    ]
+  },
+  {
+    "State": "ClaudeSkillGenerated",
+    "GeneratedBy": "claude-opus-5",
+    "OriginalString": "Change drawing color",
+    "TranslatedString": "Změnit barvu kresby",
+    "SourceLocations": [
+      "src/L10n/PdfL10nStrings.cs:68"
+    ]
+  },
+  {
+    "State": "ClaudeSkillGenerated",
+    "GeneratedBy": "claude-opus-5",
+    "OriginalString": "Change text color",
+    "TranslatedString": "Změnit barvu textu",
+    "SourceLocations": [
+      "src/L10n/PdfL10nStrings.cs:65"
+    ]
+  },
+  {
+    "State": "ClaudeSkillGenerated",
+    "GeneratedBy": "claude-opus-5",
+    "OriginalString": "Clear",
+    "TranslatedString": "Vymazat",
+    "SourceLocations": [
+      "src/Chrome/PdfViewerChrome.Search.cs:251"
+    ]
+  },
+  {
+    "State": "ClaudeSkillGenerated",
+    "GeneratedBy": "claude-opus-5",
+    "OriginalString": "Color choices",
+    "TranslatedString": "Výběr barvy",
+    "SourceLocations": [
+      "src/L10n/PdfL10nStrings.cs:77"
+    ]
+  },
+  {
+    "State": "ClaudeSkillGenerated",
+    "GeneratedBy": "claude-opus-5",
+    "OriginalString": "Comment",
+    "TranslatedString": "Komentář",
+    "SourceLocations": [
+      "src/L10n/PdfL10nStrings.cs:47"
+    ]
+  },
+  {
+    "State": "ClaudeSkillGenerated",
+    "GeneratedBy": "claude-opus-5",
+    "OriginalString": "Continued from the start of the document",
+    "TranslatedString": "Pokračováno od začátku dokumentu",
+    "SourceLocations": [
+      "src/Chrome/PdfViewerChrome.Search.cs:431"
+    ]
+  },
+  {
+    "State": "ClaudeSkillGenerated",
+    "GeneratedBy": "claude-opus-5",
+    "OriginalString": "Created automatically: {0}",
+    "TranslatedString": "Vytvořeno automaticky: {0}",
+    "SourceLocations": [
+      "src/L10n/PdfL10nStrings.cs:113"
+    ]
+  },
+  {
+    "State": "ClaudeSkillGenerated",
+    "GeneratedBy": "claude-opus-5",
+    "OriginalString": "Document outline",
+    "TranslatedString": "Osnova dokumentu",
+    "SourceLocations": [
+      "src/Chrome/PdfViewerChrome.Toolbar.cs:255"
+    ]
+  },
+  {
+    "State": "ClaudeSkillGenerated",
+    "GeneratedBy": "claude-opus-5",
+    "OriginalString": "Drawing added",
+    "TranslatedString": "Kresba přidána",
+    "SourceLocations": [
+      "src/L10n/PdfL10nStrings.cs:101"
+    ]
+  },
+  {
+    "State": "ClaudeSkillGenerated",
+    "GeneratedBy": "claude-opus-5",
+    "OriginalString": "Drawing editor",
+    "TranslatedString": "Editor kresby",
+    "SourceLocations": [
+      "src/L10n/PdfL10nStrings.cs:104"
+    ]
+  },
+  {
+    "State": "ClaudeSkillGenerated",
+    "GeneratedBy": "claude-opus-5",
+    "OriginalString": "Edit alt text",
+    "TranslatedString": "Upravit alternativní text",
+    "SourceLocations": [
+      "src/L10n/PdfL10nStrings.cs:62"
+    ]
+  },
+  {
+    "State": "ClaudeSkillGenerated",
+    "GeneratedBy": "claude-opus-5",
+    "OriginalString": "Find in document",
+    "TranslatedString": "Najít v dokumentu",
+    "SourceLocations": [
+      "src/Chrome/PdfViewerChrome.Search.cs:232"
+    ]
+  },
+  {
+    "State": "ClaudeSkillGenerated",
+    "GeneratedBy": "claude-opus-5",
+    "OriginalString": "Fit content",
+    "TranslatedString": "Šířka stránky",
+    "SourceLocations": [
+      "src/Chrome/PdfViewerChrome.Toolbar.cs:202",
+      "src/Chrome/PdfViewerChrome.Toolbar.cs:475",
+      "src/Chrome/PdfViewerChrome.Toolbar.cs:579"
+    ]
+  },
+  {
+    "State": "ClaudeSkillGenerated",
+    "GeneratedBy": "claude-opus-5",
+    "OriginalString": "Fit page",
+    "TranslatedString": "Celá stránka",
+    "SourceLocations": [
+      "src/Chrome/PdfViewerChrome.Toolbar.cs:201",
+      "src/Chrome/PdfViewerChrome.Toolbar.cs:474",
+      "src/Chrome/PdfViewerChrome.Toolbar.cs:578"
+    ]
+  },
+  {
+    "State": "ClaudeSkillGenerated",
+    "GeneratedBy": "claude-opus-5",
+    "OriginalString": "Fuzzy",
+    "TranslatedString": "Přibližné",
+    "SourceLocations": [
+      "src/Chrome/PdfViewerChrome.Search.cs:257",
+      "src/Chrome/PdfViewerChrome.Toolbar.cs:517"
+    ]
+  },
+  {
+    "State": "ClaudeSkillGenerated",
+    "GeneratedBy": "claude-opus-5",
+    "OriginalString": "Green",
+    "TranslatedString": "Zelená",
+    "SourceLocations": [
+      "src/L10n/PdfL10nStrings.cs:80"
+    ]
+  },
+  {
+    "State": "ClaudeSkillGenerated",
+    "GeneratedBy": "claude-opus-5",
+    "OriginalString": "Highlight",
+    "TranslatedString": "Zvýraznit",
+    "SourceLocations": [
+      "src/L10n/PdfL10nStrings.cs:182"
+    ]
+  },
+  {
+    "State": "ClaudeSkillGenerated",
+    "GeneratedBy": "claude-opus-5",
+    "OriginalString": "Highlight added",
+    "TranslatedString": "Zvýraznění přidáno",
+    "SourceLocations": [
+      "src/L10n/PdfL10nStrings.cs:95"
+    ]
+  },
+  {
+    "State": "ClaudeSkillGenerated",
+    "GeneratedBy": "claude-opus-5",
+    "OriginalString": "Highlight editor",
+    "TranslatedString": "Editor zvýraznění",
+    "SourceLocations": [
+      "src/L10n/PdfL10nStrings.cs:98"
+    ]
+  },
+  {
+    "State": "ClaudeSkillGenerated",
+    "GeneratedBy": "claude-opus-5",
+    "OriginalString": "Ignore case, accents and word boundaries",
+    "TranslatedString": "Ignorovat velikost písmen, diakritiku a hranice slov",
+    "SourceLocations": [
+      "src/Chrome/PdfViewerChrome.Search.cs:151"
+    ]
+  },
+  {
+    "State": "ClaudeSkillGenerated",
+    "GeneratedBy": "claude-opus-5",
+    "OriginalString": "Image added",
+    "TranslatedString": "Obrázek přidán",
+    "SourceLocations": [
+      "src/L10n/PdfL10nStrings.cs:173"
+    ]
+  },
+  {
+    "State": "ClaudeSkillGenerated",
+    "GeneratedBy": "claude-opus-5",
+    "OriginalString": "Image editor",
+    "TranslatedString": "Editor obrázku",
+    "SourceLocations": [
+      "src/L10n/PdfL10nStrings.cs:176"
+    ]
+  },
+  {
+    "State": "ClaudeSkillGenerated",
+    "GeneratedBy": "claude-opus-5",
+    "OriginalString": "Marked as decorative",
+    "TranslatedString": "Označeno jako dekorativní",
+    "SourceLocations": [
+      "src/L10n/PdfL10nStrings.cs:59"
+    ]
+  },
+  {
+    "State": "ClaudeSkillGenerated",
+    "GeneratedBy": "claude-opus-5",
+    "OriginalString": "Match case, whole words, diacritics respected",
+    "TranslatedString": "Rozlišovat velikost písmen, celá slova a diakritiku",
+    "SourceLocations": [
+      "src/Chrome/PdfViewerChrome.Search.cs:150"
+    ]
+  },
+  {
+    "State": "ClaudeSkillGenerated",
+    "GeneratedBy": "claude-opus-5",
+    "OriginalString": "Middle left — resize",
+    "TranslatedString": "Uprostřed vlevo — změnit velikost",
+    "SourceLocations": [
+      "src/L10n/PdfL10nStrings.cs:152"
+    ]
+  },
+  {
+    "State": "ClaudeSkillGenerated",
+    "GeneratedBy": "claude-opus-5",
+    "OriginalString": "Middle right — resize",
+    "TranslatedString": "Uprostřed vpravo — změnit velikost",
+    "SourceLocations": [
+      "src/L10n/PdfL10nStrings.cs:155"
+    ]
+  },
+  {
+    "State": "ClaudeSkillGenerated",
+    "GeneratedBy": "claude-opus-5",
+    "OriginalString": "Missing alt text",
+    "TranslatedString": "Chybějící alternativní text",
+    "SourceLocations": [
+      "src/L10n/PdfL10nStrings.cs:116",
+      "src/L10n/PdfL10nStrings.cs:119"
+    ]
+  },
+  {
+    "State": "ClaudeSkillGenerated",
+    "GeneratedBy": "claude-opus-5",
+    "OriginalString": "More controls",
+    "TranslatedString": "Další ovládací prvky",
+    "SourceLocations": [
+      "src/Chrome/PdfViewerChrome.Toolbar.cs:444"
+    ]
+  },
+  {
+    "State": "ClaudeSkillGenerated",
+    "GeneratedBy": "claude-opus-5",
+    "OriginalString": "Next match",
+    "TranslatedString": "Další výskyt",
+    "SourceLocations": [
+      "src/Chrome/PdfViewerChrome.Search.cs:249"
+    ]
+  },
+  {
+    "State": "ClaudeSkillGenerated",
+    "GeneratedBy": "claude-opus-5",
+    "OriginalString": "Next page",
+    "TranslatedString": "Další stránka",
+    "SourceLocations": [
+      "src/Chrome/PdfViewerChrome.Toolbar.cs:279"
+    ]
+  },
+  {
+    "State": "ClaudeSkillGenerated",
+    "GeneratedBy": "claude-opus-5",
+    "OriginalString": "No document.",
+    "TranslatedString": "Žádný dokument.",
+    "SourceLocations": [
+      "src/Chrome/PdfViewerChrome.Panel.cs:395",
+      "src/Chrome/PdfViewerChrome.Panel.cs:722"
+    ]
+  },
+  {
+    "State": "ClaudeSkillGenerated",
+    "GeneratedBy": "claude-opus-5",
+    "OriginalString": "No matches",
+    "TranslatedString": "Žádné výsledky",
+    "SourceLocations": [
+      "src/Chrome/PdfViewerChrome.Search.cs:440",
+      "src/Chrome/PdfViewerChrome.Panel.cs:199"
+    ]
+  },
+  {
+    "State": "ClaudeSkillGenerated",
+    "GeneratedBy": "claude-opus-5",
+    "OriginalString": "No matches - try Fuzzy",
+    "TranslatedString": "Žádné výsledky - zkuste Přibližné",
+    "SourceLocations": [
+      "src/Chrome/PdfViewerChrome.Search.cs:439"
+    ]
+  },
+  {
+    "State": "ClaudeSkillGenerated",
+    "GeneratedBy": "claude-opus-5",
+    "OriginalString": "Page",
+    "TranslatedString": "Stránka",
+    "SourceLocations": [
+      "src/Chrome/PdfViewerChrome.Toolbar.cs:301"
+    ]
+  },
+  {
+    "State": "ClaudeSkillGenerated",
+    "GeneratedBy": "claude-opus-5",
+    "OriginalString": "Page {0}",
+    "TranslatedString": "Stránka {0}",
+    "SourceLocations": [
+      "src/L10n/PdfL10nStrings.cs:185",
+      "src/Chrome/PdfViewerChrome.Panel.cs:749"
+    ]
+  },
+  {
+    "State": "ClaudeSkillGenerated",
+    "GeneratedBy": "claude-opus-5",
+    "OriginalString": "Page {0} of {1}",
+    "TranslatedString": "Stránka {0} z {1}",
+    "SourceLocations": [
+      "src/Chrome/PdfViewerChrome.Toolbar.cs:662"
+    ]
+  },
+  {
+    "State": "ClaudeSkillGenerated",
+    "GeneratedBy": "claude-opus-5",
+    "OriginalString": "Pink",
+    "TranslatedString": "Růžová",
+    "SourceLocations": [
+      "src/L10n/PdfL10nStrings.cs:83"
+    ]
+  },
+  {
+    "State": "ClaudeSkillGenerated",
+    "GeneratedBy": "claude-opus-5",
+    "OriginalString": "Precise",
+    "TranslatedString": "Přesné",
+    "SourceLocations": [
+      "src/Chrome/PdfViewerChrome.Search.cs:258",
+      "src/Chrome/PdfViewerChrome.Toolbar.cs:520"
+    ]
+  },
+  {
+    "State": "ClaudeSkillGenerated",
+    "GeneratedBy": "claude-opus-5",
+    "OriginalString": "Previous match",
+    "TranslatedString": "Předchozí výskyt",
+    "SourceLocations": [
+      "src/Chrome/PdfViewerChrome.Search.cs:248"
+    ]
+  },
+  {
+    "State": "ClaudeSkillGenerated",
+    "GeneratedBy": "claude-opus-5",
+    "OriginalString": "Previous page",
+    "TranslatedString": "Předchozí stránka",
+    "SourceLocations": [
+      "src/Chrome/PdfViewerChrome.Toolbar.cs:272"
+    ]
+  },
+  {
+    "State": "ClaudeSkillGenerated",
+    "GeneratedBy": "claude-opus-5",
+    "OriginalString": "Red",
+    "TranslatedString": "Červená",
+    "SourceLocations": [
+      "src/L10n/PdfL10nStrings.cs:86"
+    ]
+  },
+  {
+    "State": "ClaudeSkillGenerated",
+    "GeneratedBy": "claude-opus-5",
+    "OriginalString": "Remove drawing",
+    "TranslatedString": "Odebrat kresbu",
+    "SourceLocations": [
+      "src/L10n/PdfL10nStrings.cs:134"
+    ]
+  },
+  {
+    "State": "ClaudeSkillGenerated",
+    "GeneratedBy": "claude-opus-5",
+    "OriginalString": "Remove highlight",
+    "TranslatedString": "Odebrat zvýraznění",
+    "SourceLocations": [
+      "src/L10n/PdfL10nStrings.cs:131"
+    ]
+  },
+  {
+    "State": "ClaudeSkillGenerated",
+    "GeneratedBy": "claude-opus-5",
+    "OriginalString": "Remove image",
+    "TranslatedString": "Odebrat obrázek",
+    "SourceLocations": [
+      "src/L10n/PdfL10nStrings.cs:140"
+    ]
+  },
+  {
+    "State": "ClaudeSkillGenerated",
+    "GeneratedBy": "claude-opus-5",
+    "OriginalString": "Remove signature",
+    "TranslatedString": "Odebrat podpis",
+    "SourceLocations": [
+      "src/L10n/PdfL10nStrings.cs:137"
+    ]
+  },
+  {
+    "State": "ClaudeSkillGenerated",
+    "GeneratedBy": "claude-opus-5",
+    "OriginalString": "Remove text",
+    "TranslatedString": "Odebrat text",
+    "SourceLocations": [
+      "src/L10n/PdfL10nStrings.cs:128"
+    ]
+  },
+  {
+    "State": "ClaudeSkillGenerated",
+    "GeneratedBy": "claude-opus-5",
+    "OriginalString": "Review alt text",
+    "TranslatedString": "Zkontrolovat alternativní text",
+    "SourceLocations": [
+      "src/L10n/PdfL10nStrings.cs:122",
+      "src/L10n/PdfL10nStrings.cs:125"
+    ]
+  },
+  {
+    "State": "ClaudeSkillGenerated",
+    "GeneratedBy": "claude-opus-5",
+    "OriginalString": "Rotate right",
+    "TranslatedString": "Otočit doprava",
+    "SourceLocations": [
+      "src/Chrome/PdfViewerChrome.Toolbar.cs:416",
+      "src/Chrome/PdfViewerChrome.Toolbar.cs:487"
+    ]
+  },
+  {
+    "State": "ClaudeSkillGenerated",
+    "GeneratedBy": "claude-opus-5",
+    "OriginalString": "Searching...",
+    "TranslatedString": "Hledání...",
+    "SourceLocations": [
+      "src/Chrome/PdfViewerChrome.Panel.cs:199"
+    ]
+  },
+  {
+    "State": "ClaudeSkillGenerated",
+    "GeneratedBy": "claude-opus-5",
+    "OriginalString": "Show comment",
+    "TranslatedString": "Zobrazit komentář",
+    "SourceLocations": [
+      "src/L10n/PdfL10nStrings.cs:188"
+    ]
+  },
+  {
+    "State": "ClaudeSkillGenerated",
+    "GeneratedBy": "claude-opus-5",
+    "OriginalString": "Show in outline",
+    "TranslatedString": "Zobrazit v osnově",
+    "SourceLocations": [
+      "src/Chrome/PdfViewerChrome.Panel.cs:94"
+    ]
+  },
+  {
+    "State": "ClaudeSkillGenerated",
+    "GeneratedBy": "claude-opus-5",
+    "OriginalString": "Signature added",
+    "TranslatedString": "Podpis přidán",
+    "SourceLocations": [
+      "src/L10n/PdfL10nStrings.cs:167"
+    ]
+  },
+  {
+    "State": "ClaudeSkillGenerated",
+    "GeneratedBy": "claude-opus-5",
+    "OriginalString": "Signature editor: {0}",
+    "TranslatedString": "Editor podpisu: {0}",
+    "SourceLocations": [
+      "src/L10n/PdfL10nStrings.cs:170"
+    ]
+  },
+  {
+    "State": "ClaudeSkillGenerated",
+    "GeneratedBy": "claude-opus-5",
+    "OriginalString": "Text Editor",
+    "TranslatedString": "Textový editor",
+    "SourceLocations": [
+      "src/L10n/PdfL10nStrings.cs:179"
+    ]
+  },
+  {
+    "State": "ClaudeSkillGenerated",
+    "GeneratedBy": "claude-opus-5",
+    "OriginalString": "Text added",
+    "TranslatedString": "Text přidán",
+    "SourceLocations": [
+      "src/L10n/PdfL10nStrings.cs:92"
+    ]
+  },
+  {
+    "State": "ClaudeSkillGenerated",
+    "GeneratedBy": "claude-opus-5",
+    "OriginalString": "This document has no outline.",
+    "TranslatedString": "Tento dokument nemá osnovu.",
+    "SourceLocations": [
+      "src/Chrome/PdfViewerChrome.Panel.cs:396"
+    ]
+  },
+  {
+    "State": "ClaudeSkillGenerated",
+    "GeneratedBy": "claude-opus-5",
+    "OriginalString": "Thumbnails",
+    "TranslatedString": "Náhledy",
+    "SourceLocations": [
+      "src/Chrome/PdfViewerChrome.Toolbar.cs:263"
+    ]
+  },
+  {
+    "State": "ClaudeSkillGenerated",
+    "GeneratedBy": "claude-opus-5",
+    "OriginalString": "Top left corner — resize",
+    "TranslatedString": "Levý horní roh — změnit velikost",
+    "SourceLocations": [
+      "src/L10n/PdfL10nStrings.cs:158"
+    ]
+  },
+  {
+    "State": "ClaudeSkillGenerated",
+    "GeneratedBy": "claude-opus-5",
+    "OriginalString": "Top middle — resize",
+    "TranslatedString": "Nahoře uprostřed — změnit velikost",
+    "SourceLocations": [
+      "src/L10n/PdfL10nStrings.cs:161"
+    ]
+  },
+  {
+    "State": "ClaudeSkillGenerated",
+    "GeneratedBy": "claude-opus-5",
+    "OriginalString": "Top right corner — resize",
+    "TranslatedString": "Pravý horní roh — změnit velikost",
+    "SourceLocations": [
+      "src/L10n/PdfL10nStrings.cs:164"
+    ]
+  },
+  {
+    "State": "ClaudeSkillGenerated",
+    "GeneratedBy": "claude-opus-5",
+    "OriginalString": "Two-page spread",
+    "TranslatedString": "Dvoustrana",
+    "SourceLocations": [
+      "src/Chrome/PdfViewerChrome.Toolbar.cs:429",
+      "src/Chrome/PdfViewerChrome.Toolbar.cs:492"
+    ]
+  },
+  {
+    "State": "ClaudeSkillGenerated",
+    "GeneratedBy": "claude-opus-5",
+    "OriginalString": "Yellow",
+    "TranslatedString": "Žlutá",
+    "SourceLocations": [
+      "src/L10n/PdfL10nStrings.cs:89"
+    ]
+  },
+  {
+    "State": "ClaudeSkillGenerated",
+    "GeneratedBy": "claude-opus-5",
+    "OriginalString": "Zoom and fit",
+    "TranslatedString": "Přiblížení a přizpůsobení",
+    "SourceLocations": [
+      "src/Chrome/PdfViewerChrome.Toolbar.cs:561"
+    ]
+  },
+  {
+    "State": "ClaudeSkillGenerated",
+    "GeneratedBy": "claude-opus-5",
+    "OriginalString": "Zoom in",
+    "TranslatedString": "Přiblížit",
+    "SourceLocations": [
+      "src/Chrome/PdfViewerChrome.Toolbar.cs:77",
+      "src/Chrome/PdfViewerChrome.Toolbar.cs:186",
+      "src/Chrome/PdfViewerChrome.Toolbar.cs:464"
+    ]
+  },
+  {
+    "State": "ClaudeSkillGenerated",
+    "GeneratedBy": "claude-opus-5",
+    "OriginalString": "Zoom out",
+    "TranslatedString": "Oddálit",
+    "SourceLocations": [
+      "src/Chrome/PdfViewerChrome.Toolbar.cs:75",
+      "src/Chrome/PdfViewerChrome.Toolbar.cs:191",
+      "src/Chrome/PdfViewerChrome.Toolbar.cs:465"
+    ]
+  },
+  {
+    "State": "ClaudeSkillGenerated",
+    "GeneratedBy": "claude-opus-5",
+    "OriginalString": "[{0} Annotation]",
+    "TranslatedString": "[Anotace: {0}]",
+    "SourceLocations": [
+      "src/L10n/PdfL10nStrings.cs:191"
+    ]
+  },
+  {
+    "State": "ClaudeSkillGenerated",
+    "GeneratedBy": "claude-opus-5",
+    "OriginalString": "of {0}",
+    "TranslatedString": "z {0}",
+    "SourceLocations": [
+      "src/Chrome/PdfViewerChrome.Toolbar.cs:676"
+    ]
+  },
+  {
+    "State": "ClaudeSkillGenerated",
+    "GeneratedBy": "claude-opus-5",
+    "OriginalString": "pages {0}",
+    "TranslatedString": "stránky {0}",
+    "SourceLocations": [
+      "src/Chrome/PdfViewerChrome.Panel.cs:232"
+    ]
+  },
+  {
+    "State": "ClaudeSkillGenerated",
+    "GeneratedBy": "claude-opus-5",
+    "OriginalString": "pages {0} +{1} more",
+    "TranslatedString": "stránky {0} +{1} dalších",
+    "SourceLocations": [
+      "src/Chrome/PdfViewerChrome.Panel.cs:224"
+    ]
+  },
+  {
+    "State": "ClaudeSkillGenerated",
+    "GeneratedBy": "claude-opus-5",
+    "OriginalString": "{0} matches",
+    "TranslatedString": "{0} výsledků",
+    "SourceLocations": [
+      "src/Chrome/PdfViewerChrome.Panel.cs:186"
+    ]
+  },
+  {
+    "State": "ClaudeSkillGenerated",
+    "GeneratedBy": "claude-opus-5",
+    "OriginalString": "{0} of {1}",
+    "TranslatedString": "{0} z {1}",
+    "SourceLocations": [
+      "src/Chrome/PdfViewerChrome.Toolbar.cs:675"
+    ]
+  },
+  {
+    "State": "ClaudeSkillGenerated",
+    "GeneratedBy": "claude-opus-5",
+    "OriginalString": "{0} pages",
+    "TranslatedString": "{0} stránek",
+    "SourceLocations": [
+      "src/Chrome/PdfViewerChrome.Panel.cs:182"
+    ]
+  }
+]

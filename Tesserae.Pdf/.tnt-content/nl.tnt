@@ -1,0 +1,330 @@
+﻿[
+  [
+    "Actual size",
+    "Werkelijke grootte"
+  ],
+  [
+    "Add comment",
+    "Opmerking toevoegen"
+  ],
+  [
+    "Alt text",
+    "Alt-tekst"
+  ],
+  [
+    "Alt text added",
+    "Alt-tekst toegevoegd"
+  ],
+  [
+    "Automatic",
+    "Automatisch"
+  ],
+  [
+    "Blue",
+    "Blauw"
+  ],
+  [
+    "Bottom left corner — resize",
+    "Linkerbenedenhoek — formaat wijzigen"
+  ],
+  [
+    "Bottom middle — resize",
+    "Midden onder — formaat wijzigen"
+  ],
+  [
+    "Bottom right corner — resize",
+    "Rechterbenedenhoek — formaat wijzigen"
+  ],
+  [
+    "Change color",
+    "Kleur wijzigen"
+  ],
+  [
+    "Change drawing color",
+    "Tekenkleur wijzigen"
+  ],
+  [
+    "Change text color",
+    "Tekstkleur wijzigen"
+  ],
+  [
+    "Clear",
+    "Wissen"
+  ],
+  [
+    "Color choices",
+    "Kleurkeuze"
+  ],
+  [
+    "Comment",
+    "Opmerking"
+  ],
+  [
+    "Continued from the start of the document",
+    "Voortgezet vanaf het begin van het document"
+  ],
+  [
+    "Created automatically: {0}",
+    "Automatisch gemaakt: {0}"
+  ],
+  [
+    "Document outline",
+    "Documentoverzicht"
+  ],
+  [
+    "Drawing added",
+    "Tekening toegevoegd"
+  ],
+  [
+    "Drawing editor",
+    "Tekeningbewerker"
+  ],
+  [
+    "Edit alt text",
+    "Alt-tekst bewerken"
+  ],
+  [
+    "Find in document",
+    "Zoeken in document"
+  ],
+  [
+    "Fit content",
+    "Paginabreedte"
+  ],
+  [
+    "Fit page",
+    "Volledige pagina"
+  ],
+  [
+    "Fuzzy",
+    "Globaal"
+  ],
+  [
+    "Green",
+    "Groen"
+  ],
+  [
+    "Highlight",
+    "Markeren"
+  ],
+  [
+    "Highlight added",
+    "Markering toegevoegd"
+  ],
+  [
+    "Highlight editor",
+    "Markeringbewerker"
+  ],
+  [
+    "Ignore case, accents and word boundaries",
+    "Hoofdletters, accenten en woordgrenzen negeren"
+  ],
+  [
+    "Image added",
+    "Afbeelding toegevoegd"
+  ],
+  [
+    "Image editor",
+    "Afbeeldingsbewerker"
+  ],
+  [
+    "Marked as decorative",
+    "Gemarkeerd als decoratief"
+  ],
+  [
+    "Match case, whole words, diacritics respected",
+    "Hoofdlettergevoelig, hele woorden, accenten meetellen"
+  ],
+  [
+    "Middle left — resize",
+    "Midden links — formaat wijzigen"
+  ],
+  [
+    "Middle right — resize",
+    "Midden rechts — formaat wijzigen"
+  ],
+  [
+    "Missing alt text",
+    "Ontbrekende alt-tekst"
+  ],
+  [
+    "More controls",
+    "Meer besturingselementen"
+  ],
+  [
+    "Next match",
+    "Volgend resultaat"
+  ],
+  [
+    "Next page",
+    "Volgende pagina"
+  ],
+  [
+    "No document.",
+    "Geen document."
+  ],
+  [
+    "No matches",
+    "Geen resultaten"
+  ],
+  [
+    "No matches - try Fuzzy",
+    "Geen resultaten - probeer Globaal"
+  ],
+  [
+    "Page",
+    "Pagina"
+  ],
+  [
+    "Page {0}",
+    "Pagina {0}"
+  ],
+  [
+    "Page {0} of {1}",
+    "Pagina {0} van {1}"
+  ],
+  [
+    "Pink",
+    "Roze"
+  ],
+  [
+    "Precise",
+    "Precies"
+  ],
+  [
+    "Previous match",
+    "Vorig resultaat"
+  ],
+  [
+    "Previous page",
+    "Vorige pagina"
+  ],
+  [
+    "Red",
+    "Rood"
+  ],
+  [
+    "Remove drawing",
+    "Tekening verwijderen"
+  ],
+  [
+    "Remove highlight",
+    "Markering verwijderen"
+  ],
+  [
+    "Remove image",
+    "Afbeelding verwijderen"
+  ],
+  [
+    "Remove signature",
+    "Handtekening verwijderen"
+  ],
+  [
+    "Remove text",
+    "Tekst verwijderen"
+  ],
+  [
+    "Review alt text",
+    "Alt-tekst controleren"
+  ],
+  [
+    "Rotate right",
+    "Naar rechts draaien"
+  ],
+  [
+    "Searching...",
+    "Bezig met zoeken..."
+  ],
+  [
+    "Show comment",
+    "Opmerking tonen"
+  ],
+  [
+    "Show in outline",
+    "Tonen in overzicht"
+  ],
+  [
+    "Signature added",
+    "Handtekening toegevoegd"
+  ],
+  [
+    "Signature editor: {0}",
+    "Handtekeningbewerker: {0}"
+  ],
+  [
+    "Text Editor",
+    "Teksteditor"
+  ],
+  [
+    "Text added",
+    "Tekst toegevoegd"
+  ],
+  [
+    "This document has no outline.",
+    "Dit document heeft geen overzicht."
+  ],
+  [
+    "Thumbnails",
+    "Miniaturen"
+  ],
+  [
+    "Top left corner — resize",
+    "Linkerbovenhoek — formaat wijzigen"
+  ],
+  [
+    "Top middle — resize",
+    "Midden boven — formaat wijzigen"
+  ],
+  [
+    "Top right corner — resize",
+    "Rechterbovenhoek — formaat wijzigen"
+  ],
+  [
+    "Two-page spread",
+    "Dubbele pagina"
+  ],
+  [
+    "Yellow",
+    "Geel"
+  ],
+  [
+    "Zoom and fit",
+    "Zoomen en passend maken"
+  ],
+  [
+    "Zoom in",
+    "Inzoomen"
+  ],
+  [
+    "Zoom out",
+    "Uitzoomen"
+  ],
+  [
+    "[{0} Annotation]",
+    "[Annotatie: {0}]"
+  ],
+  [
+    "of {0}",
+    "van {0}"
+  ],
+  [
+    "pages {0}",
+    "pagina's {0}"
+  ],
+  [
+    "pages {0} +{1} more",
+    "pagina's {0} +{1} meer"
+  ],
+  [
+    "{0} matches",
+    "{0} resultaten"
+  ],
+  [
+    "{0} of {1}",
+    "{0} van {1}"
+  ],
+  [
+    "{0} pages",
+    "{0} pagina's"
+  ]
+]

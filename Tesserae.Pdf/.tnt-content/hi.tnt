@@ -1,0 +1,330 @@
+﻿[
+  [
+    "Actual size",
+    "वास्तविक आकार"
+  ],
+  [
+    "Add comment",
+    "टिप्पणी जोड़ें"
+  ],
+  [
+    "Alt text",
+    "वैकल्पिक पाठ"
+  ],
+  [
+    "Alt text added",
+    "वैकल्पिक पाठ जोड़ा गया"
+  ],
+  [
+    "Automatic",
+    "स्वचालित"
+  ],
+  [
+    "Blue",
+    "नीला"
+  ],
+  [
+    "Bottom left corner — resize",
+    "निचला बायाँ कोना — आकार बदलें"
+  ],
+  [
+    "Bottom middle — resize",
+    "नीचे मध्य — आकार बदलें"
+  ],
+  [
+    "Bottom right corner — resize",
+    "निचला दायाँ कोना — आकार बदलें"
+  ],
+  [
+    "Change color",
+    "रंग बदलें"
+  ],
+  [
+    "Change drawing color",
+    "चित्र का रंग बदलें"
+  ],
+  [
+    "Change text color",
+    "पाठ का रंग बदलें"
+  ],
+  [
+    "Clear",
+    "साफ़ करें"
+  ],
+  [
+    "Color choices",
+    "रंग विकल्प"
+  ],
+  [
+    "Comment",
+    "टिप्पणी"
+  ],
+  [
+    "Continued from the start of the document",
+    "दस्तावेज़ के आरंभ से जारी"
+  ],
+  [
+    "Created automatically: {0}",
+    "स्वचालित रूप से बनाया गया: {0}"
+  ],
+  [
+    "Document outline",
+    "दस्तावेज़ रूपरेखा"
+  ],
+  [
+    "Drawing added",
+    "चित्र जोड़ा गया"
+  ],
+  [
+    "Drawing editor",
+    "चित्र संपादक"
+  ],
+  [
+    "Edit alt text",
+    "वैकल्पिक पाठ संपादित करें"
+  ],
+  [
+    "Find in document",
+    "दस्तावेज़ में खोजें"
+  ],
+  [
+    "Fit content",
+    "पृष्ठ की चौड़ाई"
+  ],
+  [
+    "Fit page",
+    "पूरा पृष्ठ"
+  ],
+  [
+    "Fuzzy",
+    "अनुमानित"
+  ],
+  [
+    "Green",
+    "हरा"
+  ],
+  [
+    "Highlight",
+    "हाइलाइट करें"
+  ],
+  [
+    "Highlight added",
+    "हाइलाइट जोड़ा गया"
+  ],
+  [
+    "Highlight editor",
+    "हाइलाइट संपादक"
+  ],
+  [
+    "Ignore case, accents and word boundaries",
+    "बड़े-छोटे अक्षर, चिह्न और शब्द सीमाएँ अनदेखा करें"
+  ],
+  [
+    "Image added",
+    "छवि जोड़ी गई"
+  ],
+  [
+    "Image editor",
+    "छवि संपादक"
+  ],
+  [
+    "Marked as decorative",
+    "सजावटी के रूप में चिह्नित"
+  ],
+  [
+    "Match case, whole words, diacritics respected",
+    "बड़े-छोटे अक्षर, पूरे शब्द और चिह्न ध्यान में रखें"
+  ],
+  [
+    "Middle left — resize",
+    "मध्य बायाँ — आकार बदलें"
+  ],
+  [
+    "Middle right — resize",
+    "मध्य दायाँ — आकार बदलें"
+  ],
+  [
+    "Missing alt text",
+    "वैकल्पिक पाठ अनुपस्थित"
+  ],
+  [
+    "More controls",
+    "अधिक नियंत्रण"
+  ],
+  [
+    "Next match",
+    "अगला परिणाम"
+  ],
+  [
+    "Next page",
+    "अगला पृष्ठ"
+  ],
+  [
+    "No document.",
+    "कोई दस्तावेज़ नहीं।"
+  ],
+  [
+    "No matches",
+    "कोई परिणाम नहीं"
+  ],
+  [
+    "No matches - try Fuzzy",
+    "कोई परिणाम नहीं - अनुमानित आज़माएँ"
+  ],
+  [
+    "Page",
+    "पृष्ठ"
+  ],
+  [
+    "Page {0}",
+    "पृष्ठ {0}"
+  ],
+  [
+    "Page {0} of {1}",
+    "पृष्ठ {0} / {1}"
+  ],
+  [
+    "Pink",
+    "गुलाबी"
+  ],
+  [
+    "Precise",
+    "सटीक"
+  ],
+  [
+    "Previous match",
+    "पिछला परिणाम"
+  ],
+  [
+    "Previous page",
+    "पिछला पृष्ठ"
+  ],
+  [
+    "Red",
+    "लाल"
+  ],
+  [
+    "Remove drawing",
+    "चित्र हटाएँ"
+  ],
+  [
+    "Remove highlight",
+    "हाइलाइट हटाएँ"
+  ],
+  [
+    "Remove image",
+    "छवि हटाएँ"
+  ],
+  [
+    "Remove signature",
+    "हस्ताक्षर हटाएँ"
+  ],
+  [
+    "Remove text",
+    "पाठ हटाएँ"
+  ],
+  [
+    "Review alt text",
+    "वैकल्पिक पाठ जाँचें"
+  ],
+  [
+    "Rotate right",
+    "दाईं ओर घुमाएँ"
+  ],
+  [
+    "Searching...",
+    "खोज रहे हैं..."
+  ],
+  [
+    "Show comment",
+    "टिप्पणी दिखाएँ"
+  ],
+  [
+    "Show in outline",
+    "रूपरेखा में दिखाएँ"
+  ],
+  [
+    "Signature added",
+    "हस्ताक्षर जोड़ा गया"
+  ],
+  [
+    "Signature editor: {0}",
+    "हस्ताक्षर संपादक: {0}"
+  ],
+  [
+    "Text Editor",
+    "पाठ संपादक"
+  ],
+  [
+    "Text added",
+    "पाठ जोड़ा गया"
+  ],
+  [
+    "This document has no outline.",
+    "इस दस्तावेज़ की कोई रूपरेखा नहीं है।"
+  ],
+  [
+    "Thumbnails",
+    "थंबनेल"
+  ],
+  [
+    "Top left corner — resize",
+    "ऊपरी बायाँ कोना — आकार बदलें"
+  ],
+  [
+    "Top middle — resize",
+    "ऊपर मध्य — आकार बदलें"
+  ],
+  [
+    "Top right corner — resize",
+    "ऊपरी दायाँ कोना — आकार बदलें"
+  ],
+  [
+    "Two-page spread",
+    "दो-पृष्ठ दृश्य"
+  ],
+  [
+    "Yellow",
+    "पीला"
+  ],
+  [
+    "Zoom and fit",
+    "ज़ूम और फ़िट"
+  ],
+  [
+    "Zoom in",
+    "ज़ूम इन"
+  ],
+  [
+    "Zoom out",
+    "ज़ूम आउट"
+  ],
+  [
+    "[{0} Annotation]",
+    "[एनोटेशन: {0}]"
+  ],
+  [
+    "of {0}",
+    "/ {0}"
+  ],
+  [
+    "pages {0}",
+    "पृष्ठ {0}"
+  ],
+  [
+    "pages {0} +{1} more",
+    "पृष्ठ {0} +{1} और"
+  ],
+  [
+    "{0} matches",
+    "{0} परिणाम"
+  ],
+  [
+    "{0} of {1}",
+    "{0} / {1}"
+  ],
+  [
+    "{0} pages",
+    "{0} पृष्ठ"
+  ]
+]

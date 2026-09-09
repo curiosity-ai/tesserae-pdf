@@ -1,0 +1,330 @@
+﻿[
+  [
+    "Actual size",
+    "実際のサイズ"
+  ],
+  [
+    "Add comment",
+    "コメントを追加"
+  ],
+  [
+    "Alt text",
+    "代替テキスト"
+  ],
+  [
+    "Alt text added",
+    "代替テキストを追加しました"
+  ],
+  [
+    "Automatic",
+    "自動"
+  ],
+  [
+    "Blue",
+    "青"
+  ],
+  [
+    "Bottom left corner — resize",
+    "左下隅 — サイズ変更"
+  ],
+  [
+    "Bottom middle — resize",
+    "下中央 — サイズ変更"
+  ],
+  [
+    "Bottom right corner — resize",
+    "右下隅 — サイズ変更"
+  ],
+  [
+    "Change color",
+    "色を変更"
+  ],
+  [
+    "Change drawing color",
+    "線の色を変更"
+  ],
+  [
+    "Change text color",
+    "文字色を変更"
+  ],
+  [
+    "Clear",
+    "クリア"
+  ],
+  [
+    "Color choices",
+    "色の選択"
+  ],
+  [
+    "Comment",
+    "コメント"
+  ],
+  [
+    "Continued from the start of the document",
+    "文書の先頭から続けて検索しました"
+  ],
+  [
+    "Created automatically: {0}",
+    "自動生成: {0}"
+  ],
+  [
+    "Document outline",
+    "文書のアウトライン"
+  ],
+  [
+    "Drawing added",
+    "描画を追加しました"
+  ],
+  [
+    "Drawing editor",
+    "描画エディター"
+  ],
+  [
+    "Edit alt text",
+    "代替テキストを編集"
+  ],
+  [
+    "Find in document",
+    "文書内を検索"
+  ],
+  [
+    "Fit content",
+    "幅に合わせる"
+  ],
+  [
+    "Fit page",
+    "ページ全体"
+  ],
+  [
+    "Fuzzy",
+    "あいまい"
+  ],
+  [
+    "Green",
+    "緑"
+  ],
+  [
+    "Highlight",
+    "ハイライト"
+  ],
+  [
+    "Highlight added",
+    "ハイライトを追加しました"
+  ],
+  [
+    "Highlight editor",
+    "ハイライトエディター"
+  ],
+  [
+    "Ignore case, accents and word boundaries",
+    "大文字と小文字、アクセント、単語の区切りを区別しない"
+  ],
+  [
+    "Image added",
+    "画像を追加しました"
+  ],
+  [
+    "Image editor",
+    "画像エディター"
+  ],
+  [
+    "Marked as decorative",
+    "装飾としてマーク済み"
+  ],
+  [
+    "Match case, whole words, diacritics respected",
+    "大文字と小文字、単語単位、アクセントを区別する"
+  ],
+  [
+    "Middle left — resize",
+    "左中央 — サイズ変更"
+  ],
+  [
+    "Middle right — resize",
+    "右中央 — サイズ変更"
+  ],
+  [
+    "Missing alt text",
+    "代替テキストがありません"
+  ],
+  [
+    "More controls",
+    "その他の操作"
+  ],
+  [
+    "Next match",
+    "次の一致"
+  ],
+  [
+    "Next page",
+    "次のページ"
+  ],
+  [
+    "No document.",
+    "文書がありません。"
+  ],
+  [
+    "No matches",
+    "一致なし"
+  ],
+  [
+    "No matches - try Fuzzy",
+    "一致なし - あいまいで検索"
+  ],
+  [
+    "Page",
+    "ページ"
+  ],
+  [
+    "Page {0}",
+    "{0} ページ"
+  ],
+  [
+    "Page {0} of {1}",
+    "{0} / {1} ページ"
+  ],
+  [
+    "Pink",
+    "ピンク"
+  ],
+  [
+    "Precise",
+    "完全一致"
+  ],
+  [
+    "Previous match",
+    "前の一致"
+  ],
+  [
+    "Previous page",
+    "前のページ"
+  ],
+  [
+    "Red",
+    "赤"
+  ],
+  [
+    "Remove drawing",
+    "描画を削除"
+  ],
+  [
+    "Remove highlight",
+    "ハイライトを削除"
+  ],
+  [
+    "Remove image",
+    "画像を削除"
+  ],
+  [
+    "Remove signature",
+    "署名を削除"
+  ],
+  [
+    "Remove text",
+    "テキストを削除"
+  ],
+  [
+    "Review alt text",
+    "代替テキストを確認"
+  ],
+  [
+    "Rotate right",
+    "右に回転"
+  ],
+  [
+    "Searching...",
+    "検索中..."
+  ],
+  [
+    "Show comment",
+    "コメントを表示"
+  ],
+  [
+    "Show in outline",
+    "アウトラインに表示"
+  ],
+  [
+    "Signature added",
+    "署名を追加しました"
+  ],
+  [
+    "Signature editor: {0}",
+    "署名エディター: {0}"
+  ],
+  [
+    "Text Editor",
+    "テキストエディター"
+  ],
+  [
+    "Text added",
+    "テキストを追加しました"
+  ],
+  [
+    "This document has no outline.",
+    "この文書にはアウトラインがありません。"
+  ],
+  [
+    "Thumbnails",
+    "サムネイル"
+  ],
+  [
+    "Top left corner — resize",
+    "左上隅 — サイズ変更"
+  ],
+  [
+    "Top middle — resize",
+    "上中央 — サイズ変更"
+  ],
+  [
+    "Top right corner — resize",
+    "右上隅 — サイズ変更"
+  ],
+  [
+    "Two-page spread",
+    "見開き 2 ページ"
+  ],
+  [
+    "Yellow",
+    "黄"
+  ],
+  [
+    "Zoom and fit",
+    "ズームと表示倍率"
+  ],
+  [
+    "Zoom in",
+    "拡大"
+  ],
+  [
+    "Zoom out",
+    "縮小"
+  ],
+  [
+    "[{0} Annotation]",
+    "[注釈: {0}]"
+  ],
+  [
+    "of {0}",
+    "/ {0}"
+  ],
+  [
+    "pages {0}",
+    "ページ {0}"
+  ],
+  [
+    "pages {0} +{1} more",
+    "ページ {0} 他 {1} 件"
+  ],
+  [
+    "{0} matches",
+    "{0} 件の一致"
+  ],
+  [
+    "{0} of {1}",
+    "{0} / {1}"
+  ],
+  [
+    "{0} pages",
+    "{0} ページ"
+  ]
+]

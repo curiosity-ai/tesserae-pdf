@@ -1,0 +1,330 @@
+﻿[
+  [
+    "Actual size",
+    "Skutečná velikost"
+  ],
+  [
+    "Add comment",
+    "Přidat komentář"
+  ],
+  [
+    "Alt text",
+    "Alternativní text"
+  ],
+  [
+    "Alt text added",
+    "Alternativní text přidán"
+  ],
+  [
+    "Automatic",
+    "Automaticky"
+  ],
+  [
+    "Blue",
+    "Modrá"
+  ],
+  [
+    "Bottom left corner — resize",
+    "Levý dolní roh — změnit velikost"
+  ],
+  [
+    "Bottom middle — resize",
+    "Dole uprostřed — změnit velikost"
+  ],
+  [
+    "Bottom right corner — resize",
+    "Pravý dolní roh — změnit velikost"
+  ],
+  [
+    "Change color",
+    "Změnit barvu"
+  ],
+  [
+    "Change drawing color",
+    "Změnit barvu kresby"
+  ],
+  [
+    "Change text color",
+    "Změnit barvu textu"
+  ],
+  [
+    "Clear",
+    "Vymazat"
+  ],
+  [
+    "Color choices",
+    "Výběr barvy"
+  ],
+  [
+    "Comment",
+    "Komentář"
+  ],
+  [
+    "Continued from the start of the document",
+    "Pokračováno od začátku dokumentu"
+  ],
+  [
+    "Created automatically: {0}",
+    "Vytvořeno automaticky: {0}"
+  ],
+  [
+    "Document outline",
+    "Osnova dokumentu"
+  ],
+  [
+    "Drawing added",
+    "Kresba přidána"
+  ],
+  [
+    "Drawing editor",
+    "Editor kresby"
+  ],
+  [
+    "Edit alt text",
+    "Upravit alternativní text"
+  ],
+  [
+    "Find in document",
+    "Najít v dokumentu"
+  ],
+  [
+    "Fit content",
+    "Šířka stránky"
+  ],
+  [
+    "Fit page",
+    "Celá stránka"
+  ],
+  [
+    "Fuzzy",
+    "Přibližné"
+  ],
+  [
+    "Green",
+    "Zelená"
+  ],
+  [
+    "Highlight",
+    "Zvýraznit"
+  ],
+  [
+    "Highlight added",
+    "Zvýraznění přidáno"
+  ],
+  [
+    "Highlight editor",
+    "Editor zvýraznění"
+  ],
+  [
+    "Ignore case, accents and word boundaries",
+    "Ignorovat velikost písmen, diakritiku a hranice slov"
+  ],
+  [
+    "Image added",
+    "Obrázek přidán"
+  ],
+  [
+    "Image editor",
+    "Editor obrázku"
+  ],
+  [
+    "Marked as decorative",
+    "Označeno jako dekorativní"
+  ],
+  [
+    "Match case, whole words, diacritics respected",
+    "Rozlišovat velikost písmen, celá slova a diakritiku"
+  ],
+  [
+    "Middle left — resize",
+    "Uprostřed vlevo — změnit velikost"
+  ],
+  [
+    "Middle right — resize",
+    "Uprostřed vpravo — změnit velikost"
+  ],
+  [
+    "Missing alt text",
+    "Chybějící alternativní text"
+  ],
+  [
+    "More controls",
+    "Další ovládací prvky"
+  ],
+  [
+    "Next match",
+    "Další výskyt"
+  ],
+  [
+    "Next page",
+    "Další stránka"
+  ],
+  [
+    "No document.",
+    "Žádný dokument."
+  ],
+  [
+    "No matches",
+    "Žádné výsledky"
+  ],
+  [
+    "No matches - try Fuzzy",
+    "Žádné výsledky - zkuste Přibližné"
+  ],
+  [
+    "Page",
+    "Stránka"
+  ],
+  [
+    "Page {0}",
+    "Stránka {0}"
+  ],
+  [
+    "Page {0} of {1}",
+    "Stránka {0} z {1}"
+  ],
+  [
+    "Pink",
+    "Růžová"
+  ],
+  [
+    "Precise",
+    "Přesné"
+  ],
+  [
+    "Previous match",
+    "Předchozí výskyt"
+  ],
+  [
+    "Previous page",
+    "Předchozí stránka"
+  ],
+  [
+    "Red",
+    "Červená"
+  ],
+  [
+    "Remove drawing",
+    "Odebrat kresbu"
+  ],
+  [
+    "Remove highlight",
+    "Odebrat zvýraznění"
+  ],
+  [
+    "Remove image",
+    "Odebrat obrázek"
+  ],
+  [
+    "Remove signature",
+    "Odebrat podpis"
+  ],
+  [
+    "Remove text",
+    "Odebrat text"
+  ],
+  [
+    "Review alt text",
+    "Zkontrolovat alternativní text"
+  ],
+  [
+    "Rotate right",
+    "Otočit doprava"
+  ],
+  [
+    "Searching...",
+    "Hledání..."
+  ],
+  [
+    "Show comment",
+    "Zobrazit komentář"
+  ],
+  [
+    "Show in outline",
+    "Zobrazit v osnově"
+  ],
+  [
+    "Signature added",
+    "Podpis přidán"
+  ],
+  [
+    "Signature editor: {0}",
+    "Editor podpisu: {0}"
+  ],
+  [
+    "Text Editor",
+    "Textový editor"
+  ],
+  [
+    "Text added",
+    "Text přidán"
+  ],
+  [
+    "This document has no outline.",
+    "Tento dokument nemá osnovu."
+  ],
+  [
+    "Thumbnails",
+    "Náhledy"
+  ],
+  [
+    "Top left corner — resize",
+    "Levý horní roh — změnit velikost"
+  ],
+  [
+    "Top middle — resize",
+    "Nahoře uprostřed — změnit velikost"
+  ],
+  [
+    "Top right corner — resize",
+    "Pravý horní roh — změnit velikost"
+  ],
+  [
+    "Two-page spread",
+    "Dvoustrana"
+  ],
+  [
+    "Yellow",
+    "Žlutá"
+  ],
+  [
+    "Zoom and fit",
+    "Přiblížení a přizpůsobení"
+  ],
+  [
+    "Zoom in",
+    "Přiblížit"
+  ],
+  [
+    "Zoom out",
+    "Oddálit"
+  ],
+  [
+    "[{0} Annotation]",
+    "[Anotace: {0}]"
+  ],
+  [
+    "of {0}",
+    "z {0}"
+  ],
+  [
+    "pages {0}",
+    "stránky {0}"
+  ],
+  [
+    "pages {0} +{1} more",
+    "stránky {0} +{1} dalších"
+  ],
+  [
+    "{0} matches",
+    "{0} výsledků"
+  ],
+  [
+    "{0} of {1}",
+    "{0} z {1}"
+  ],
+  [
+    "{0} pages",
+    "{0} stránek"
+  ]
+]

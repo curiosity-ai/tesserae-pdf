@@ -1,0 +1,330 @@
+﻿[
+  [
+    "Actual size",
+    "גודל אמיתי"
+  ],
+  [
+    "Add comment",
+    "הוספת הערה"
+  ],
+  [
+    "Alt text",
+    "טקסט חלופי"
+  ],
+  [
+    "Alt text added",
+    "טקסט חלופי נוסף"
+  ],
+  [
+    "Automatic",
+    "אוטומטי"
+  ],
+  [
+    "Blue",
+    "כחול"
+  ],
+  [
+    "Bottom left corner — resize",
+    "פינה שמאלית תחתונה — שינוי גודל"
+  ],
+  [
+    "Bottom middle — resize",
+    "מרכז תחתון — שינוי גודל"
+  ],
+  [
+    "Bottom right corner — resize",
+    "פינה ימנית תחתונה — שינוי גודל"
+  ],
+  [
+    "Change color",
+    "שינוי צבע"
+  ],
+  [
+    "Change drawing color",
+    "שינוי צבע הציור"
+  ],
+  [
+    "Change text color",
+    "שינוי צבע הטקסט"
+  ],
+  [
+    "Clear",
+    "ניקוי"
+  ],
+  [
+    "Color choices",
+    "בחירת צבעים"
+  ],
+  [
+    "Comment",
+    "הערה"
+  ],
+  [
+    "Continued from the start of the document",
+    "החיפוש נמשך מתחילת המסמך"
+  ],
+  [
+    "Created automatically: {0}",
+    "נוצר אוטומטית: {0}"
+  ],
+  [
+    "Document outline",
+    "תוכן העניינים"
+  ],
+  [
+    "Drawing added",
+    "ציור נוסף"
+  ],
+  [
+    "Drawing editor",
+    "עורך ציורים"
+  ],
+  [
+    "Edit alt text",
+    "עריכת טקסט חלופי"
+  ],
+  [
+    "Find in document",
+    "חיפוש במסמך"
+  ],
+  [
+    "Fit content",
+    "רוחב העמוד"
+  ],
+  [
+    "Fit page",
+    "עמוד שלם"
+  ],
+  [
+    "Fuzzy",
+    "מקורב"
+  ],
+  [
+    "Green",
+    "ירוק"
+  ],
+  [
+    "Highlight",
+    "הדגשה"
+  ],
+  [
+    "Highlight added",
+    "הדגשה נוספה"
+  ],
+  [
+    "Highlight editor",
+    "עורך הדגשות"
+  ],
+  [
+    "Ignore case, accents and word boundaries",
+    "התעלמות מאותיות גדולות, ניקוד וגבולות מילים"
+  ],
+  [
+    "Image added",
+    "תמונה נוספה"
+  ],
+  [
+    "Image editor",
+    "עורך תמונות"
+  ],
+  [
+    "Marked as decorative",
+    "סומן כדקורטיבי"
+  ],
+  [
+    "Match case, whole words, diacritics respected",
+    "התאמת אותיות גדולות, מילים שלמות וניקוד"
+  ],
+  [
+    "Middle left — resize",
+    "מרכז שמאל — שינוי גודל"
+  ],
+  [
+    "Middle right — resize",
+    "מרכז ימין — שינוי גודל"
+  ],
+  [
+    "Missing alt text",
+    "חסר טקסט חלופי"
+  ],
+  [
+    "More controls",
+    "פקדים נוספים"
+  ],
+  [
+    "Next match",
+    "התוצאה הבאה"
+  ],
+  [
+    "Next page",
+    "העמוד הבא"
+  ],
+  [
+    "No document.",
+    "אין מסמך."
+  ],
+  [
+    "No matches",
+    "אין תוצאות"
+  ],
+  [
+    "No matches - try Fuzzy",
+    "אין תוצאות - נסו מקורב"
+  ],
+  [
+    "Page",
+    "עמוד"
+  ],
+  [
+    "Page {0}",
+    "עמוד {0}"
+  ],
+  [
+    "Page {0} of {1}",
+    "עמוד {0} מתוך {1}"
+  ],
+  [
+    "Pink",
+    "ורוד"
+  ],
+  [
+    "Precise",
+    "מדויק"
+  ],
+  [
+    "Previous match",
+    "התוצאה הקודמת"
+  ],
+  [
+    "Previous page",
+    "העמוד הקודם"
+  ],
+  [
+    "Red",
+    "אדום"
+  ],
+  [
+    "Remove drawing",
+    "הסרת הציור"
+  ],
+  [
+    "Remove highlight",
+    "הסרת ההדגשה"
+  ],
+  [
+    "Remove image",
+    "הסרת התמונה"
+  ],
+  [
+    "Remove signature",
+    "הסרת החתימה"
+  ],
+  [
+    "Remove text",
+    "הסרת הטקסט"
+  ],
+  [
+    "Review alt text",
+    "בדיקת הטקסט החלופי"
+  ],
+  [
+    "Rotate right",
+    "סיבוב ימינה"
+  ],
+  [
+    "Searching...",
+    "מחפש..."
+  ],
+  [
+    "Show comment",
+    "הצגת ההערה"
+  ],
+  [
+    "Show in outline",
+    "הצגה בתוכן העניינים"
+  ],
+  [
+    "Signature added",
+    "חתימה נוספה"
+  ],
+  [
+    "Signature editor: {0}",
+    "עורך חתימות: {0}"
+  ],
+  [
+    "Text Editor",
+    "עורך טקסט"
+  ],
+  [
+    "Text added",
+    "טקסט נוסף"
+  ],
+  [
+    "This document has no outline.",
+    "למסמך זה אין תוכן עניינים."
+  ],
+  [
+    "Thumbnails",
+    "תמונות ממוזערות"
+  ],
+  [
+    "Top left corner — resize",
+    "פינה שמאלית עליונה — שינוי גודל"
+  ],
+  [
+    "Top middle — resize",
+    "מרכז עליון — שינוי גודל"
+  ],
+  [
+    "Top right corner — resize",
+    "פינה ימנית עליונה — שינוי גודל"
+  ],
+  [
+    "Two-page spread",
+    "תצוגת שני עמודים"
+  ],
+  [
+    "Yellow",
+    "צהוב"
+  ],
+  [
+    "Zoom and fit",
+    "זום והתאמה"
+  ],
+  [
+    "Zoom in",
+    "התקרבות"
+  ],
+  [
+    "Zoom out",
+    "התרחקות"
+  ],
+  [
+    "[{0} Annotation]",
+    "[הערה: {0}]"
+  ],
+  [
+    "of {0}",
+    "מתוך {0}"
+  ],
+  [
+    "pages {0}",
+    "עמודים {0}"
+  ],
+  [
+    "pages {0} +{1} more",
+    "עמודים {0} +{1} נוספים"
+  ],
+  [
+    "{0} matches",
+    "{0} תוצאות"
+  ],
+  [
+    "{0} of {1}",
+    "{0} מתוך {1}"
+  ],
+  [
+    "{0} pages",
+    "{0} עמודים"
+  ]
+]

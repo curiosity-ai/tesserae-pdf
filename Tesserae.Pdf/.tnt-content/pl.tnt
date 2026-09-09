@@ -1,0 +1,330 @@
+﻿[
+  [
+    "Actual size",
+    "Rzeczywisty rozmiar"
+  ],
+  [
+    "Add comment",
+    "Dodaj komentarz"
+  ],
+  [
+    "Alt text",
+    "Tekst alternatywny"
+  ],
+  [
+    "Alt text added",
+    "Dodano tekst alternatywny"
+  ],
+  [
+    "Automatic",
+    "Automatycznie"
+  ],
+  [
+    "Blue",
+    "Niebieski"
+  ],
+  [
+    "Bottom left corner — resize",
+    "Lewy dolny róg — zmień rozmiar"
+  ],
+  [
+    "Bottom middle — resize",
+    "Dolna krawędź na środku — zmień rozmiar"
+  ],
+  [
+    "Bottom right corner — resize",
+    "Prawy dolny róg — zmień rozmiar"
+  ],
+  [
+    "Change color",
+    "Zmień kolor"
+  ],
+  [
+    "Change drawing color",
+    "Zmień kolor rysunku"
+  ],
+  [
+    "Change text color",
+    "Zmień kolor tekstu"
+  ],
+  [
+    "Clear",
+    "Wyczyść"
+  ],
+  [
+    "Color choices",
+    "Wybór koloru"
+  ],
+  [
+    "Comment",
+    "Komentarz"
+  ],
+  [
+    "Continued from the start of the document",
+    "Kontynuowano od początku dokumentu"
+  ],
+  [
+    "Created automatically: {0}",
+    "Utworzono automatycznie: {0}"
+  ],
+  [
+    "Document outline",
+    "Konspekt dokumentu"
+  ],
+  [
+    "Drawing added",
+    "Dodano rysunek"
+  ],
+  [
+    "Drawing editor",
+    "Edytor rysunku"
+  ],
+  [
+    "Edit alt text",
+    "Edytuj tekst alternatywny"
+  ],
+  [
+    "Find in document",
+    "Znajdź w dokumencie"
+  ],
+  [
+    "Fit content",
+    "Szerokość strony"
+  ],
+  [
+    "Fit page",
+    "Cała strona"
+  ],
+  [
+    "Fuzzy",
+    "Przybliżone"
+  ],
+  [
+    "Green",
+    "Zielony"
+  ],
+  [
+    "Highlight",
+    "Wyróżnij"
+  ],
+  [
+    "Highlight added",
+    "Dodano wyróżnienie"
+  ],
+  [
+    "Highlight editor",
+    "Edytor wyróżnień"
+  ],
+  [
+    "Ignore case, accents and word boundaries",
+    "Ignoruj wielkość liter, znaki diakrytyczne i granice słów"
+  ],
+  [
+    "Image added",
+    "Dodano obraz"
+  ],
+  [
+    "Image editor",
+    "Edytor obrazu"
+  ],
+  [
+    "Marked as decorative",
+    "Oznaczone jako dekoracyjne"
+  ],
+  [
+    "Match case, whole words, diacritics respected",
+    "Uwzględniaj wielkość liter, całe słowa i znaki diakrytyczne"
+  ],
+  [
+    "Middle left — resize",
+    "Środek po lewej — zmień rozmiar"
+  ],
+  [
+    "Middle right — resize",
+    "Środek po prawej — zmień rozmiar"
+  ],
+  [
+    "Missing alt text",
+    "Brak tekstu alternatywnego"
+  ],
+  [
+    "More controls",
+    "Więcej opcji"
+  ],
+  [
+    "Next match",
+    "Następny wynik"
+  ],
+  [
+    "Next page",
+    "Następna strona"
+  ],
+  [
+    "No document.",
+    "Brak dokumentu."
+  ],
+  [
+    "No matches",
+    "Brak wyników"
+  ],
+  [
+    "No matches - try Fuzzy",
+    "Brak wyników - spróbuj Przybliżone"
+  ],
+  [
+    "Page",
+    "Strona"
+  ],
+  [
+    "Page {0}",
+    "Strona {0}"
+  ],
+  [
+    "Page {0} of {1}",
+    "Strona {0} z {1}"
+  ],
+  [
+    "Pink",
+    "Różowy"
+  ],
+  [
+    "Precise",
+    "Dokładne"
+  ],
+  [
+    "Previous match",
+    "Poprzedni wynik"
+  ],
+  [
+    "Previous page",
+    "Poprzednia strona"
+  ],
+  [
+    "Red",
+    "Czerwony"
+  ],
+  [
+    "Remove drawing",
+    "Usuń rysunek"
+  ],
+  [
+    "Remove highlight",
+    "Usuń wyróżnienie"
+  ],
+  [
+    "Remove image",
+    "Usuń obraz"
+  ],
+  [
+    "Remove signature",
+    "Usuń podpis"
+  ],
+  [
+    "Remove text",
+    "Usuń tekst"
+  ],
+  [
+    "Review alt text",
+    "Sprawdź tekst alternatywny"
+  ],
+  [
+    "Rotate right",
+    "Obróć w prawo"
+  ],
+  [
+    "Searching...",
+    "Wyszukiwanie..."
+  ],
+  [
+    "Show comment",
+    "Pokaż komentarz"
+  ],
+  [
+    "Show in outline",
+    "Pokaż w konspekcie"
+  ],
+  [
+    "Signature added",
+    "Dodano podpis"
+  ],
+  [
+    "Signature editor: {0}",
+    "Edytor podpisu: {0}"
+  ],
+  [
+    "Text Editor",
+    "Edytor tekstu"
+  ],
+  [
+    "Text added",
+    "Dodano tekst"
+  ],
+  [
+    "This document has no outline.",
+    "Ten dokument nie ma konspektu."
+  ],
+  [
+    "Thumbnails",
+    "Miniatury"
+  ],
+  [
+    "Top left corner — resize",
+    "Lewy górny róg — zmień rozmiar"
+  ],
+  [
+    "Top middle — resize",
+    "Górna krawędź na środku — zmień rozmiar"
+  ],
+  [
+    "Top right corner — resize",
+    "Prawy górny róg — zmień rozmiar"
+  ],
+  [
+    "Two-page spread",
+    "Dwie strony obok siebie"
+  ],
+  [
+    "Yellow",
+    "Żółty"
+  ],
+  [
+    "Zoom and fit",
+    "Powiększenie i dopasowanie"
+  ],
+  [
+    "Zoom in",
+    "Powiększ"
+  ],
+  [
+    "Zoom out",
+    "Pomniejsz"
+  ],
+  [
+    "[{0} Annotation]",
+    "[Adnotacja: {0}]"
+  ],
+  [
+    "of {0}",
+    "z {0}"
+  ],
+  [
+    "pages {0}",
+    "strony {0}"
+  ],
+  [
+    "pages {0} +{1} more",
+    "strony {0} +{1} więcej"
+  ],
+  [
+    "{0} matches",
+    "{0} wyników"
+  ],
+  [
+    "{0} of {1}",
+    "{0} z {1}"
+  ],
+  [
+    "{0} pages",
+    "{0} stron"
+  ]
+]

@@ -77,4 +77,15 @@
       <None Include="$(PdfJsBundleDir)/**" Pack="true" PackagePath="pdfjs/" />
     </ItemGroup>
   </Target>
+
+  <!--
+    The translation tables tnt writes (.tnt-content/<lang>.tnt), packed beside pdf.js and copied into
+    the consumer's output by the same targets file - which renames them to .json on the way, because
+    a static-file server that does not know the extension answers 404 rather than the file, and
+    PdfJs.LoadTranslationsAsync then reports a language nobody translated. A .tnt with no translations
+    in it is not written by tnt at all, so this glob ships exactly the languages that have some.
+  -->
+  <ItemGroup>
+    <None Include=".tnt-content/*.tnt" Pack="true" PackagePath="l10n/" />
+  </ItemGroup>
 </Project>

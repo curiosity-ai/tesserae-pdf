@@ -1,0 +1,330 @@
+﻿[
+  [
+    "Actual size",
+    "实际大小"
+  ],
+  [
+    "Add comment",
+    "添加评论"
+  ],
+  [
+    "Alt text",
+    "替代文本"
+  ],
+  [
+    "Alt text added",
+    "已添加替代文本"
+  ],
+  [
+    "Automatic",
+    "自动"
+  ],
+  [
+    "Blue",
+    "蓝色"
+  ],
+  [
+    "Bottom left corner — resize",
+    "左下角 — 调整大小"
+  ],
+  [
+    "Bottom middle — resize",
+    "底部中间 — 调整大小"
+  ],
+  [
+    "Bottom right corner — resize",
+    "右下角 — 调整大小"
+  ],
+  [
+    "Change color",
+    "更改颜色"
+  ],
+  [
+    "Change drawing color",
+    "更改绘图颜色"
+  ],
+  [
+    "Change text color",
+    "更改文字颜色"
+  ],
+  [
+    "Clear",
+    "清除"
+  ],
+  [
+    "Color choices",
+    "颜色选择"
+  ],
+  [
+    "Comment",
+    "评论"
+  ],
+  [
+    "Continued from the start of the document",
+    "已从文档开头继续搜索"
+  ],
+  [
+    "Created automatically: {0}",
+    "自动生成：{0}"
+  ],
+  [
+    "Document outline",
+    "文档大纲"
+  ],
+  [
+    "Drawing added",
+    "已添加绘图"
+  ],
+  [
+    "Drawing editor",
+    "绘图编辑器"
+  ],
+  [
+    "Edit alt text",
+    "编辑替代文本"
+  ],
+  [
+    "Find in document",
+    "在文档中查找"
+  ],
+  [
+    "Fit content",
+    "适合宽度"
+  ],
+  [
+    "Fit page",
+    "整页"
+  ],
+  [
+    "Fuzzy",
+    "模糊"
+  ],
+  [
+    "Green",
+    "绿色"
+  ],
+  [
+    "Highlight",
+    "高亮"
+  ],
+  [
+    "Highlight added",
+    "已添加高亮"
+  ],
+  [
+    "Highlight editor",
+    "高亮编辑器"
+  ],
+  [
+    "Ignore case, accents and word boundaries",
+    "忽略大小写、变音符号和单词边界"
+  ],
+  [
+    "Image added",
+    "已添加图片"
+  ],
+  [
+    "Image editor",
+    "图片编辑器"
+  ],
+  [
+    "Marked as decorative",
+    "已标记为装饰性"
+  ],
+  [
+    "Match case, whole words, diacritics respected",
+    "区分大小写、全词匹配并区分变音符号"
+  ],
+  [
+    "Middle left — resize",
+    "左侧中间 — 调整大小"
+  ],
+  [
+    "Middle right — resize",
+    "右侧中间 — 调整大小"
+  ],
+  [
+    "Missing alt text",
+    "缺少替代文本"
+  ],
+  [
+    "More controls",
+    "更多控件"
+  ],
+  [
+    "Next match",
+    "下一个匹配"
+  ],
+  [
+    "Next page",
+    "下一页"
+  ],
+  [
+    "No document.",
+    "没有文档。"
+  ],
+  [
+    "No matches",
+    "无匹配项"
+  ],
+  [
+    "No matches - try Fuzzy",
+    "无匹配项 - 试试模糊"
+  ],
+  [
+    "Page",
+    "页"
+  ],
+  [
+    "Page {0}",
+    "第 {0} 页"
+  ],
+  [
+    "Page {0} of {1}",
+    "第 {0} 页，共 {1} 页"
+  ],
+  [
+    "Pink",
+    "粉色"
+  ],
+  [
+    "Precise",
+    "精确"
+  ],
+  [
+    "Previous match",
+    "上一个匹配"
+  ],
+  [
+    "Previous page",
+    "上一页"
+  ],
+  [
+    "Red",
+    "红色"
+  ],
+  [
+    "Remove drawing",
+    "删除绘图"
+  ],
+  [
+    "Remove highlight",
+    "删除高亮"
+  ],
+  [
+    "Remove image",
+    "删除图片"
+  ],
+  [
+    "Remove signature",
+    "删除签名"
+  ],
+  [
+    "Remove text",
+    "删除文本"
+  ],
+  [
+    "Review alt text",
+    "检查替代文本"
+  ],
+  [
+    "Rotate right",
+    "向右旋转"
+  ],
+  [
+    "Searching...",
+    "正在搜索..."
+  ],
+  [
+    "Show comment",
+    "显示评论"
+  ],
+  [
+    "Show in outline",
+    "在大纲中显示"
+  ],
+  [
+    "Signature added",
+    "已添加签名"
+  ],
+  [
+    "Signature editor: {0}",
+    "签名编辑器：{0}"
+  ],
+  [
+    "Text Editor",
+    "文本编辑器"
+  ],
+  [
+    "Text added",
+    "已添加文本"
+  ],
+  [
+    "This document has no outline.",
+    "此文档没有大纲。"
+  ],
+  [
+    "Thumbnails",
+    "缩略图"
+  ],
+  [
+    "Top left corner — resize",
+    "左上角 — 调整大小"
+  ],
+  [
+    "Top middle — resize",
+    "顶部中间 — 调整大小"
+  ],
+  [
+    "Top right corner — resize",
+    "右上角 — 调整大小"
+  ],
+  [
+    "Two-page spread",
+    "双页视图"
+  ],
+  [
+    "Yellow",
+    "黄色"
+  ],
+  [
+    "Zoom and fit",
+    "缩放与适应"
+  ],
+  [
+    "Zoom in",
+    "放大"
+  ],
+  [
+    "Zoom out",
+    "缩小"
+  ],
+  [
+    "[{0} Annotation]",
+    "[注释：{0}]"
+  ],
+  [
+    "of {0}",
+    "共 {0} 页"
+  ],
+  [
+    "pages {0}",
+    "第 {0} 页"
+  ],
+  [
+    "pages {0} +{1} more",
+    "第 {0} 页，另有 {1} 页"
+  ],
+  [
+    "{0} matches",
+    "{0} 个匹配项"
+  ],
+  [
+    "{0} of {1}",
+    "{0} / {1}"
+  ],
+  [
+    "{0} pages",
+    "{0} 页"
+  ]
+]

@@ -18,6 +18,8 @@
   <PropertyGroup>
     <_PdfJsPackagedDir>$([MSBuild]::NormalizeDirectory('$(MSBuildThisFileDirectory)..', 'pdfjs'))</_PdfJsPackagedDir>
     <_PdfJsRepoBundleDir>$([MSBuild]::NormalizeDirectory('$(MSBuildThisFileDirectory)..', 'assets', 'js', 'pdf'))</_PdfJsRepoBundleDir>
+    <_PdfL10nPackagedDir>$([MSBuild]::NormalizeDirectory('$(MSBuildThisFileDirectory)..', 'l10n'))</_PdfL10nPackagedDir>
+    <_PdfL10nRepoDir>$([MSBuild]::NormalizeDirectory('$(MSBuildThisFileDirectory)..', '.tnt-content'))</_PdfL10nRepoDir>
   </PropertyGroup>
 
   <!--
@@ -56,5 +58,45 @@
 
     <Message Importance="normal"
              Text="Tesserae.Pdf: copied pdf.js from $(_PdfJsSourceDir) to $(PdfJsAssetsOutputDir)" />
+  </Target>
+
+  <!--
+    The package's own translation tables, next to pdf.js: `l10n/<lang>.json`, which is where
+    PdfJs.LoadTranslationsAsync looks. Resolved the same two ways as pdf.js itself - `../l10n` inside
+    a restored package, `.tnt-content` in this repo - so the sample exercises the same copy.
+
+    They are renamed from tnt's `.tnt` to `.json` here, and that is the point of doing it in the copy
+    rather than at pack time: `.tnt` is a content type ASP.NET Core's static-file middleware does not
+    know, and an unknown one is answered with 404 rather than the file. A host would see the reader
+    fall back to English with nothing in the console to say why.
+
+    Missing tables are not an error: a host may pin an older package, and a package built before any
+    language was translated has nothing to copy. The reader is English then, which is what an
+    untranslated key does anyway.
+  -->
+  <Target Name="_CopyPdfL10nTables"
+          AfterTargets="Build"
+          Condition="'$(DesignTimeBuild)' != 'true'">
+
+    <PropertyGroup>
+      <_PdfL10nSourceDir Condition="Exists('$(_PdfL10nPackagedDir)')">$(_PdfL10nPackagedDir)</_PdfL10nSourceDir>
+      <_PdfL10nSourceDir Condition="'$(_PdfL10nSourceDir)' == '' and Exists('$(_PdfL10nRepoDir)')">$(_PdfL10nRepoDir)</_PdfL10nSourceDir>
+
+      <PdfJsAssetsOutputDir Condition="'$(PdfJsAssetsOutputDir)' == ''">$([MSBuild]::NormalizeDirectory('$(MSBuildProjectDirectory)', '$(OutDir)', 'tps', 'assets', 'js', 'pdf'))</PdfJsAssetsOutputDir>
+    </PropertyGroup>
+
+    <ItemGroup Condition="'$(_PdfL10nSourceDir)' != ''">
+      <_PdfL10nFiles Include="$(_PdfL10nSourceDir)*.tnt" />
+    </ItemGroup>
+
+    <Copy SourceFiles="@(_PdfL10nFiles)"
+          DestinationFiles="@(_PdfL10nFiles->'$(PdfJsAssetsOutputDir)l10n\%(Filename).json')"
+          SkipUnchangedFiles="true"
+          OverwriteReadOnlyFiles="true"
+          Condition="'@(_PdfL10nFiles)' != ''" />
+
+    <Message Importance="normal"
+             Condition="'@(_PdfL10nFiles)' != ''"
+             Text="Tesserae.Pdf: copied @(_PdfL10nFiles->Count()) translation table(s) from $(_PdfL10nSourceDir) to $(PdfJsAssetsOutputDir)l10n" />
   </Target>
 </Project>

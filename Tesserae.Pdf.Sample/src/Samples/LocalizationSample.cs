@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using TNT;
 using static TNT.T;
 using static Transpose.Core.dom;
@@ -17,21 +18,13 @@ namespace Tesserae.Pdf.Sample
         private readonly IComponent _content;
 
         /// <summary>
-        /// A German dictionary for the four strings this page shows - two of the package's l10n keys
-        /// and two of the page's own, to make the point that they share one table.
-        ///
-        /// A real application loads this from wherever its translations live and calls
-        /// <c>TNT.T.SetTranslation</c> once, before building any UI.
+        /// This page's own two German strings. The package's - every label the chrome draws and every
+        /// message pdf.js asks for - come from the table it ships, which
+        /// <see cref="PdfJs.LoadTranslationsAsync"/> fetches; the two are merged into the one table TNT
+        /// holds, with the application's own entries last so they win.
         /// </summary>
-        private static readonly Dictionary<string, string> German = new Dictionary<string, string>
+        private static readonly Dictionary<string, string> GermanForThisPage = new Dictionary<string, string>
         {
-            // Two of pdf.js's own message ids, as the package's English keys.
-            { "Page {0}",             "Seite {0}" },
-            { "[{0} Annotation]",     "[Anmerkung: {0}]" },
-            { "Highlight",            "Hervorheben" },
-            { "Add comment",          "Kommentar hinzufügen" },
-
-            // And two of this page's, to show it is the same table.
             { "The page landmark below is what a screen reader announces.", "Die Seitenmarkierung unten ist, was ein Screenreader vorliest." },
             { "Language",             "Sprache" },
         };
@@ -49,11 +42,7 @@ namespace Tesserae.Pdf.Sample
 
             Rebuild();
 
-            var toGerman = Button("Deutsch").SetIcon(UIcons.Globe).OnClick(() =>
-            {
-                T.SetTranslation(German);
-                Rebuild();
-            });
+            var toGerman = Button("Deutsch").SetIcon(UIcons.Globe).OnClick(() => ApplyGermanAsync().FireAndForget());
 
             var toEnglish = Button("English").SetIcon(UIcons.Globe).OnClick(() =>
             {
@@ -61,6 +50,18 @@ namespace Tesserae.Pdf.Sample
                 T.SetTranslation(null);
                 Rebuild();
             });
+
+            // The package's table first, this page's over it: an application that words something
+            // differently keeps its wording, and TNT holds one table for both.
+            async Task ApplyGermanAsync()
+            {
+                var table = await PdfJs.LoadTranslationsAsync("de");
+
+                foreach (var entry in GermanForThisPage) table[entry.Key] = entry.Value;
+
+                T.SetTranslation(table);
+                Rebuild();
+            }
 
             // The viewer is rebuilt rather than refreshed, because TNT takes a snapshot per lookup and
             // pdf.js has already written its labels into the DOM. That is also the convention a
@@ -92,7 +93,7 @@ namespace Tesserae.Pdf.Sample
                         TextBlock("Most of what it covers is invisible until it matters: page landmarks a screen reader announces, alt text on annotation icons, tooltips on the editor's buttons. This page shows the landmark, because it is the one you can read back out of the DOM.").MT(8))).SetTitle("Overview")))
                .FlatSection(VStack().Children(
                     Card(VStack().WS().Children(
-                        TextBlock("There is a gap a package cannot close by itself: a host's own tnt extract scans its own source, and this package's strings live in a NuGet package it never sees. So these keys will not appear in your translation file on their own - the README lists all 50, to be pasted into whatever feeds SetTranslation."),
+                        TextBlock("The package translates its own strings: it runs tnt over its sources and ships the resulting table for each language beside pdf.js, as assets/js/pdf/l10n/<lang>.json. PdfJs.LoadTranslationsAsync fetches one and hands it back - your application merges it into its own table, because TNT holds a single dictionary and has no way to read it back, so a package that installed one would throw away its host's."),
                         TextBlock("The package deliberately exposes no language API of its own. TNT's table is process-global and singular; a package that called SetTranslation would clobber the host's. PdfJs.Language only tells pdf.js which language it is looking at, which decides text direction and how dates inside annotations are formatted.").MT(8),
                         TextBlock("Placeholders follow TNT's convention rather than Fluent's: \"Page {0}\", not \"Page { $page }\". That is what t($\"Page {n}\") produces, so a translator sees the same shape here as everywhere else in the application.").MT(8),
                         TextBlock("Changing language rebuilds. TNT reads its table at each lookup, but pdf.js has already written its labels into the DOM by then - so the viewer is rebuilt, which is also what a Tesserae app does for a language change.").MT(8))).SetTitle("Best Practices")))

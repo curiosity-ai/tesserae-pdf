@@ -1,0 +1,330 @@
+﻿[
+  [
+    "Actual size",
+    "실제 크기"
+  ],
+  [
+    "Add comment",
+    "주석 추가"
+  ],
+  [
+    "Alt text",
+    "대체 텍스트"
+  ],
+  [
+    "Alt text added",
+    "대체 텍스트가 추가됨"
+  ],
+  [
+    "Automatic",
+    "자동"
+  ],
+  [
+    "Blue",
+    "파랑"
+  ],
+  [
+    "Bottom left corner — resize",
+    "왼쪽 아래 모서리 — 크기 조정"
+  ],
+  [
+    "Bottom middle — resize",
+    "아래쪽 가운데 — 크기 조정"
+  ],
+  [
+    "Bottom right corner — resize",
+    "오른쪽 아래 모서리 — 크기 조정"
+  ],
+  [
+    "Change color",
+    "색상 변경"
+  ],
+  [
+    "Change drawing color",
+    "그리기 색상 변경"
+  ],
+  [
+    "Change text color",
+    "텍스트 색상 변경"
+  ],
+  [
+    "Clear",
+    "지우기"
+  ],
+  [
+    "Color choices",
+    "색상 선택"
+  ],
+  [
+    "Comment",
+    "주석"
+  ],
+  [
+    "Continued from the start of the document",
+    "문서 처음부터 계속 검색함"
+  ],
+  [
+    "Created automatically: {0}",
+    "자동 생성됨: {0}"
+  ],
+  [
+    "Document outline",
+    "문서 개요"
+  ],
+  [
+    "Drawing added",
+    "그리기가 추가됨"
+  ],
+  [
+    "Drawing editor",
+    "그리기 편집기"
+  ],
+  [
+    "Edit alt text",
+    "대체 텍스트 편집"
+  ],
+  [
+    "Find in document",
+    "문서에서 찾기"
+  ],
+  [
+    "Fit content",
+    "페이지 너비"
+  ],
+  [
+    "Fit page",
+    "전체 페이지"
+  ],
+  [
+    "Fuzzy",
+    "유사 일치"
+  ],
+  [
+    "Green",
+    "초록"
+  ],
+  [
+    "Highlight",
+    "강조"
+  ],
+  [
+    "Highlight added",
+    "강조가 추가됨"
+  ],
+  [
+    "Highlight editor",
+    "강조 편집기"
+  ],
+  [
+    "Ignore case, accents and word boundaries",
+    "대소문자, 발음 기호, 단어 경계 무시"
+  ],
+  [
+    "Image added",
+    "이미지가 추가됨"
+  ],
+  [
+    "Image editor",
+    "이미지 편집기"
+  ],
+  [
+    "Marked as decorative",
+    "장식용으로 표시됨"
+  ],
+  [
+    "Match case, whole words, diacritics respected",
+    "대소문자, 전체 단어, 발음 기호 일치"
+  ],
+  [
+    "Middle left — resize",
+    "왼쪽 가운데 — 크기 조정"
+  ],
+  [
+    "Middle right — resize",
+    "오른쪽 가운데 — 크기 조정"
+  ],
+  [
+    "Missing alt text",
+    "대체 텍스트 없음"
+  ],
+  [
+    "More controls",
+    "기타 컨트롤"
+  ],
+  [
+    "Next match",
+    "다음 일치"
+  ],
+  [
+    "Next page",
+    "다음 페이지"
+  ],
+  [
+    "No document.",
+    "문서 없음."
+  ],
+  [
+    "No matches",
+    "일치 항목 없음"
+  ],
+  [
+    "No matches - try Fuzzy",
+    "일치 항목 없음 - 유사 일치로 검색"
+  ],
+  [
+    "Page",
+    "페이지"
+  ],
+  [
+    "Page {0}",
+    "{0} 페이지"
+  ],
+  [
+    "Page {0} of {1}",
+    "{0} / {1} 페이지"
+  ],
+  [
+    "Pink",
+    "분홍"
+  ],
+  [
+    "Precise",
+    "정확히 일치"
+  ],
+  [
+    "Previous match",
+    "이전 일치"
+  ],
+  [
+    "Previous page",
+    "이전 페이지"
+  ],
+  [
+    "Red",
+    "빨강"
+  ],
+  [
+    "Remove drawing",
+    "그리기 삭제"
+  ],
+  [
+    "Remove highlight",
+    "강조 삭제"
+  ],
+  [
+    "Remove image",
+    "이미지 삭제"
+  ],
+  [
+    "Remove signature",
+    "서명 삭제"
+  ],
+  [
+    "Remove text",
+    "텍스트 삭제"
+  ],
+  [
+    "Review alt text",
+    "대체 텍스트 검토"
+  ],
+  [
+    "Rotate right",
+    "오른쪽으로 회전"
+  ],
+  [
+    "Searching...",
+    "검색 중..."
+  ],
+  [
+    "Show comment",
+    "주석 표시"
+  ],
+  [
+    "Show in outline",
+    "개요에 표시"
+  ],
+  [
+    "Signature added",
+    "서명이 추가됨"
+  ],
+  [
+    "Signature editor: {0}",
+    "서명 편집기: {0}"
+  ],
+  [
+    "Text Editor",
+    "텍스트 편집기"
+  ],
+  [
+    "Text added",
+    "텍스트가 추가됨"
+  ],
+  [
+    "This document has no outline.",
+    "이 문서에는 개요가 없습니다."
+  ],
+  [
+    "Thumbnails",
+    "축소판"
+  ],
+  [
+    "Top left corner — resize",
+    "왼쪽 위 모서리 — 크기 조정"
+  ],
+  [
+    "Top middle — resize",
+    "위쪽 가운데 — 크기 조정"
+  ],
+  [
+    "Top right corner — resize",
+    "오른쪽 위 모서리 — 크기 조정"
+  ],
+  [
+    "Two-page spread",
+    "두 페이지 보기"
+  ],
+  [
+    "Yellow",
+    "노랑"
+  ],
+  [
+    "Zoom and fit",
+    "확대/축소 및 맞춤"
+  ],
+  [
+    "Zoom in",
+    "확대"
+  ],
+  [
+    "Zoom out",
+    "축소"
+  ],
+  [
+    "[{0} Annotation]",
+    "[주석: {0}]"
+  ],
+  [
+    "of {0}",
+    "/ {0}"
+  ],
+  [
+    "pages {0}",
+    "페이지 {0}"
+  ],
+  [
+    "pages {0} +{1} more",
+    "페이지 {0} 외 {1}개"
+  ],
+  [
+    "{0} matches",
+    "일치 {0}개"
+  ],
+  [
+    "{0} of {1}",
+    "{0} / {1}"
+  ],
+  [
+    "{0} pages",
+    "{0}페이지"
+  ]
+]

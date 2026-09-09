@@ -10,18 +10,16 @@ namespace Tesserae.Pdf
     /// all 50 of them, taken from pdf.js's own inlined en-US bundle - each run through Tesserae's TNT
     /// translation table.
     ///
-    /// <b>Why the strings are written out as literals</b>, rather than read from a dictionary: TNT
-    /// extracts its translatable strings by scanning source for <c>.t()</c> applied to a literal, so
-    /// a key built at run time is a key no translator ever sees. The switch below is therefore a
+    /// <b>Why the strings are written out as literals</b>, rather than read from a dictionary: TNTC
+    /// extracts translatable strings by scanning source for <c>.t()</c> applied to a literal, so a
+    /// key built at run time is a key no translator ever sees. The switch below is therefore a
     /// little repetitive on purpose - every English string in it is a compile-time literal at its own
-    /// <c>.t()</c> call site, which is what puts it in a host's <c>.tnt</c> file.
+    /// <c>.t()</c> call site, which is what puts it in this package's <c>.tnt</c> store.
     ///
-    /// <b>What a host has to do about that.</b> A host's own <c>tnt extract</c> never sees this
-    /// source - it lives in a NuGet package - so these keys will not appear in its translation file
-    /// on their own, and every one of them renders in English however many languages the host ships.
-    /// <c>scripts/list-translatable-strings.mjs</c> writes the list to repeat in a file the host's
-    /// extraction does read (see the README's Localization section); anything that merges into
-    /// <c>TNT.T.SetTranslation</c> works too.
+    /// <b>Where the translations come from.</b> A host's own extraction never sees this source - it
+    /// lives in a NuGet package - so the package translates these strings itself, with TNTC, and
+    /// ships a table per language beside pdf.js. <see cref="PdfJs.LoadTranslationsAsync"/> is how a
+    /// host gets one; it merges the result into whatever it feeds <c>TNT.T.SetTranslation</c>.
     ///
     /// <b>Placeholders.</b> Fluent writes them <c>{ $page }</c>; TNT's own convention for a
     /// formattable key is <c>{0}</c>, which is what <c>t($"Page {page}")</c> produces. The five
