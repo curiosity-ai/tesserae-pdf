@@ -119,18 +119,19 @@ namespace Tesserae.Pdf
         /// </summary>
         public async Task<PdfPermission[]> GetPermissionsAsync()
         {
-            var flags = await PromiseHelper.ToTask<int[]>(_document.getPermissions());
+            // pdf.js 6.3 switched this from an array to a Set - see IPermissionSet. flags.Length on
+            // a Set is undefined, so reading this the old way did not throw and did not return null
+            // either: it silently produced an empty array, reporting "forbids everything" for every
+            // protected document.
+            var flags = await PromiseHelper.ToTask<IPermissionSet>(_document.getPermissions());
 
             if (flags is null) return null;
 
-            var permissions = new PdfPermission[flags.Length];
+            var permissions = new List<PdfPermission>();
 
-            for (var i = 0; i < flags.Length; i++)
-            {
-                permissions[i] = (PdfPermission)flags[i];
-            }
+            flags.forEach(flag => permissions.Add((PdfPermission)flag));
 
-            return permissions;
+            return permissions.ToArray();
         }
 
         /// <summary>Whether the document permits something. True for a document with no restrictions.</summary>
