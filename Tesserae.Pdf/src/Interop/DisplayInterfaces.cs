@@ -67,6 +67,21 @@ namespace Tesserae.Pdf
         double percent { get; }
     }
 
+    /// <summary>
+    /// The JavaScript <c>Set</c> <see cref="IPdfDocumentProxy.getPermissions"/> resolves with.
+    /// Declared narrowly for this one call rather than as a general <c>Set&lt;T&gt;</c> wrapper - the
+    /// compiler has no such type, and <c>forEach</c> is all <c>PdfDocument.GetPermissionsAsync</c>
+    /// needs to read it back into a C# array. The callback is declared with one parameter even though
+    /// a native <c>Set.forEach</c> calls it with three (value, value again, the set) - JavaScript
+    /// does not mind a function called with more arguments than it declares.
+    /// </summary>
+    [External]
+    [Convention(Notation.None)]
+    public interface IPermissionSet
+    {
+        void forEach(Action<double> callback);
+    }
+
     /// <summary>A loaded document. Pages are 1-based, everywhere in pdf.js.</summary>
     [External]
     [Convention(Notation.None)]
@@ -120,9 +135,11 @@ namespace Tesserae.Pdf
         IPromise getAttachments();
 
         /// <summary>
-        /// Resolves with the permissions the document grants, as an array of
+        /// Resolves with the permissions the document grants, as a JavaScript <c>Set</c> of
         /// <see cref="PdfPermission"/> values - or null when it places no restrictions at all, which
-        /// is not the same as granting nothing.
+        /// is not the same as granting nothing. An array before pdf.js 6.3, which is why
+        /// <c>PdfDocument</c> reads it through <see cref="IPermissionSet"/> rather than
+        /// <c>es5.Array&lt;double&gt;</c>.
         /// </summary>
         IPromise getPermissions();
 

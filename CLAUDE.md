@@ -228,6 +228,18 @@ Rules learned wiring it up, each confirmed by reading the emitted JS:
 - **Declare pdf.js, not the platform.** `es5.JSON`, `es5.Date`, `es5.Map`, `es5.Uint8Array` and the
   whole DOM come from `Transpose.Core`; declaring one again shadows the real thing. (`es5.Object`
   does *not* appear to be reachable - `PdfAnnotation` exists partly so nothing needs `Object.keys`.)
+  There is no `es5.Set<T>` in this compiler version, though - `IPermissionSet` in
+  `Interop/DisplayInterfaces.cs` is a narrow hand-declared `forEach` wrapper for the one call that
+  needs one, not a gap to fill with a general one.
+- **A JS collection type change compiles clean and fails silently, every time.** pdf.js 6.3 changed
+  `getPermissions()` from an array to a `Set` (its own viewer moved from `.includes()` to `.has()` in
+  the same release, which is the tell that it is deliberate). `PdfDocument.GetPermissionsAsync` read
+  it as `int[]`: not null, so the null-means-unrestricted check passed it through, and `.Length` on a
+  `Set` is `undefined`, so the indexed loop ran zero times - a *restricted* document silently reported
+  *no permissions at all*, the one wrong answer `GetPermissionsAsync`'s null-vs-empty contract exists
+  to prevent. Nothing threw and nothing warned. Re-check every declared member's actual *shape*
+  (array vs. Map vs. Set, sync vs. Promise) against the bundled source on every pdfjs-dist bump -
+  existence isn't enough, and the compiler cannot check either one for an `[External]` member.
 
 ## pdf.js behaviour worth preserving
 
@@ -570,7 +582,7 @@ mkdir -p /tmp/consumer/localfeed && cp Tesserae.Pdf/bin/Release/*.nupkg /tmp/con
 dotnet build -v n | grep 'Tesserae.Pdf: copied'
 ```
 
-The log line should name the package directory, not the repo one, and the output should hold 286
+The log line should name the package directory, not the repo one, and the output should hold 287
 files under `assets/js/pdf`. Serving it and loading a document is the last link in the chain that
 nothing else covers.
 
