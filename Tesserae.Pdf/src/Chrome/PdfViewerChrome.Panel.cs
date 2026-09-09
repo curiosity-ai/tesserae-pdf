@@ -754,6 +754,18 @@ namespace Tesserae.Pdf
 
                 tile.Element = tile.Button.Render();
 
+                // NoMinSize() writes an inline "min-width: unset" - not 0 - which beats any
+                // stylesheet rule regardless of specificity. "unset" still leaves the tile's
+                // automatic minimum size as its content's min-content width, which is the
+                // fixed-pixel-wide canvas FitScale paints into it - so the grid column can never
+                // shrink back below whatever the tile last rendered at. A resize that paints one
+                // pixel wider - a click's selection border alone is enough - then ratchets the
+                // whole column wider forever, because the wider column becomes the next render's
+                // "available width". Overriding the inline style with an explicit 0 breaks that:
+                // the grid item can always shrink to its 1fr share, so the tile is bounded by the
+                // panel's own width instead of by whatever it happened to paint last.
+                tile.Element.style.minWidth = "0";
+
                 grid.Add(tile.Button);
 
                 _thumbnails.Add(tile);
