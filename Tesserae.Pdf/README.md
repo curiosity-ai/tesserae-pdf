@@ -162,6 +162,11 @@ their own. Each is a flat array of `[english, translated]` pairs, which is also 
 `Tesserae.Pdf` type exists (a host that keeps the package out of its boot payload) can fetch and
 merge that file itself instead.
 
+**Or merge them into your own tables at build time**, which costs no code at run time at all: the
+package's targets declare every table as a `@(TranslationTable)` MSBuild item, carrying its
+`PackageId`, so a target of your own can fold them into the file your application already ships -
+your entries last, so your wording wins. That is what mosaik does.
+
 A language we have no table for answers an empty dictionary rather than throwing, and every key then
 falls back to its English text - which is what TNT does with a key it cannot find. The twenty are
 `cs, de, el, es, fr, he, hi, it, ja, ko, ms, ne, nl, pl, pt, ru, sr, sv, uk, zh`.

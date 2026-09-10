@@ -23,6 +23,25 @@
   </PropertyGroup>
 
   <!--
+    The same tables, declared as an item so a host can merge them into its own translation file at
+    build time instead of fetching a second one at run time. A host globbing our folder layout would
+    be a host that breaks when the layout moves; `@(TranslationTable)` is the contract, one item per
+    language file, carrying the package it came from.
+
+    Evaluated at import time on purpose - unlike pdf.js, both candidate folders are static content
+    (the nupkg's `l10n/`, or this repository's committed `.tnt-content/`), so nothing appears later
+    in the build. A glob that matches nothing contributes nothing, which is what a package built
+    before any language was translated does.
+  -->
+  <ItemGroup>
+    <TranslationTable Include="$(_PdfL10nPackagedDir)*.tnt"
+                      PackageId="Tesserae.Pdf" />
+    <TranslationTable Include="$(_PdfL10nRepoDir)*.tnt"
+                      PackageId="Tesserae.Pdf"
+                      Condition="!Exists('$(_PdfL10nPackagedDir)')" />
+  </ItemGroup>
+
+  <!--
     Runs after Build so it lands after the Transpose compiler has written (and possibly cleaned) the
     output folder. SkipUnchangedFiles keeps the ~7 MB payload off the critical path on rebuilds.
 

@@ -555,9 +555,16 @@ Four things about the whole arrangement worth knowing before touching either hal
 - **The host merges; the package must not.** `TNT.T`'s whole surface is `t(...)` and
   `SetTranslation(dictionary)` - one table for the application, replaced wholesale, with no getter -
   so a package that installed its own would throw away its host's. `LoadTranslationsAsync` therefore
-  hands the table back and says so in its doc comment. It is also why the file format is documented:
-  a host that keeps this package out of its boot payload (mosaik does) loads its translations before
-  any `Tesserae.Pdf` type exists, and merges the JSON itself rather than calling us.
+  hands the table back and says so in its doc comment.
+- **There are two ways for a host to merge, and the targets file offers both.** At run time it
+  fetches `assets/js/pdf/l10n/<code>.json` - what `LoadTranslationsAsync` does, and what the sample
+  uses. At *build* time it folds our tables into its own, which is better where it is possible: one
+  file for the application to load, no host code, and precedence settled in a diff rather than at
+  run time. For that the targets file also declares the tables as **`@(TranslationTable)`** items
+  (one per language, carrying `PackageId`), because a host globbing our folder layout is a host that
+  breaks when the layout moves. mosaik consumes that item in `Build/Curiosity.Tnt.targets`; its
+  CLAUDE.md has the other half. The item is evaluated at import time, unlike the pdf.js paths -
+  both candidate folders are static content, so nothing appears later in the build.
 - **A missing table is a fallback, never an error.** An older package, a language nobody translated,
   a host that does not copy the assets: `LoadTranslationsAsync` answers an empty dictionary, and TNT
   falls back to the English key. The one thing it distinguishes is a failed *request* (`status` 0),
