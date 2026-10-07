@@ -21,11 +21,15 @@ namespace Tesserae.Pdf
     /// </list>
     ///
     /// <b>The colours are Tesserae's.</b> Every surface, border and accent resolves to a
-    /// <c>--tss-*</c> theme variable, so the chrome follows <c>UI.Theme.Dark()</c> and a host's
-    /// <c>Theme.Build()</c> with no second palette to keep in step. The handful of values with no
-    /// theme equivalent - the icon-button hover wash, the faint glyph grey, the segmented track - are
-    /// declared as this sheet's own variables at the top, once, so a host can override them on
-    /// <c>.tsspdf-chrome</c> without reaching into rules.
+    /// <c>--tss-*</c> theme variable, so the chrome follows <c>UI.Theme.Dark()</c>, a host's
+    /// <c>Theme.Build()</c> and a custom theme (<c>Tesserae.Themes.Curiosity</c>) with no second
+    /// palette to keep in step. So do the corner radii and shadows (<c>--tss-border-radius-md</c>,
+    /// <c>--tss-shadow-*</c>): a theme that squares its corners and swaps shadows for hairlines gets
+    /// a chrome that does the same. The wash behind a hovered button and the segmented track are a
+    /// few percent of the theme's foreground rather than a fixed grey, because a fixed grey is
+    /// invisible against a theme whose paper is that grey. The one value with no theme equivalent,
+    /// the faint glyph grey, is declared as this sheet's own variable at the top, so a host can
+    /// override it on <c>.tsspdf-chrome</c> without reaching into rules.
     ///
     /// <b>Rules that name a <c>tss-</c> class are a coupling</b>, and are marked as such below. They
     /// are the price of using the components rather than redrawing them, and they are all of the
@@ -84,14 +88,16 @@ namespace Tesserae.Pdf
   --tsspdf-fg-faint:rgb(140,143,151);
   --tsspdf-accent:var(--tss-link-color);
   --tsspdf-accent-soft:rgba(var(--tss-link-color-root),.10);
-  --tsspdf-hover:rgb(240,241,242);
-  --tsspdf-track:rgb(240,241,242);
+  --tsspdf-hover:rgba(var(--tss-default-foreground-color-root),.06);
+  --tsspdf-track:rgba(var(--tss-default-foreground-color-root),.06);
   --tsspdf-danger:var(--tss-danger-border-color);
-  --tsspdf-shadow-sm:0 1px 2px 0 rgba(0,0,0,.05);
-  --tsspdf-shadow-lift:0 4px 6px -1px rgba(0,0,0,.1);
+  --tsspdf-shadow-sm:var(--tss-shadow-sm);
+  --tsspdf-shadow-lift:var(--tss-shadow-md);
+  --tsspdf-shadow-float:var(--tss-shadow-lg);
   --tsspdf-panel-width:264px;
   --tsspdf-search-width:430px;
-  --tsspdf-radius:6px;
+  --tsspdf-radius:var(--tss-border-radius-md,6px);
+  --tsspdf-radius-sm:calc(var(--tsspdf-radius) * .67);
   display:flex;flex-direction:column;width:100%;height:100%;position:relative;overflow:hidden;
   background:var(--tsspdf-canvas);color:var(--tsspdf-fg);
 }
@@ -110,11 +116,10 @@ namespace Tesserae.Pdf
 
 .tss-dark-mode .tsspdf-chrome{
   --tsspdf-accent-soft:rgba(var(--tss-link-color-root),.16);
-  --tsspdf-hover:rgba(255,255,255,.10);
-  --tsspdf-track:rgba(255,255,255,.06);
+  --tsspdf-hover:rgba(var(--tss-default-foreground-color-root),.10);
+  --tsspdf-track:rgba(var(--tss-default-foreground-color-root),.06);
   --tsspdf-fg-faint:rgb(120,128,144);
   --tsspdf-shadow-sm:none;
-  --tsspdf-shadow-lift:0 4px 10px -2px rgba(0,0,0,.55);
 }
 
 /* ---------------------------------------------------------------- toolbar */
@@ -135,7 +140,7 @@ namespace Tesserae.Pdf
 
 /* -- coupling: Tesserae sizes a button for a form. These are the design's exact numbers. */
 .tsspdf-chrome .tsspdf-iconbtn.tss-btn{width:32px;height:32px;min-width:32px;min-height:32px;
-  padding:0;border:0;background:transparent;box-shadow:none;border-radius:6px;
+  padding:0;border:0;background:transparent;box-shadow:none;border-radius:var(--tsspdf-radius);
   color:var(--tsspdf-fg-muted);flex-shrink:0;justify-content:center}
 .tsspdf-chrome .tsspdf-iconbtn.tss-btn:hover:not(:disabled){background:var(--tsspdf-hover);
   color:var(--tsspdf-fg-strong)}
@@ -145,7 +150,7 @@ namespace Tesserae.Pdf
 
 /* The zoom value and its chevron: a field-shaped button rather than an icon-shaped one. */
 .tsspdf-chrome .tsspdf-zoom.tss-btn{height:28px;min-height:28px;min-width:70px;padding:0 8px;
-  border-radius:6px;font-size:12px;color:var(--tsspdf-fg);background:var(--tsspdf-surface);
+  border-radius:var(--tsspdf-radius);font-size:12px;color:var(--tsspdf-fg);background:var(--tsspdf-surface);
   border:1px solid var(--tsspdf-border);box-shadow:var(--tsspdf-shadow-sm);flex-shrink:0;gap:6px}
 .tsspdf-chrome .tsspdf-zoom.tss-btn:hover{background:var(--tsspdf-hover)}
 .tsspdf-chrome .tsspdf-zoom.tss-btn{flex-direction:row-reverse;justify-content:flex-end}
@@ -156,7 +161,7 @@ namespace Tesserae.Pdf
 /* -- coupling: the page box. Tesserae's text field is 36px tall and padded for a form. */
 .tsspdf-chrome .tsspdf-pagebox.tss-textbox-container{width:38px;min-width:38px;flex-shrink:0}
 .tsspdf-chrome .tsspdf-pagebox .tss-textbox{height:28px;padding:0 2px;font-size:12px;
-  text-align:center;border-radius:6px;box-shadow:var(--tsspdf-shadow-sm)}
+  text-align:center;border-radius:var(--tsspdf-radius);box-shadow:var(--tsspdf-shadow-sm)}
 .tsspdf-chrome .tsspdf-pagebox .tss-textbox-error{display:none}
 /* A reserved width, because this text changes as the reader moves through the document - of 9 to
    of 10, 1 of 12 to 12 of 12 - and everything after it would move with it. */
@@ -170,8 +175,8 @@ namespace Tesserae.Pdf
    SegmentedPivot is a scrollable tab strip that also hosts a content pane, and PivotSelector
    collapses to a dropdown. The track is three declarations and the two things inside it are
    ordinary Tesserae buttons. */
-.tsspdf-seg{background:var(--tsspdf-track);border-radius:6px;padding:2px;flex-shrink:0}
-.tsspdf-chrome .tsspdf-seg-item.tss-btn{height:24px;min-height:24px;padding:0 9px;border-radius:4px;
+.tsspdf-seg{background:var(--tsspdf-track);border-radius:var(--tsspdf-radius);padding:2px;flex-shrink:0}
+.tsspdf-chrome .tsspdf-seg-item.tss-btn{height:24px;min-height:24px;padding:0 9px;border-radius:var(--tsspdf-radius-sm);
   font-size:12px;font-weight:600;color:var(--tsspdf-fg-muted);background:transparent;gap:6px}
 .tsspdf-chrome .tsspdf-seg-item.tss-btn:hover{color:var(--tsspdf-fg-strong);background:transparent}
 .tsspdf-chrome .tsspdf-seg-item.tss-btn.tsspdf-on{background:var(--tsspdf-surface);
@@ -199,7 +204,7 @@ namespace Tesserae.Pdf
   font-family:var(--tss-monospace-font-family);flex-shrink:0;min-width:58px;text-align:right}
 .tsspdf-note{padding:0 6px;white-space:nowrap;font-size:11px;color:var(--tsspdf-danger);flex-shrink:0}
 .tsspdf-chrome .tsspdf-step.tss-btn{width:22px;height:22px;min-width:22px;min-height:22px;
-  padding:0;border:0;background:transparent;box-shadow:none;border-radius:4px;
+  padding:0;border:0;background:transparent;box-shadow:none;border-radius:var(--tsspdf-radius-sm);
   color:var(--tsspdf-fg-muted);flex-shrink:0;justify-content:center}
 .tsspdf-chrome .tsspdf-step.tss-btn:hover:not(:disabled){background:var(--tsspdf-hover)}
 .tsspdf-chrome .tsspdf-step.tss-btn i{font-size:13px}
@@ -258,7 +263,7 @@ namespace Tesserae.Pdf
    Positioned against the body, which is why the body is relative. */
 .tsspdf-body{position:relative}
 .tsspdf-chrome.tsspdf-mini .tsspdf-panel{position:absolute;top:0;left:0;bottom:0;z-index:5;
-  width:min(320px,86%);min-width:0;box-shadow:0 8px 24px -6px rgba(0,0,0,.28)}
+  width:min(320px,86%);min-width:0;box-shadow:var(--tsspdf-shadow-float)}
 
 /* Touch: the design's 32px squares are a mouse target. A finger wants 40, and the toolbar grows to
    suit rather than the buttons overlapping. */
@@ -312,7 +317,7 @@ namespace Tesserae.Pdf
    configured away because selection is what the tree is for here and the box is not. */
 .tsspdf-chrome .tsspdf-outline .tss-tree-checkbox{display:none}
 .tsspdf-chrome .tsspdf-outline{padding:8px}
-.tsspdf-chrome .tsspdf-outline .tss-tree-item-content{min-height:0;padding:5px 8px;border-radius:4px;
+.tsspdf-chrome .tsspdf-outline .tss-tree-item-content{min-height:0;padding:5px 8px;border-radius:var(--tsspdf-radius-sm);
   border-left:3px solid transparent;margin-left:-3px;gap:6px;font-size:13px;line-height:1.35}
 /* An icon font brings its own line box, which is what made these rows 32px rather than the design's
    27.5 - the glyph is 11px but the line it sits on was not. */

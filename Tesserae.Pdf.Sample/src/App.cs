@@ -23,6 +23,7 @@ namespace Tesserae.Pdf.Sample
     internal static class App
     {
         private const string _sidebarOpenStateKey = "tss-pdf-sidebar-open-close";
+        private const string _themeKey             = "tss-pdf-theme";
 
         private static void Main()
         {
@@ -46,7 +47,33 @@ namespace Tesserae.Pdf.Sample
             await Transpose.Require.RequireAsync(Transpose.RequireKind.Module, "./Tesserae.Pdf.min.js");
 #endif
 
+            await ApplyStoredThemeAsync();
+
             Start();
+        }
+
+        /// <summary>
+        /// The gallery runs under either of Tesserae's two looks, the default one and the Curiosity theme
+        /// (<c>Tesserae.Themes.Curiosity</c>), each in light and dark. <c>?theme=curiosity</c> or
+        /// <c>?theme=default</c> picks one for a link or a browser check and is remembered; the sidebar's
+        /// palette button switches at runtime.
+        /// </summary>
+        private static async Task ApplyStoredThemeAsync()
+        {
+            var query = new URLSearchParams(window.location.search).get("theme");
+
+            if (query is object) localStorage.setItem(_themeKey, query);
+
+            if (localStorage.getItem(_themeKey) == "curiosity")
+            {
+                await Theme.SetCustomTheme(Tesserae.Themes.Curiosity.CuriosityTheme.Instance);
+            }
+
+            // ?mode=dark | light, for the same reason.
+            var mode = new URLSearchParams(window.location.search).get("mode");
+
+            if (mode == "dark")  Theme.Dark();
+            if (mode == "light") Theme.Light();
         }
 
         private static void Start()
@@ -186,7 +213,22 @@ namespace Tesserae.Pdf.Sample
                 }
             });
 
-            sidebar.AddFooter(new SidebarCommands("CONFIG", lightDark, openClose));
+            var curiosityOn = localStorage.getItem(_themeKey) == "curiosity";
+            var themeSwitch = new SidebarCommand(UIcons.Palette).Tooltip(curiosityOn ? "Curiosity theme (click for the default theme)" : "Default theme (click for the Curiosity theme)");
+
+            themeSwitch.OnClick(async () =>
+            {
+                curiosityOn = !curiosityOn;
+
+                localStorage.setItem(_themeKey, curiosityOn ? "curiosity" : "default");
+
+                if (curiosityOn) await Theme.SetCustomTheme(Tesserae.Themes.Curiosity.CuriosityTheme.Instance);
+                else             await Theme.ClearCustomTheme();
+
+                themeSwitch.Tooltip(curiosityOn ? "Curiosity theme (click for the default theme)" : "Default theme (click for the Curiosity theme)");
+            });
+
+            sidebar.AddFooter(new SidebarCommands("CONFIG", themeSwitch, lightDark, openClose));
 
             var groupIndex = 0;
 
