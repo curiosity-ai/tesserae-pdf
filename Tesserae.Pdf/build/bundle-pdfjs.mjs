@@ -99,7 +99,23 @@ const cssBuild = await build({
   loader: { '.svg': 'dataurl', '.gif': 'dataurl', '.png': 'dataurl' },
 });
 
-const viewerCss = cssBuild.outputFiles.find((f) => f.path.endsWith('.css')).text;
+const builtCss = cssBuild.outputFiles.find((f) => f.path.endsWith('.css')).text;
+
+/**
+ * pdf.js sizes a `.page` as the page's width plus a 9px border, which only adds up in a
+ * `content-box` - the CSS default, and the only thing its own stylesheet ever assumed. A host that
+ * resets `*{box-sizing:border-box}` (Tesserae's tss.css does, and so does `.tsspdf-chrome *`) takes
+ * the border out of the width instead, so the page is laid out 18px narrower inside than it was
+ * sized for. The canvas fills it (`width:100%`) and is resampled down; the text layer is
+ * absolutely positioned with an explicit width and keeps the full size. The two no longer share a
+ * scale, so search highlights and a text selection drift off the glyphs they cover - by up to a
+ * couple of characters along a line - and nothing throws.
+ *
+ * `.pdfViewer .page` outranks a bare `*` and `.tsspdf-chrome *`, so this holds whatever the host
+ * resets. It is appended rather than patched in because the stylesheet is pdf.js's, rebuilt from
+ * the pinned package on every bundle.
+ */
+const viewerCss = builtCss + '\n.pdfViewer .page{box-sizing:content-box}\n';
 
 /**
  * The display API and the viewer components, in that order.

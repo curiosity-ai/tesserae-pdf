@@ -318,6 +318,14 @@ These cost a debugging round each. Don't simplify them away.
   back to the match. Arming it from the bus rather than from `Find()` is deliberate: a host dispatching
   `find` itself, which is the only way to reach an option this surface does not wrap, still gets its
   match scrolled to.
+- **A `.page` is `content-box`, whatever the host resets `*` to.** pdf.js sizes it as the page width plus
+  a 9px border, so a `border-box` page is 18px narrower inside than it was laid out for: the canvas
+  (`width:100%`) shrinks and is resampled while the text layer, absolutely positioned with an explicit
+  width, keeps the full size. Highlights and selection then drift off the glyphs by up to a couple of
+  characters along a line, and nothing throws. Tesserae's own `tss.css` resets `*`, so every Tesserae
+  host hits it, chrome or not; `bundle-pdfjs.mjs` appends `.pdfViewer .page{box-sizing:content-box}` to
+  the inlined stylesheet. To check it: `canvas.getBoundingClientRect().width` should equal the
+  `.textLayer`'s.
 
 ## Fixed: a viewer in an animating modal froze the whole tab
 
