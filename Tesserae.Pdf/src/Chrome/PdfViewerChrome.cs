@@ -36,9 +36,10 @@ namespace Tesserae.Pdf
     ///
     /// <b>Two layouts</b>, from one set of controls - see <see cref="PdfChromeLayout"/>.
     ///
-    /// <b>It follows Tesserae's theme.</b> Every colour resolves to a <c>--tss-*</c> variable, so
-    /// <c>UI.Theme.Dark()</c> and a host's own <c>Theme.Build()</c> both come through with no work
-    /// here. See <see cref="PdfChromeStyles"/>.
+    /// <b>It follows Tesserae's theme.</b> Every colour, corner radius and shadow resolves to a
+    /// <c>--tss-*</c> variable, so <c>UI.Theme.Dark()</c>, a host's own <c>Theme.Build()</c> and a
+    /// custom theme such as <c>Tesserae.Themes.Curiosity</c> (square corners, hairlines instead of
+    /// shadows) all come through with no work here. See <see cref="PdfChromeStyles"/>.
     ///
     /// <b>Lifetime</b> is the viewer's: leaving the DOM tears the view down and re-adding it rebuilds
     /// it, and the chrome rebuilds its panel with it. <see cref="Dispose"/> is the one-way door.
@@ -311,8 +312,9 @@ namespace Tesserae.Pdf
         }
 
         /// <summary>
-        /// How round the corners of <see cref="Border"/> are, in pixels. 6 by default - the radius
-        /// the chrome's own controls use. 0 squares the frame off.
+        /// How round the corners of <see cref="Border"/> and the chrome's own controls are, in pixels.
+        /// By default the theme's medium radius (<c>--tss-border-radius-md</c>): 6 in Tesserae's
+        /// default theme, 0 in the Curiosity one. 0 squares everything off.
         /// </summary>
         public PdfViewerChrome CornerRadius(int pixels)
         {
