@@ -1,4 +1,3 @@
-using System.Threading.Tasks;
 using Transpose.Core;
 using static Transpose.Core.dom;
 using static Tesserae.UI;
@@ -25,11 +24,6 @@ namespace Tesserae.Pdf.Sample
             chrome
                .Url(OUTLINE_PDF)
                .Panel(PdfChromePanel.Outline)
-               // A control of the application's own, in the toolbar beside the chrome's - and in the
-               // overflow menu on the band that sheds rotate and spread, so it is never less
-               // reachable than they are. The awaitable overload spins the button while it runs.
-               .AddAction(UIcons.Download, "Download", () => DownloadAsync(chrome, status))
-               .AddAction(UIcons.Link, "Copy a link to this page", () => status.Text = $"Copied a link to page {chrome.Page}.")
                .OnPanelChanged(panel => status.Text = $"Panel: {panel}, search: {chrome.CurrentSearchMode}")
                .OnSearchModeChanged(mode => status.Text = $"Panel: {chrome.CurrentPanel}, search: {mode}");
 
@@ -94,7 +88,7 @@ namespace Tesserae.Pdf.Sample
                         HStack().WS().Children(layoutChoice, borderChoice.ML(24)),
                         status.MT(8),
                         chrome.H(620).WS().MT(8),
-                        SampleHint("Type \"tesserae\" into the search box - it is on three pages of this document, so the count should settle on 3 / 3. Switch to Precise and it still finds them; search \"Tesserae\" in Precise and it goes red. Click an entry in the outline to jump to its section, and watch the entry you are inside stay marked as the document scrolls. The download and link buttons at the end of the toolbar are this page\u0027s own, added with AddAction - narrow the window until the toolbar wraps and they move into the overflow menu with rotate and spread.")
+                        SampleHint("Type \"tesserae\" into the search box - it is on three pages of this document, so the count should settle on 3 / 3. Switch to Precise and it still finds them; search \"Tesserae\" in Precise and it goes red. Click an entry in the outline to jump to its section, and watch the entry you are inside stay marked as the document scrolls.")
                     )).SetTitle("Usage")))
                .FlatSection(VStack().Children(
                     Card(VStack().WS().Children(
@@ -116,37 +110,6 @@ namespace Tesserae.Pdf.Sample
                         SampleHint("The search box shrinks before anything else in the toolbar does, so the controls survive a narrow container and the search field gives up width for them.")
                     )).SetTitle("Paring it back")))
                .SeeAlso(typeof(SearchSample), typeof(OutlineAndNavigationSample), typeof(ZoomAndFitSample));
-        }
-
-        /// <summary>
-        /// What the toolbar's Download action does. Nothing pdf.js-specific: the bytes come back as a
-        /// Uint8Array, which is what a Blob wants, which is what a download wants. The package
-        /// deliberately does not do this itself - how a file reaches a user is the host's decision,
-        /// which is the reason AddAction exists at all.
-        /// </summary>
-        private static async Task DownloadAsync(PdfViewerChrome chrome, TextBlock status)
-        {
-            var pdfDocument = chrome.Document;
-
-            if (pdfDocument is null)
-            {
-                status.Text = "No document to download yet.";
-                return;
-            }
-
-            var bytes = await pdfDocument.GetDataAsync();
-
-            var blob = new Blob(new object[] { bytes }, new BlobPropertyBag { type = "application/pdf" });
-            var url  = URL.createObjectURL(blob);
-            var link = (HTMLAnchorElement)document.createElement("a");
-
-            link.href     = url;
-            link.download = "sample-outline.pdf";
-            link.click();
-
-            URL.revokeObjectURL(url);
-
-            status.Text = $"Downloaded {bytes.length} bytes.";
         }
 
         public HTMLElement Render() => _content.Render();
