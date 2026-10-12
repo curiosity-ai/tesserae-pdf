@@ -184,7 +184,7 @@ Two Bridge-era settings are **gone and must not come back**: the four self-JS `r
 (every variant of the compiled output — the formatted bundle, the minified bundle, the module entry
 and its chunks — is embedded automatically for a packable project) and `"outputFormatting"`, which no
 longer exists and is silently ignored. Module output needs `Transpose.BCL >= 26.8.4102`; this project
-pins 26.8.4619 to match the applications consuming it.
+pins 26.9.5840 (the floor Tesserae 2026.10.71970 and the Curiosity theme require).
 
 Two gotchas in the targets file, both inherited from tesserae-monaco's: `$(OutDir)` is empty at
 import time, so the destination is computed **inside** the target; and a `ProjectReference` does not
@@ -364,9 +364,28 @@ value in `PdfChromeStyles` resolves to a `--tss-*` variable, which is not a comp
 light palette *is* Tesserae's light theme, value for value - `rgb(255,255,255)`, `rgb(249,250,251)`,
 `rgb(224,230,235)`, `rgb(101,103,107)`, `rgb(36,142,250)`, `rgb(235,234,234)` - and its dark accent
 and danger are Tesserae's dark ones. So the light chrome is pixel-identical to the comp and dark mode
-came free. Only three values have no theme equivalent (the icon-button hover wash, the faint glyph
-grey, the segmented track); they are declared as this sheet's own variables at the top so a host can
-override them without reaching into rules.
+came free. Only one value has no theme equivalent (the faint glyph grey); it is declared as this
+sheet's own variable at the top so a host can override it without reaching into rules.
+
+**It works under both of Tesserae's themes: the default one and Curiosity**
+(`Tesserae.Themes.Curiosity`, activated with `UI.Theme.SetCustomTheme(CuriosityTheme.Instance)`), each
+in light and dark. Curiosity overrides the same `--tss-*` tokens, so colours follow for free; what it
+also changes is shape, and a hard-coded value is what breaks:
+
+- **Radius and shadow come from tokens.** `--tsspdf-radius` is `--tss-border-radius-md` (6px default,
+  0 in Curiosity) and `--tsspdf-radius-sm` is two thirds of it; shadows are `--tss-shadow-sm/md/lg`
+  (Curiosity turns them into 1px rings). A literal `border-radius:6px` leaves the page box and zoom
+  button rounded beside Curiosity's square search box. `CornerRadius(px)` still overrides the radius.
+- **The hover wash and the segmented track are `rgba(var(--tss-default-foreground-color-root), .06)`**
+  (`.10` for hover in dark), not a fixed grey. The old `rgb(240,241,242)` is 4 levels off
+  Curiosity's paper, so a hovered button did not visibly change. In the default light theme the
+  result is within a shade of the old value.
+- **The package must not reference Curiosity.** Only the sample does. Check a chrome change in all
+  four combinations (default and Curiosity, light and dark) - the sample takes `?theme=curiosity` or
+  `?theme=default` and `?mode=dark` or `?mode=light`, remembers the theme in `localStorage`, and has
+  a palette button in the sidebar footer.
+- Curiosity's CSS is fetched lazily the first time it is activated, so a page that loads with
+  `?theme=curiosity` has the theme applied before the first page is built.
 
 **The `Fuzzy | Precise` pill's two meanings are the host's to define.** The defaults are pdf.js's own
 (Fuzzy: case, accents and word boundaries all ignored; Precise: all three on), and `SearchOptions(mode,
