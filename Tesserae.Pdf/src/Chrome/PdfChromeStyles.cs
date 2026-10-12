@@ -193,7 +193,9 @@ namespace Tesserae.Pdf
    keyboard-shortcut chip, search-as-you-type, the invalid state - is the component's own. */
 .tsspdf-chrome .tsspdf-search.tss-searchbox-container{height:28px;
   width:var(--tsspdf-search-width);min-width:310px;flex-shrink:1}
-.tsspdf-chrome .tsspdf-search .tss-searchbox{height:28px;font-size:13px}
+/* height:100%, not 28px: the container is 28px *including* its 1px border, so a 28px input starts below
+   the top border and overflows the bottom, and its text sits 1px lower than every other control. */
+.tsspdf-chrome .tsspdf-search .tss-searchbox{height:100%;font-size:13px}
 .tsspdf-chrome .tsspdf-search.tss-searchbox-container.tsspdf-nomatches{border-color:var(--tsspdf-danger);
   box-shadow:0 0 0 2px rgba(var(--tss-danger-border-color-root),.14)}
 .tsspdf-chrome .tsspdf-search.tsspdf-nomatches .tss-searchbox-icon{color:var(--tsspdf-danger)}
@@ -276,8 +278,7 @@ namespace Tesserae.Pdf
   .tsspdf-chrome .tsspdf-step.tss-btn{width:28px;height:28px;min-width:28px;min-height:28px}
   .tsspdf-chrome .tsspdf-pagebox .tss-textbox,
   .tsspdf-chrome .tsspdf-zoom.tss-btn,
-  .tsspdf-chrome .tsspdf-search.tss-searchbox-container,
-  .tsspdf-chrome .tsspdf-search .tss-searchbox{height:34px}
+  .tsspdf-chrome .tsspdf-search.tss-searchbox-container{height:34px}
   .tsspdf-chrome .tsspdf-seg-item.tss-btn{height:30px}
   .tsspdf-seg{padding:3px}
   .tsspdf-chrome .tsspdf-outline .tss-tree-item-content{padding:9px 8px}
