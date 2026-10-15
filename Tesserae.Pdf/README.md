@@ -197,7 +197,7 @@ position - add these too if you use it.
 </details>
 
 <details>
-<summary>The 45 translatable strings pdf.js can ask for</summary>
+<summary>The 46 translatable strings pdf.js can ask for</summary>
 
 | Key |
 | --- |
@@ -240,6 +240,7 @@ position - add these too if you use it.
 | `Show comment` |
 | `Signature added` |
 | `Signature editor: {0}` |
+| `Start typing…` |
 | `Text added` |
 | `Text Editor` |
 | `Top left corner — resize` |

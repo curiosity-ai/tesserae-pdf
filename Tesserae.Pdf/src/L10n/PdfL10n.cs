@@ -14,7 +14,7 @@ namespace Tesserae.Pdf
     /// <b>What pdf.js does with this.</b> Its viewer, page views and annotation-editor layer put
     /// <c>data-l10n-id</c> attributes on the elements they build and expect something to turn those
     /// into text. Left to itself pdf.js builds an English-only implementation with an inlined Fluent
-    /// bundle; this replaces it, answering the same 50 message ids from
+    /// bundle; this replaces it, answering the same 52 message ids from
     /// <see cref="PdfL10nStrings"/>.
     ///
     /// <b>Duck-typed on purpose.</b> pdf.js's own <c>L10n</c> base class is not exported from the
@@ -182,7 +182,19 @@ namespace Tesserae.Pdf
 
             if (string.IsNullOrEmpty(id)) return;
 
-            var args = ParseArguments(element.getAttribute("data-l10n-args"));
+            var rawArgs = element.getAttribute("data-l10n-args");
+
+            // Already translated with this id and these args: nothing to do. Resume() walks the whole
+            // viewer, and pdf.js pauses and resumes around every layer it inserts - about twice per
+            // page render - so without this every page's landmark was parsed, looked up and written
+            // again on each render: thousands of times per render in a long document.
+            var applied = id + "\u0001" + rawArgs;
+
+            if (Script.Get<string>(element, APPLIED_KEY) == applied) return;
+
+            Script.Set(element, APPLIED_KEY, applied);
+
+            var args = ParseArguments(rawArgs);
 
             if (id == PdfL10nStrings.DATE_TIME_ID)
             {
@@ -209,15 +221,24 @@ namespace Tesserae.Pdf
             }
         }
 
+        // An expando on each element this has translated, holding the id and args it was translated
+        // with - so a walk can tell an element that changed from one it has already done.
+        private const string APPLIED_KEY = "__tsspdfL10nApplied";
+
         /// <summary>
         /// Substitutes the message's single argument, TNT-style. Every one of pdf.js's parameterised
         /// messages takes exactly one, so there is no name-to-position mapping to get wrong.
+        ///
+        /// Split and joined rather than <c>Replace</c>d: the compiler emits <c>string.Replace</c> as a
+        /// JavaScript <c>replace</c> with a regex, which reads <c>$&amp;</c>, <c>$$</c> and friends in
+        /// the replacement as patterns - and the argument is document text, a page label or a
+        /// signature's description, so "Paid $$5" was announced as "Paid $5".
         /// </summary>
         private static string Format(string text, string argument)
         {
             if (text is null || argument is null || text.IndexOf("{0}") < 0) return text;
 
-            return text.Replace("{0}", argument);
+            return string.Join(argument, text.Split(new[] { "{0}" }, StringSplitOptions.None));
         }
 
         private static object ParseArguments(string json)
@@ -271,11 +292,23 @@ namespace Tesserae.Pdf
 
             if (value is null) return null;
 
-            // pdf.js passes a timestamp in milliseconds; a Date built from it formats in the user's
-            // own locale, which is the only way to get the conventions right.
+            // pdf.js passes a timestamp in milliseconds. Formatted in PdfJs.Language, which is what
+            // the rest of the viewer is reported as - left to the browser's own locale, a page set to
+            // German showed US-format dates beside German labels.
             if (!(value is double milliseconds)) return value.ToString();
 
-            return new es5.Date(milliseconds).toLocaleString();
+            var date = new es5.Date(milliseconds);
+
+            try
+            {
+                return date.toLocaleString(PdfJs.Language);
+            }
+            catch (Exception)
+            {
+                // A tag the browser does not accept throws a RangeError. A date in the browser's own
+                // locale is still better than none.
+                return date.toLocaleString();
+            }
         }
 
         private void Observe(HTMLElement root)

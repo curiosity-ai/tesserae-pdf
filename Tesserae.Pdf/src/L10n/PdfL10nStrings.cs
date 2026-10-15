@@ -41,6 +41,12 @@ namespace Tesserae.Pdf
                 // format - see FormatDateTime there.
                 case DATE_TIME_ID: return null;
 
+                // Set through a template literal in pdf.js rather than a quoted one, which is how
+                // this id and pdfjs-highlight-floating-button1 were missed: the floating buttons came
+                // up with no title and no accessible name.
+                case "pdfjs-comment-floating-button":
+                    return Message(Attribute("title", "Comment".t()), Attribute("aria-label", "Comment".t()));
+
                 case "pdfjs-comment-floating-button-label":
                     return Message(Value("Comment".t()));
 
@@ -173,11 +179,17 @@ namespace Tesserae.Pdf
                 case "pdfjs-editor-stamp-editor":
                     return Message(Attribute("aria-label", "Image editor".t()));
 
+                // default-content is the editor's placeholder: pdf.js marks the element with
+                // data-l10n-attrs="default-content", and its stylesheet shows that attribute while the
+                // box is empty. Without it a new text annotation was a blank box with no hint.
                 case "pdfjs-free-text2":
-                    return Message(Attribute("aria-label", "Text Editor".t()));
+                    return Message(Attribute("aria-label", "Text Editor".t()), Attribute("default-content", "Start typing…".t()));
 
                 case "pdfjs-highlight-floating-button-label":
                     return Message(Value("Highlight".t()));
+
+                case "pdfjs-highlight-floating-button1":
+                    return Message(Attribute("title", "Highlight".t()), Attribute("aria-label", "Highlight".t()));
 
                 case "pdfjs-page-landmark":
                     return Message(Attribute("aria-label", "Page {0}".t()));

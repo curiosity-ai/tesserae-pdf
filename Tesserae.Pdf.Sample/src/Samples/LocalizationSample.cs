@@ -87,7 +87,7 @@ namespace Tesserae.Pdf.Sample
                .SampleTitle(typeof(LocalizationSample), UIcons.Globe, "pdf.js's own strings, through Tesserae's translation table")
                .FlatSection(VStack().Children(
                     Card(VStack().WS().Children(
-                        TextBlock("pdf.js puts data-l10n-id attributes on the elements it builds and expects something to turn them into text. Left alone it uses an English-only bundle inlined into its viewer; the package replaces that with a bridge that answers the same 50 message ids through TNT - the translation table Tesserae itself uses."),
+                        TextBlock("pdf.js puts data-l10n-id attributes on the elements it builds and expects something to turn them into text. Left alone it uses an English-only bundle inlined into its viewer; the package replaces that with a bridge that answers the same 52 message ids through TNT - the translation table Tesserae itself uses."),
                         TextBlock("So a German application gets a German viewer, from the same dictionary that translates its own buttons, with nothing to configure. L10n(customObject) replaces the bridge, and WithoutOwnLocalization() falls back to pdf.js's English.").MT(8),
                         TextBlock("Most of what it covers is invisible until it matters: page landmarks a screen reader announces, alt text on annotation icons, tooltips on the editor's buttons. This page shows the landmark, because it is the one you can read back out of the DOM.").MT(8))).SetTitle("Overview")))
                .FlatSection(VStack().Children(
