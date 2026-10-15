@@ -166,7 +166,7 @@ namespace Tesserae.Pdf
 
             if (map is null) return attachments;
 
-            map.forEach((value, key, _) => attachments.Add(new PdfAttachment(key, value)));
+            map.forEach((value, key, _) => attachments.Add(new PdfAttachment(_document, key, value)));
 
             return attachments;
         }
@@ -327,20 +327,20 @@ namespace Tesserae.Pdf
         /// <summary>The document's own description of the file, when it gives one.</summary>
         string description { get; }
 
-        /// <summary>The bytes, when pdf.js already had them. Null when they have to be fetched.</summary>
-        es5.Uint8Array content { get; }
     }
 
     /// <summary>One file embedded in a document.</summary>
     public sealed class PdfAttachment
     {
-        internal PdfAttachment(string key, IPdfAttachment attachment)
+        private readonly IPdfDocumentProxy _document;
+
+        internal PdfAttachment(IPdfDocumentProxy document, string key, IPdfAttachment attachment)
         {
+            _document   = document;
             Key         = key;
             FileName    = attachment.filename;
             RawFileName = attachment.rawFilename;
             Description = attachment.description;
-            Content     = attachment.content;
         }
 
         /// <summary>The key the document files it under, and what <c>getAttachmentContent</c> takes.</summary>
@@ -356,13 +356,14 @@ namespace Tesserae.Pdf
         public string Description { get; }
 
         /// <summary>
-        /// The bytes, when pdf.js had them to hand. Null for an attachment that has to be fetched
-        /// separately, which is what <c>getAttachmentContent</c> on the underlying document is for.
+        /// Fetches the file's bytes from the worker, or null when the document names a file it does
+        /// not carry.
+        ///
+        /// A round trip rather than a field, because pdf.js 6.3 stopped sending content with the
+        /// attachment list: <c>getAttachments()</c> answers with names and descriptions only, and the
+        /// bytes come from <c>getAttachmentContent</c>, by the same key.
         /// </summary>
-        public es5.Uint8Array Content { get; }
-
-        /// <summary>The size in bytes, or -1 when the content has not been fetched.</summary>
-        public int Length => Content is object ? (int)Content.length : -1;
+        public Task<es5.Uint8Array> GetContentAsync() => PromiseHelper.ToTask<es5.Uint8Array>(_document.getAttachmentContent(Key));
     }
 
     /// <summary>

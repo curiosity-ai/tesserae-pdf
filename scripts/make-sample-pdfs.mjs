@@ -7,8 +7,8 @@
  * guessing at a PDF somebody found on the web.
  *
  *   sample-outline.pdf     12 pages, a three-level outline with bold/italic/coloured entries, named
- *                          destinations, roman-then-decimal page labels, full metadata, and a phrase
- *                          repeated on known pages for the search page to count
+ *                          destinations, roman-then-decimal page labels, full metadata, one embedded
+ *                          file, and a phrase repeated on known pages for the search page to count
  *   sample-images.pdf      three pages of embedded images, for the render and thumbnail pages
  *   sample-cjk.pdf         a CID font with no embedded font file, so pdf.js has to fetch a .bcmap -
  *                          which is what makes this the regression test for cMapUrl
@@ -326,9 +326,17 @@ function outlinePdf() {
   // makes a viewer's page label differ from its page number, which is the whole point of labels.
   const pageLabels = pdf.add('<< /Nums [0 << /S /r >> 2 << /S /D /St 1 >>] >>');
 
+  // One embedded file, so the metadata page has an attachment whose bytes it can fetch - the list
+  // and the content are two separate round trips since pdf.js 6.3. 38 bytes, which is the number the
+  // page should report.
+  const embedded = pdf.add({ dict: '/Type /EmbeddedFile', stream: 'Notes attached to the sample document\n' });
+  const fileSpec = pdf.add(
+    `<< /Type /Filespec /F (notes.txt) /UF (notes.txt) /Desc (A plain-text attachment) /EF << /F ${embedded} 0 R >> >>`);
+  const names = pdf.add(`<< /EmbeddedFiles << /Names [(notes.txt) ${fileSpec} 0 R] >> >>`);
+
   pdf.put(catalogNumber,
     `<< /Type /Catalog /Pages ${pagesNumber} 0 R /Outlines ${outlineNumber} 0 R ` +
-    `/Dests ${dests} 0 R /PageLabels ${pageLabels} 0 R /PageMode /UseOutlines /PageLayout /OneColumn >>`);
+    `/Dests ${dests} 0 R /PageLabels ${pageLabels} 0 R /Names ${names} 0 R /PageMode /UseOutlines /PageLayout /OneColumn >>`);
 
   pdf.put(infoNumber,
     '<< /Title (Tesserae.Pdf sample document) /Author (Curiosity GmbH) ' +

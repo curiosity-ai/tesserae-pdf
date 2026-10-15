@@ -137,7 +137,10 @@ namespace Tesserae.Pdf.Sample
 
             foreach (var attachment in attachments)
             {
-                Row("  " + attachment.Key, attachment.FileName + " (" + attachment.Length + " bytes)");
+                // The bytes are a round trip of their own, not part of the list.
+                var content = await attachment.GetContentAsync();
+
+                Row("  " + attachment.Key, attachment.FileName + (content is object ? " (" + content.length + " bytes)" : " (not carried by the document)"));
             }
 
             Row("Named destinations", destinations.Count == 0 ? "(none)" : string.Join(", ", destinations.Keys));

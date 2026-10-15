@@ -135,6 +135,12 @@ namespace Tesserae.Pdf
         IPromise getAttachments();
 
         /// <summary>
+        /// Resolves with one embedded file's bytes as a <c>Uint8Array</c>, by its key in
+        /// <see cref="getAttachments"/>. New in pdf.js 6.3, which stopped sending content with the list.
+        /// </summary>
+        IPromise getAttachmentContent(string id);
+
+        /// <summary>
         /// Resolves with the permissions the document grants, as a JavaScript <c>Set</c> of
         /// <see cref="PdfPermission"/> values - or null when it places no restrictions at all, which
         /// is not the same as granting nothing. An array before pdf.js 6.3, which is why
