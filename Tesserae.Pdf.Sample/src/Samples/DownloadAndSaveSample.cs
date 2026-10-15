@@ -54,7 +54,7 @@ namespace Tesserae.Pdf.Sample
                     Card(VStack().WS().Children(
                         TextBlock("Saving needs the values to have been kept, which means the viewer's annotation mode has to be EnableForms - the default. A viewer showing a form with Enable renders it as a picture, and SaveAsync then honestly reports that nothing was filled in."),
                         TextBlock("The round-trip button is the check worth having: it saves, opens the saved bytes in a second viewer, and shows them side by side. If a form value survives that, the whole chain worked - the annotation storage, the save, and the reopen.").MT(8),
-                        TextBlock("Bytes given to a viewer are transferred to its worker, so the array cannot be reused: the round trip below saves again rather than keeping the array from the first save. Revoke the object URL a download creates once the click has happened, or the blob stays in memory for the life of the page.").MT(8))).SetTitle("Best Practices")))
+                        TextBlock("Bytes given to a viewer stay yours: a PdfSource hands pdf.js a copy, because pdf.js detaches the array it is given. Revoke the object URL a download creates once the click has happened, or the blob stays in memory for the life of the page.").MT(8))).SetTitle("Best Practices")))
                .FlatSection(VStack().Children(
                     Card(VStack().WS().Children(
                         SampleSubTitle("Try it"),
@@ -87,9 +87,6 @@ namespace Tesserae.Pdf.Sample
 
             if (into is null) return;
 
-            // FromBytes(Uint8Array) hands the array straight over, and pdf.js transfers it to its
-            // worker - so this array is spent afterwards, which is why the button saves again rather
-            // than reusing one.
             into.Source(PdfSource.FromBytes(bytes));
 
             status.Text += " Reopened in the viewer below.";

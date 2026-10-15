@@ -37,6 +37,7 @@ namespace Tesserae.Pdf
         private bool   _fitWidth = true;
         private int    _rotation;
         private int    _renderGeneration;
+        private int    _loadGeneration;
 
         private PageColors           _pageColors;
         private AnnotationMode       _annotationMode = AnnotationMode.Disable;
@@ -59,6 +60,8 @@ namespace Tesserae.Pdf
         /// <summary>Opens a document of its own, and releases it when the component is torn down.</summary>
         public PdfPageCanvas Source(PdfSource source)
         {
+            ReleaseDocument();
+
             _source       = source;
             _ownsDocument = true;
 
@@ -78,6 +81,8 @@ namespace Tesserae.Pdf
         /// </summary>
         public PdfPageCanvas Document(PdfDocument document)
         {
+            ReleaseDocument();
+
             _source       = null;
             _ownsDocument = false;
             _document     = document;
@@ -201,39 +206,68 @@ namespace Tesserae.Pdf
 
         protected override void DisposeCore()
         {
-            // Only what this component opened. A borrowed document belongs to whoever handed it over,
-            // and releasing it here would take the rest of a thumbnail rail down with it.
-            if (_ownsDocument && _document is object)
-            {
-                _document.DestroyAsync().FireAndForget();
-                _document = null;
-            }
+            // A borrowed document survives a teardown, so a remount paints it again; an owned one is
+            // reopened from the source.
+            if (_ownsDocument) ReleaseDocument();
+            else               _loadGeneration++;
 
             _host.innerHTML = "";
 
             if (_host.parentElement is object) _host.parentElement.removeChild(_host);
         }
 
+        /// <summary>
+        /// Lets go of the current document: releases it if this component opened it, forgets the page
+        /// taken off it, and orphans any open still in flight so its result is released on arrival
+        /// rather than kept.
+        /// </summary>
+        private void ReleaseDocument()
+        {
+            _loadGeneration++;
+
+            _render?.Cancel();
+            _render = null;
+
+            // A page belongs to its document. Keeping it would paint the old document's page whenever
+            // the new one is shown at the same page number.
+            _page = null;
+
+            // Only what this component opened. A borrowed document belongs to whoever handed it over,
+            // and releasing it here would take the rest of a thumbnail rail down with it.
+            if (_ownsDocument && _document is object) _document.DestroyAsync().FireAndForget();
+
+            _document = null;
+        }
+
         private async Task ReloadAsync()
         {
-            if (_source is object)
+            if (_source is object && _document is null)
             {
-                var previous = _document;
+                var generation = ++_loadGeneration;
 
-                _document = null;
-
-                if (_ownsDocument && previous is object) await previous.DestroyAsync();
+                PdfDocument opened;
 
                 try
                 {
-                    _document = await PdfJs.OpenAsync(_source);
+                    opened = await PdfJs.OpenAsync(_source);
                 }
                 catch (Exception exception)
                 {
-                    Report(PdfError.FromJs(exception));
+                    if (generation == _loadGeneration) Report(PdfError.FromJs(exception));
 
                     return;
                 }
+
+                // Superseded by another source, or torn down, while it opened. Nobody else holds it,
+                // so it is released here or never: a document left behind keeps its worker alive.
+                if (generation != _loadGeneration || !IsCreated)
+                {
+                    opened.DestroyAsync().FireAndForget();
+
+                    return;
+                }
+
+                _document = opened;
             }
 
             await RenderAsync();

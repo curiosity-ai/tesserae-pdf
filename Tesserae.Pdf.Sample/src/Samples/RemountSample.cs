@@ -66,7 +66,7 @@ namespace Tesserae.Pdf.Sample
                     Card(VStack().WS().Children(
                         TextBlock("Restored across a remount: the document, the page in view, the zoom mode, the rotation, the scroll mode and the spread mode. Not restored: the pixel scroll offset within a page, and any search highlighting."),
                         TextBlock("The scroll offset is left out deliberately rather than forgotten. It means nothing at a different container size, and restoring it fights the fit mode that is about to be re-applied - so the page is restored and the position within it is not.").MT(8),
-                        TextBlock("The document is re-fetched on the way back, which the browser will usually serve from cache. A viewer given bytes rather than a URL is the exception: a typed array is transferred to the worker and cannot be re-read, so pass PdfSource.FromBytes a fresh copy if a remount has to work.").MT(8))).SetTitle("Best Practices")))
+                        TextBlock("The document is re-fetched on the way back, which the browser will usually serve from cache. A viewer given bytes rather than a URL reopens them too: a PdfSource hands pdf.js a copy on every open, because pdf.js detaches the array it is given.").MT(8))).SetTitle("Best Practices")))
                .FlatSection(VStack().Children(
                     Card(VStack().WS().Children(
                         SampleSubTitle("Try it"),

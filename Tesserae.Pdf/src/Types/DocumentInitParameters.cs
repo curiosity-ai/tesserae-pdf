@@ -27,8 +27,8 @@ namespace Tesserae.Pdf
         ///
         /// A typed array is <b>transferred</b> to the worker, which takes ownership of it - the
         /// caller's view of it is detached and unusable afterwards. That is why
-        /// <see cref="PdfSource.ToInitParameters"/> builds a fresh object on every call rather than
-        /// caching one.
+        /// <see cref="PdfSource.ToInitParameters"/> puts a copy here on every call rather than the
+        /// source's own array.
         /// </summary>
         public es5.Uint8Array data;
 

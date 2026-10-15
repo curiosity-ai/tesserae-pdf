@@ -102,21 +102,40 @@ namespace Tesserae.Pdf
                 // tight loop for as long as the network stays down.
                 console.error("Tesserae.Pdf: pdf.js could not be loaded", exception);
 
-                if (!_disposed) DomObserver.WhenRemoved(_container, HandleRemoved);
+                // Already out of the DOM means half the gesture has happened, and a removal hook would
+                // never fire - so wait for the other half instead.
+                if (_disposed) return;
+
+                if (_container.IsMounted()) DomObserver.WhenRemoved(_container, HandleRemoved);
+                else                        ArmMountObserver();
 
                 return;
             }
 
             // The component can be discarded again, or torn down and remounted, while pdf.js loads.
-            if (_disposed || !_container.IsMounted()) return;
+            if (_disposed) return;
 
             // A second mount signal for a view that already exists would create a duplicate.
             if (_created) return;
 
+            // Left the DOM while pdf.js loaded. The mount signal is one-shot and already spent, and no
+            // removal hook exists yet, so without a re-arm being put back would never build the view.
+            if (!_container.IsMounted())
+            {
+                ArmMountObserver();
+                return;
+            }
+
             await WaitForAncestorAnimationsAsync();
 
-            // Waiting yielded to the browser, so re-check all three of the above.
-            if (_disposed || !_container.IsMounted() || _created) return;
+            // Waiting yielded to the browser, so re-check all of the above.
+            if (_disposed || _created) return;
+
+            if (!_container.IsMounted())
+            {
+                ArmMountObserver();
+                return;
+            }
 
             _created = true;
 

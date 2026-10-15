@@ -51,9 +51,9 @@ namespace Tesserae.Pdf
         /// <summary>
         /// A document already in memory, as a JavaScript typed array.
         ///
-        /// pdf.js <b>transfers</b> the array to the worker, taking ownership of it - the caller's
-        /// view is detached afterwards. Opening the same array twice therefore fails the second time;
-        /// pass a fresh copy, or use a URL.
+        /// pdf.js <b>transfers</b> what it is given to the worker, so every open hands it a copy:
+        /// the array stays the caller's, and the same source can be opened again - which a viewer
+        /// does on every remount. The price is one transient copy of the file per open.
         /// </summary>
         public static PdfSource FromBytes(es5.Uint8Array data) => new PdfSource(null, data);
 
@@ -204,9 +204,9 @@ namespace Tesserae.Pdf
         /// <summary>
         /// The pdf.js parameter object for this source, with the package's asset URLs filled in.
         ///
-        /// A fresh object every call, deliberately: the byte array in it is transferred to the worker
-        /// and the caller's view of it detached, so a cached parameter object could only be opened
-        /// once.
+        /// A fresh object every call, deliberately: the byte array in it is a fresh copy, because
+        /// pdf.js transfers it to the worker and detaches it, so a cached parameter object could
+        /// only be opened once.
         /// </summary>
         internal DocumentInitParameters ToInitParameters()
         {
@@ -227,7 +227,11 @@ namespace Tesserae.Pdf
             // the fields that were set, so an untouched option keeps pdf.js's own default rather than
             // being overridden with a C# zero.
             if (!string.IsNullOrWhiteSpace(_url))        parameters.url        = _url;
-            if (_data is object)                         parameters.data       = _data;
+            // A copy, because pdf.js transfers what it is given to the worker and leaves the caller's
+            // view detached. Handing over the original made a source single-use - and a viewer
+            // replays its source on every remount, so a byte-backed viewer failed the second time
+            // it was mounted.
+            if (_data is object)                         parameters.data       = _data.slice();
             if (!string.IsNullOrEmpty(_password))        parameters.password   = _password;
             if (_withCredentials)                        parameters.withCredentials = true;
             if (_rangeChunkSize > 0)                     parameters.rangeChunkSize  = _rangeChunkSize;

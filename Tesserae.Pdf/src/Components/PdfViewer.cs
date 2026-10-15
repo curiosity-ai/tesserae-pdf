@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Threading.Tasks;
 using Transpose;
 using Tesserae;
@@ -179,7 +180,15 @@ namespace Tesserae.Pdf
         {
             _source = source;
 
-            if (IsCreated) OpenDocumentAsync(source).FireAndForget();
+            if (IsCreated)
+            {
+                // The page is kept across a remount of the same document, which goes through
+                // AfterCreate rather than here. A different document starts at its beginning - kept,
+                // the reader's page 9 of one document became page 9 of the next.
+                _page = 1;
+
+                OpenDocumentAsync(source).FireAndForget();
+            }
 
             return this;
         }
@@ -189,7 +198,12 @@ namespace Tesserae.Pdf
         {
             _source = null;
 
-            if (IsCreated) OpenDocumentAsync(null).FireAndForget();
+            if (IsCreated)
+            {
+                _page = 1;
+
+                OpenDocumentAsync(null).FireAndForget();
+            }
 
             return this;
         }
@@ -266,7 +280,14 @@ namespace Tesserae.Pdf
         public PdfViewer AutoZoom() => SetScaleValue("auto");
 
         /// <summary>Sets an explicit zoom, where 1 is 100%.</summary>
-        public PdfViewer Zoom(double scale) => SetScaleValue(scale.ToString());
+        public PdfViewer Zoom(double scale) => SetScaleValue(ScaleToString(scale));
+
+        /// <summary>
+        /// A scale as pdf.js parses it. Invariant, because pdf.js reads the string with
+        /// <c>parseFloat</c> and a host running under a comma-decimal culture would otherwise hand it
+        /// "1,25" - which parses as 1, so every zoom level came out as 100%.
+        /// </summary>
+        private static string ScaleToString(double scale) => scale.ToString(CultureInfo.InvariantCulture);
 
         /// <summary>Zooms in one step.</summary>
         public PdfViewer ZoomIn(double factor = 1.1)
@@ -995,7 +1016,7 @@ namespace Tesserae.Pdf
                 else
                 {
                     _lastScalePreset = null;
-                    _scaleValue      = changed.scale.ToString();
+                    _scaleValue      = ScaleToString(changed.scale);
                 }
 
                 _onScaleChanged?.Invoke(changed.scale);
