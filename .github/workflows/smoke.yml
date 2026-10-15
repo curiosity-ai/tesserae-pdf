@@ -1,0 +1,65 @@
+name: Smoke test the sample
+
+# Builds the sample in Release and drives every page of it in Chromium - see tests/smoke/smoke.mjs.
+# `dotnet build` proves the package compiles; nearly every pdf.js failure is a runtime one, and most
+# are silent, so this is the check that a change actually works before it merges.
+
+on:
+  pull_request:
+    paths:
+      - 'Tesserae.Pdf/**'
+      - 'Tesserae.Pdf.Sample/**'
+      - 'tests/smoke/**'
+      - 'scripts/**'
+      - '.github/workflows/smoke.yml'
+  workflow_dispatch: {}
+
+permissions:
+  contents: read
+
+jobs:
+  smoke:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
+        with:
+          persist-credentials: false
+
+      - name: Set up .NET
+        uses: actions/setup-dotnet@26b0ec14cb23fa6904739307f278c14f94c95bf1 # v5.4.0
+        with:
+          dotnet-version: 10.x
+
+      - name: Set up Node.js
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: |
+            Tesserae.Pdf/package-lock.json
+            tests/smoke/package-lock.json
+
+      # The same pin as pages.yml - see the note there on why the compiler has to match the BCL.
+      - name: Install the Transpose compiler
+        run: |
+          dotnet tool update --global Transpose.Compiler --version 26.9.4868
+          echo "$HOME/.dotnet/tools" >> "$GITHUB_PATH"
+
+      - name: Bundle pdf.js
+        run: |
+          npm ci --no-audit --no-fund
+          npm run bundle
+        working-directory: Tesserae.Pdf
+
+      - name: Build the sample (Release)
+        run: dotnet build Tesserae.Pdf.Sample/Tesserae.Pdf.Sample.csproj -c Release
+
+      - name: Install Playwright and Chromium
+        run: |
+          npm ci --no-audit --no-fund
+          npx playwright install --with-deps chromium
+        working-directory: tests/smoke
+
+      - name: Drive every page
+        run: node tests/smoke/smoke.mjs Tesserae.Pdf.Sample/bin/Release/netstandard2.0/tps

@@ -1,0 +1,12 @@
+{
+  "name": "tesserae-pdf-smoke",
+  "private": true,
+  "description": "Drives the sample gallery in Chromium. See smoke.mjs.",
+  "type": "module",
+  "scripts": {
+    "smoke": "node smoke.mjs"
+  },
+  "dependencies": {
+    "playwright": "1.56.1"
+  }
+}
