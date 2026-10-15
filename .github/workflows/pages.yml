@@ -34,8 +34,13 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     steps:
+      # The job's token can write to the repository, and the steps below run third-party code -
+      # npm install scripts, the Transpose compiler, an MSBuild SDK. Nothing after checkout uses
+      # git (the publish step takes the token as an input), so it is not left in .git/config.
       - name: Checkout
         uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
+        with:
+          persist-credentials: false
 
       - name: Set up .NET
         uses: actions/setup-dotnet@26b0ec14cb23fa6904739307f278c14f94c95bf1 # v5.4.0
@@ -51,9 +56,13 @@ jobs:
           cache: npm
           cache-dependency-path: Tesserae.Pdf/package-lock.json
 
+      # Pinned to the release that matches the Transpose.BCL in the csproj files. The compiler and the
+      # runtime it emits calls into ship separately: 26.10.x emits Transpose.fn.cacheBindMember, which
+      # BCL 26.9.4872 does not have, so an unpinned install builds cleanly and publishes a gallery whose
+      # every viewer throws on mount. Bump it with the BCL, and in the Azure pipeline too.
       - name: Install the Transpose compiler
         run: |
-          dotnet tool update --global Transpose.Compiler
+          dotnet tool update --global Transpose.Compiler --version 26.9.4868
           echo "$HOME/.dotnet/tools" >> "$GITHUB_PATH"
 
       # Done explicitly rather than left to the BundlePdfJs MSBuild target so the bundle shows up

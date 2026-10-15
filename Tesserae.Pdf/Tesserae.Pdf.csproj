@@ -58,7 +58,7 @@
     <PdfJsBundleDir>$(MSBuildProjectDirectory)/assets/js/pdf</PdfJsBundleDir>
   </PropertyGroup>
 
-  <Target Name="BundlePdfJs" BeforeTargets="BeforeBuild" Inputs="package.json;build/bundle-pdfjs.mjs" Outputs="$(PdfJsBundleDir)/version.txt">
+  <Target Name="BundlePdfJs" BeforeTargets="BeforeBuild" Inputs="package.json;package-lock.json;.npmrc;build/bundle-pdfjs.mjs" Outputs="$(PdfJsBundleDir)/version.txt">
     <Exec Command="npm install --no-audit --no-fund" WorkingDirectory="$(MSBuildProjectDirectory)" />
     <Exec Command="npm run bundle" WorkingDirectory="$(MSBuildProjectDirectory)" />
   </Target>

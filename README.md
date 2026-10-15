@@ -37,7 +37,7 @@ and [`TODO.md`](TODO.md) for what is deliberately not in it.
 ## Building
 
 ```bash
-dotnet tool update --global Transpose.Compiler
+dotnet tool update --global Transpose.Compiler --version 26.9.4868 --allow-downgrade
 export PATH="$PATH:$HOME/.dotnet/tools"
 
 dotnet build Tesserae.Pdf.slnx

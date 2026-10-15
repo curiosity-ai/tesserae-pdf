@@ -15,8 +15,6 @@ pool:
 
 steps:
 - checkout: self
-  submodules: true
-  persistCredentials: true
 
 - task: PowerShell@2
   displayName: 'Create CalVer Version'
@@ -39,27 +37,33 @@ steps:
 
 - task: NuGetToolInstaller@1
 
+# Pinned to the release that matches the Transpose.BCL in the csproj files: the compiler and the
+# runtime it calls into ship separately, and 26.10.x emits Transpose.fn.cacheBindMember, which BCL
+# 26.9.4872 does not have - an unpinned install builds cleanly and ships a package whose viewers
+# throw on mount. Bump it with the BCL, and in .github/workflows/pages.yml too.
 - task: CmdLine@2
   displayName: 'install Transpose compiler'
   inputs:
-    script: 'dotnet tool update --global Transpose.Compiler'
+    script: 'dotnet tool update --global Transpose.Compiler --version 26.9.4868'
 
 - task: NodeTool@0
   displayName: 'Use Node.js 22.x'
   inputs:
     versionSpec: '22.x'
 
-# There is no global-tool compiler for Transpose: the Transpose.Build.Target SDK
-# runs the `tps` compiler as part of the normal `dotnet build` below.
+# The Transpose.Build.Target SDK runs the global `tps` tool installed above as part of the normal
+# `dotnet build` below.
 
 # Bundle pdf.js from its ESM build into the scripts the package ships (also runs as an MSBuild target
 # during the build, but doing it explicitly here makes the produced artifact visible in the logs).
 # pdf.js is not vendored in this repo - it is restored from the pinned npm package every build.
+# `npm ci`, not `npm install`: the package that ships is built from exactly the tree in
+# package-lock.json, the same one the Pages workflow builds the sample from.
 - task: CmdLine@2
   displayName: 'bundle pdf.js'
   inputs:
     script: |
-      npm install --no-audit --no-fund
+      npm ci --no-audit --no-fund
       npm run bundle
     workingDirectory: '$(Build.SourcesDirectory)/Tesserae.Pdf/'
 
