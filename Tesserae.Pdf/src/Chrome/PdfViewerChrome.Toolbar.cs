@@ -308,6 +308,9 @@ namespace Tesserae.Pdf
                     }
                     else if (e.key == "Escape")
                     {
+                        // No longer an edit, so UpdatePageState writes the current page back over it.
+                        _pageBoxEdited = false;
+
                         UpdatePageState();
 
                         input.blur();
@@ -321,6 +324,16 @@ namespace Tesserae.Pdf
 
                 input.addEventListener("input", new Action<Event>(_ => _pageBoxEdited = true));
 
+                // Committed on Enter (above) and when the reader leaves the box - never per keystroke.
+                // Committing as they typed went to page 1 and then 12 on the way to 120, and made a
+                // label such as "A-7" impossible to enter: "A" is neither a label nor a number, so the
+                // box was reset under them. The flag keeps Enter's commit from being repeated here,
+                // since a text input raises change on Enter too.
+                input.addEventListener("change", new Action<Event>(_ =>
+                {
+                    if (_pageBoxEdited) CommitPageBox();
+                }));
+
                 input.addEventListener("focus", new Action<Event>(_ =>
                 {
                     _pageBoxEdited = false;
@@ -328,8 +341,6 @@ namespace Tesserae.Pdf
                     input.select();
                 }));
             }
-
-            _pageBox.Attach(_ => CommitPageBox());
 
             _pageTotal = TextBlock("").Class("tsspdf-pagetotal");
 
@@ -345,36 +356,15 @@ namespace Tesserae.Pdf
         /// </summary>
         private bool _pageBoxEdited;
 
-        /// <summary>
-        /// Set while the chrome is writing into the page box.
-        ///
-        /// <b>A Tesserae input raises the same event for a programmatic write as for a keystroke</b>,
-        /// so putting the current page into the box from inside the handler for that event is a loop.
-        /// The guard is on the write rather than on the handler, so the handler stays the single place
-        /// that reacts to a change.
-        /// </summary>
-        private bool _writingPageBox;
-
         private void WritePageBox(string value)
         {
             if (_pageBox is null) return;
 
-            _writingPageBox = true;
-
-            try
-            {
-                _pageBox.Text = value;
-            }
-            finally
-            {
-                _writingPageBox = false;
-            }
+            _pageBox.Text = value;
         }
 
         private void CommitPageBox()
         {
-            if (_writingPageBox) return;
-
             _pageBoxEdited = false;
 
             var typed = (_pageBox.Text ?? "").Trim();
@@ -708,7 +698,6 @@ namespace Tesserae.Pdf
         private void ApplyPageLabels(string[] labels)
         {
             _documentHasLabels = false;
-            
 
             if (labels is object)
             {
@@ -721,6 +710,10 @@ namespace Tesserae.Pdf
                     break;
                 }
             }
+
+            // The labelled total ("11 of 12") is wider than the plain one ("of 12"), and its reserved
+            // width hangs off this class.
+            Toggle(_root, PdfChromeStyles.LABELLED, _documentHasLabels);
 
             UpdatePageState();
         }

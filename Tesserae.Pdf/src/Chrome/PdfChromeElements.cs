@@ -170,16 +170,5 @@ namespace Tesserae.Pdf
         /// <summary>The first descendant matching a selector, inside a component's element.</summary>
         internal static HTMLElement Find(IComponent component, string selector)
             => component is null ? null : Find(component.Render(), selector);
-
-        /// <summary>Removes every child of an element.</summary>
-        internal static void Empty(HTMLElement element)
-        {
-            if (element is null) return;
-
-            while (element.firstChild is object)
-            {
-                element.removeChild(element.firstChild);
-            }
-        }
     }
 }

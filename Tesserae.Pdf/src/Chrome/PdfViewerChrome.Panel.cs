@@ -45,8 +45,6 @@ namespace Tesserae.Pdf
         private HTMLElement _panelBodyElement;
         private Stack       _outlineHost;
         private Stack       _thumbnailHost;
-        private HTMLElement _outlineElement;
-        private HTMLElement _thumbnailElement;
         private TextBlock   _panelSummary;
         private Button      _panelAction;
 
@@ -76,8 +74,6 @@ namespace Tesserae.Pdf
                 _panelBodyElement = null;
                 _outlineHost      = null;
                 _thumbnailHost    = null;
-                _outlineElement   = null;
-                _thumbnailElement = null;
                 _panelSummary     = null;
                 _panelAction      = null;
             }
@@ -134,18 +130,14 @@ namespace Tesserae.Pdf
 
             _panelBody.Clear();
 
-            _outlineHost      = null;
-            _outlineElement   = null;
-            _thumbnailHost    = null;
-            _thumbnailElement = null;
+            _outlineHost   = null;
+            _thumbnailHost = null;
 
             if (_panel == PdfChromePanel.Thumbnails)
             {
                 _thumbnailHost = VStack().WS().Class("tsspdf-thumbs");
 
                 _panelBody.Add(_thumbnailHost);
-
-                _thumbnailElement = Find(_panelBodyElement, ".tsspdf-thumbs");
 
                 BuildThumbnails();
             }
@@ -154,8 +146,6 @@ namespace Tesserae.Pdf
                 _outlineHost = VStack().WS().Class("tsspdf-outline");
 
                 _panelBody.Add(_outlineHost);
-
-                _outlineElement = Find(_panelBodyElement, ".tsspdf-outline");
 
                 BuildOutlineTree();
             }
@@ -618,11 +608,31 @@ namespace Tesserae.Pdf
             internal HTMLElement   MatchDot;
             internal PdfPageCanvas Canvas;
             internal int           Page;
+            internal bool          HasMatch;
         }
 
         private readonly List<ThumbnailTile> _thumbnails = new List<ThumbnailTile>();
 
         private IntersectionObserver _thumbnailObserver;
+
+        /// <summary>
+        /// Whether the thumbnail panel keeps the current page in view. On when the grid is built and
+        /// whenever the page changes; off the moment the reader scrolls the panel themselves.
+        ///
+        /// Tiles render <i>because</i> the reader scrolled to them, and each render re-aims the panel
+        /// so the grid settling around the current page does not leave it off screen. Unconditional,
+        /// that re-aim snapped the panel back to page 1 every time a tile near page 100 painted, and a
+        /// far page could not be browsed to at all.
+        /// </summary>
+        private bool _thumbnailsFollowPage;
+
+        // The gestures that mean "the reader is scrolling the panel": anything that scrolls it except
+        // this chrome's own ScrollPanelTo, which is why it is not the scroll event. Held so it can be
+        // removed again, because the scroller outlives the grid.
+        private Action<Event> _stopFollowingPage;
+        private HTMLElement   _followScroller;
+
+        private static readonly string[] PANEL_SCROLL_GESTURES = { "wheel", "touchstart", "pointerdown", "keydown" };
 
         /// <summary>
         /// The first page's width over its height, as a CSS ratio, or null before it is known.
@@ -691,6 +701,13 @@ namespace Tesserae.Pdf
                 _thumbnailObserver.disconnect();
 
                 _thumbnailObserver = null;
+            }
+
+            if (_followScroller is object)
+            {
+                foreach (var gesture in PANEL_SCROLL_GESTURES) _followScroller.removeEventListener(gesture, _stopFollowingPage);
+
+                _followScroller = null;
             }
 
             foreach (var tile in _thumbnails)
@@ -773,6 +790,16 @@ namespace Tesserae.Pdf
 
             _thumbnailHost.Add(grid);
 
+            _thumbnailsFollowPage = true;
+            _followScroller       = PanelScroller();
+
+            if (_followScroller is object)
+            {
+                if (_stopFollowingPage is null) _stopFollowingPage = _ => _thumbnailsFollowPage = false;
+
+                foreach (var gesture in PANEL_SCROLL_GESTURES) _followScroller.addEventListener(gesture, _stopFollowingPage);
+            }
+
             var options = new IntersectionObserverInit
             {
                 root       = PanelScroller(),
@@ -804,7 +831,8 @@ namespace Tesserae.Pdf
                            tile.Frame.style.removeProperty("aspect-ratio");
 
                            // Every tile that renders above the selected one moves it, so the panel is
-                           // re-aimed as the grid settles rather than once while it was all stubs.
+                           // re-aimed as the grid settles rather than once while it was all stubs -
+                           // unless the reader has taken over the panel's scrolling.
                            ScrollSelectedThumbnailIntoView();
                        });
 
@@ -882,7 +910,7 @@ namespace Tesserae.Pdf
 
         private void ScrollSelectedThumbnailIntoView()
         {
-            if (_page <= 0) return;
+            if (_page <= 0 || !_thumbnailsFollowPage) return;
 
             foreach (var tile in _thumbnails)
             {
@@ -936,12 +964,7 @@ namespace Tesserae.Pdf
         {
             _matchPages.Clear();
 
-            foreach (var tile in _thumbnails)
-            {
-                tile.MatchDot.style.display = "none";
-            }
-
-            UpdatePanelFooter();
+            ShowMatchDots();
         }
 
         /// <summary>
@@ -972,9 +995,31 @@ namespace Tesserae.Pdf
                 }
             }
 
+            ShowMatchDots();
+        }
+
+        /// <summary>
+        /// Puts a dot on the tiles of the matched pages, and takes it off the rest.
+        ///
+        /// This runs on every match-count report - about one per page with a hit - so it is linear: both
+        /// lists are in page order and are walked together, and only a tile whose answer changed is
+        /// written to. Testing each tile against the list made a common word in a 1,000-page document
+        /// some 10^9 comparisons and a million style writes.
+        /// </summary>
+        private void ShowMatchDots()
+        {
+            var next = 0;
+
             foreach (var tile in _thumbnails)
             {
-                tile.MatchDot.style.display = _matchPages.Contains(tile.Page) ? "" : "none";
+                while (next < _matchPages.Count && _matchPages[next] < tile.Page) next++;
+
+                var hasMatch = next < _matchPages.Count && _matchPages[next] == tile.Page;
+
+                if (hasMatch == tile.HasMatch) continue;
+
+                tile.HasMatch               = hasMatch;
+                tile.MatchDot.style.display = hasMatch ? "" : "none";
             }
 
             UpdatePanelFooter();

@@ -37,8 +37,8 @@ namespace Tesserae.Pdf
         internal const string ROOT       = "tsspdf-chrome";
         internal const string BORDERED   = "tsspdf-bordered";
         internal const string ON         = "tsspdf-on";
-        internal const string OPEN       = "tsspdf-open";
         internal const string NO_MATCHES = "tsspdf-nomatches";
+        internal const string LABELLED   = "tsspdf-labelled";
         internal const string SECTION    = "tsspdf-section";
         internal const string CURRENT    = "tsspdf-current";
 

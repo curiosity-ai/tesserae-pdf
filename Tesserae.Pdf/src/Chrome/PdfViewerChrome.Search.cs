@@ -61,7 +61,6 @@ namespace Tesserae.Pdf
         /// rather than on the handler, so the handler stays the single place that reacts to a change.
         /// </summary>
         private bool _writingSearchBox;
-        private string    _runningQuery;
         private int       _matchCurrent;
         private int       _matchTotal;
         private FindState _findState = FindState.Pending;
@@ -209,8 +208,7 @@ namespace Tesserae.Pdf
         /// <summary>Empties the box and drops the highlighting.</summary>
         public PdfViewerChrome ClearSearch()
         {
-            _query        = "";
-            _runningQuery = null;
+            _query = "";
 
             WriteSearchBox("");
 
@@ -229,6 +227,11 @@ namespace Tesserae.Pdf
         /// </summary>
         private Stack BuildSearchRow()
         {
+            // The shortcut is a keydown listener on window, removed only by setting it again on the
+            // same box - so a box being replaced has to drop its own, or every rebuild leaves one
+            // behind, keeping the old chrome alive and taking Ctrl+F before the live box can.
+            ReleaseSearchShortcut();
+
             _searchBox = SearchBox("Find in document".t())
                .SetIcon(UIcons.Search)
                .SearchAsYouType()
@@ -264,7 +267,16 @@ namespace Tesserae.Pdf
                .Children(_searchBox.Grow(), _searchNote, _searchCount,
                          _searchPrevious, _searchNext, _searchClear, modes);
 
+            // A rebuild (a layout change, a Show* call) is a new box. Without this it came up empty
+            // while the old query's highlights and count stayed on screen.
+            WriteSearchBox(_query);
+
             return _searchRow;
+        }
+
+        private void ReleaseSearchShortcut()
+        {
+            if (_searchBox is object) _searchBox.SetKeyboardShortcut();
         }
 
         /// <summary>
@@ -334,7 +346,6 @@ namespace Tesserae.Pdf
         {
             if (_query.Length == 0) return;
 
-            _runningQuery  = _query;
             _searchSettled = false;
 
             _viewer.Search(_query, OptionsFor(_searchMode));

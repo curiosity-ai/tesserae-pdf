@@ -229,6 +229,10 @@ namespace Tesserae.Pdf
 
             ResetDocumentState();
 
+            // No pagesinit follows a Clear, so nothing else would take the old document's outline
+            // rows and thumbnail frames off the panel.
+            BuildPanel();
+
             return this;
         }
 
@@ -573,6 +577,9 @@ namespace Tesserae.Pdf
 
                     _page = changed.pageNumber;
 
+                    // A new page is worth following again, even after the reader scrolled the panel.
+                    _thumbnailsFollowPage = true;
+
                     UpdatePageState();
                     HighlightCurrentPage();
                 }));
@@ -619,6 +626,14 @@ namespace Tesserae.Pdf
 
         private void HandlePagesInit()
         {
+            // A new document on the same bus - Url, Data or Source on a live chrome - arrives here
+            // without a ResetDocumentState, which only a new bus or Clear() runs. What the panel and
+            // the search row hold belongs to the document that went.
+            ResetOutline();
+            ResetSearchResults();
+
+            _thumbnailAspect = null;
+
             _pageCount = _viewer.PageCount;
             _page      = _viewer.Page;
 
@@ -641,6 +656,8 @@ namespace Tesserae.Pdf
             _page              = 0;
             _documentHasLabels = false;
 
+            Toggle(_root, PdfChromeStyles.LABELLED, false);
+
             ResetOutline();
             ResetThumbnails();
             ResetSearchResults();
@@ -662,6 +679,7 @@ namespace Tesserae.Pdf
             _disposed = true;
 
             ResetThumbnails();
+            ReleaseSearchShortcut();
 
             if (_sizeObserver is object)
             {
