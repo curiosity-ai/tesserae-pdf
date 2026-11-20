@@ -499,10 +499,17 @@ namespace Tesserae.Pdf
             {
                 // The document decides how its own entries look. Colour is deliberately left alone
                 // when the PDF names none - PdfOutlineItem reports null rather than black for that
-                // exactly so the row can inherit a theme's foreground instead.
-                if (row.Item.Bold)            label.style.fontWeight = "600";
-                if (row.Item.Italic)          label.style.fontStyle  = "italic";
-                if (row.Item.Color is object) label.style.color      = row.Item.Color;
+                // exactly so the row can inherit a theme's foreground instead. It is handed over as a
+                // variable rather than set: the stylesheet adapts it to a dark theme and lets the
+                // theme's colours win on a marked or hovered row, which an inline colour would beat.
+                if (row.Item.Bold)   label.style.fontWeight = "600";
+                if (row.Item.Italic) label.style.fontStyle  = "italic";
+
+                if (row.Item.Color is object)
+                {
+                    label.style.setProperty("--tsspdf-outline-color", row.Item.Color);
+                    label.classList.add(PdfChromeStyles.COLORED);
+                }
 
                 label.title = row.Item.Title ?? "";
             }

@@ -46,6 +46,8 @@ namespace Tesserae.Pdf.Sample
             await Transpose.Require.RequireAsync(Transpose.RequireKind.Module, "./Tesserae.Pdf.min.js");
 #endif
 
+            await SampleThemes.ActivateSavedThemeAsync();
+
             Start();
         }
 
@@ -186,6 +188,7 @@ namespace Tesserae.Pdf.Sample
                 }
             });
 
+            sidebar.AddFooter(SampleThemes.CreateNav());
             sidebar.AddFooter(new SidebarCommands("CONFIG", lightDark, openClose));
 
             var groupIndex = 0;

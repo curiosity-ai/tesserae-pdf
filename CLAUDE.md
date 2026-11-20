@@ -45,6 +45,11 @@ dotnet build Tesserae.Pdf.slnx
 The first build runs `npm install && npm run bundle` in `Tesserae.Pdf/` via the `BundlePdfJs`
 MSBuild target, so node is a prerequisite.
 
+**No `<LangVersion>` in a csproj.** The Transpose SDK sets it after the project body to the version
+`tps` compiles at, and `tps` ignores the csproj's value anyway. A pin only makes the IDE report
+modern C# as an error in code that builds. Keep the SDK, `Transpose.BCL`, `Transpose.Core` and
+`Tesserae` versions in step with the applications that consume this package (mosaik's front end).
+
 `Tesserae.Pdf/.npmrc` sets `min-release-age=7`, so `npm install` only resolves versions published
 more than a week ago - a supply-chain cooldown. It needs **npm >= 11.10.0**; older npm accepts the
 key and ignores it silently, so an old client builds as before rather than failing. `npm ci` is
@@ -113,6 +118,16 @@ when the pin moves**: if the modern build stops needing an unshipped proposal, s
 ~110 KB. The `import.meta.url` in the legacy build is inside a Node-only branch, which is why
 `define` can erase it and let an IIFE be emitted at all.
 
+Last re-checked at **6.5.438**: the modern build still calls it unconditionally (48 call sites).
+Chromium has shipped it since (the preinstalled Chromium 157 has it), so the modern build would
+now work there - but a consumer's users are not all on a current Chromium, so `legacy/` stays
+until the other engines ship it too.
+
+6.5 also adds an opt-in **renderer worker** (`pdf.renderer.mjs`, enabled by setting
+`GlobalWorkerOptions.rendererSrc`), which draws pages on an `OffscreenCanvas` off the main thread.
+It is off unless that option is set, this package does not set it, and the bundle does not ship
+the file. Wiring it up would be a third verbatim-copied module, for the same reason as the worker.
+
 ### Two files are copied verbatim, and neither can be bundled
 
 - **The worker.** pdf.js constructs it with `new Worker(src, { type: "module" })` - a hard-coded
@@ -136,7 +151,7 @@ to open a document. A reload does not reliably fix it either: a hard reload bypa
 what the page fetches, not for a worker a script creates later.
 
 So `bundle-pdfjs.mjs` stamps the bundled version onto the default `workerSrc`
-(`pdf.worker.min.mjs?v=6.3.289`), which makes the URL change whenever the pin does. A query is safe on
+(`pdf.worker.min.mjs?v=6.5.438`), which makes the URL change whenever the pin does. A query is safe on
 all three paths pdf.js puts that value through - `new Worker(src, { type: "module" })`, the
 cross-origin `new URL(src, location)` blob wrapper, and the fake-worker `import(src)` - and a host
 overriding `PdfJs.WorkerSrc` should keep one. The failure is also classified now rather than reported
@@ -184,7 +199,7 @@ Two Bridge-era settings are **gone and must not come back**: the four self-JS `r
 (every variant of the compiled output — the formatted bundle, the minified bundle, the module entry
 and its chunks — is embedded automatically for a packable project) and `"outputFormatting"`, which no
 longer exists and is silently ignored. Module output needs `Transpose.BCL >= 26.8.4102`; this project
-pins 26.8.4619 to match the applications consuming it.
+pins 26.11.7972 to match the applications consuming it.
 
 Two gotchas in the targets file, both inherited from tesserae-monaco's: `$(OutDir)` is empty at
 import time, so the destination is computed **inside** the target; and a `ProjectReference` does not
@@ -561,6 +576,44 @@ Two things this depends on, both easy to break:
 There are 22 pages in three groups: **Viewer** (the component and everything it does), **Pages** (the
 headless half - render, thumbnails, text, metadata, character maps) and **Runtime and hosting**
 (loading, modals, remount, several documents, save, scripting, localization and the translation pipeline).
+
+**The gallery carries every Tesserae custom theme** (`SampleThemes.cs`, the Theme nav at the foot of the
+sidebar): the fourteen `Tesserae.Themes.*` packages plus the default look. The choice is kept in
+`localStorage["tss-pdf-sample-theme"]` under the ids Tesserae's own gallery uses (`default`, `curiosity`,
+`stratus`, `retroos`, `rechenwerk`, `weniger`, `zeitung`, `blaupause`, `phosphor`, `glas`, `kristall`,
+`kontrast`, `memphis`, `washi`, `graustufe`), so a browser check sets it before load. Dark mode is the
+sun/moon command beside it. Keep the theme package versions in step with `Tesserae`.
+
+## Themes: what the chrome must not assume
+
+The chrome is built from Tesserae components and tokens, so every theme restyles it - which is the
+point, and also how it breaks. Each rule below cost a defect in at least one theme:
+
+- **A fill always comes with its own foreground.** `--tss-default-background-active-color` goes with
+  `--tss-default-foreground-active-color`. RetroOS makes the active fill ink, and the default text colour
+  on it was invisible.
+- **Do not add a hover fill to a Tesserae component that already has one.** A theme pairs its hover fill
+  with a hover text colour (RetroOS inverts a tree row); a fill from here keeps the theme's text colour on
+  a background it was not chosen for.
+- **Do not reverse a flex row to reorder a button's parts.** `row-reverse` also swaps the button's own
+  `::before` and `::after`, which a theme may draw (Phosphor brackets a label: `[ 114% ]`). Use `order`.
+- **Do not size text set in a theme's button face.** A theme may give buttons a display face with a size
+  to match (RetroOS: a pixel font at 16px); 12px of it is illegible. A reading such as the zoom value
+  takes the text font (`font-family:inherit`).
+- **A document's colours are for a white page.** An outline entry's colour arrives as
+  `--tsspdf-outline-color`, a dark theme mixes it toward its foreground, and on a marked or hovered row the
+  theme's colours win. An inline `color` would beat all three.
+- **Centre a glyph, not a line box.** An icon's glyph is its `::before` in the icon font, but the `<i>`
+  (or `<span>`) keeps the text font, whose line box is what flexbox centres. The glyph lands 1.5-2px high
+  in the default theme and 2-5px low under a face with a tall ascent (Blaupause, Graustufe). The chrome's
+  button and search box icons are flex boxes for that reason, and its one-line labels use
+  `text-box: trim-both cap alphabetic`. Tesserae's own components have the same line box issue.
+
+How to check: screenshot each control at `deviceScaleFactor: 2` in all 30 theme and mode pairs, find the
+ink (pixels that differ from the edge colour) and compare its centre to the control's. Exclude a field's
+border or bottom rule from the crop, and remember a word with a descender ("Fuzzy") has its ink centre
+below the middle even when its capitals are centred. For contrast, resolve each computed colour through a
+1px canvas: Chromium reports a `color-mix()` result as `oklab()`, not `rgb()`.
 
 ## Verifying changes
 
