@@ -20,7 +20,7 @@ namespace Tesserae.Pdf
     [Name("pdfjsLib")]
     internal static class PdfJsLib
     {
-        /// <summary>The pdf.js version string, e.g. <c>"6.2.108"</c>.</summary>
+        /// <summary>The pdf.js version string, e.g. <c>"6.5.438"</c>.</summary>
         public static extern string version { get; }
 
         /// <summary>The pdf.js build hash.</summary>

@@ -45,6 +45,11 @@ dotnet build Tesserae.Pdf.slnx
 The first build runs `npm install && npm run bundle` in `Tesserae.Pdf/` via the `BundlePdfJs`
 MSBuild target, so node is a prerequisite.
 
+**No `<LangVersion>` in a csproj.** The Transpose SDK sets it after the project body to the version
+`tps` compiles at, and `tps` ignores the csproj's value anyway. A pin only makes the IDE report
+modern C# as an error in code that builds. Keep the SDK, `Transpose.BCL`, `Transpose.Core` and
+`Tesserae` versions in step with the applications that consume this package (mosaik's front end).
+
 `Tesserae.Pdf/.npmrc` sets `min-release-age=7`, so `npm install` only resolves versions published
 more than a week ago - a supply-chain cooldown. It needs **npm >= 11.10.0**; older npm accepts the
 key and ignores it silently, so an old client builds as before rather than failing. `npm ci` is
@@ -113,6 +118,16 @@ when the pin moves**: if the modern build stops needing an unshipped proposal, s
 ~110 KB. The `import.meta.url` in the legacy build is inside a Node-only branch, which is why
 `define` can erase it and let an IIFE be emitted at all.
 
+Last re-checked at **6.5.438**: the modern build still calls it unconditionally (48 call sites).
+Chromium has shipped it since (the preinstalled Chromium 157 has it), so the modern build would
+now work there - but a consumer's users are not all on a current Chromium, so `legacy/` stays
+until the other engines ship it too.
+
+6.5 also adds an opt-in **renderer worker** (`pdf.renderer.mjs`, enabled by setting
+`GlobalWorkerOptions.rendererSrc`), which draws pages on an `OffscreenCanvas` off the main thread.
+It is off unless that option is set, this package does not set it, and the bundle does not ship
+the file. Wiring it up would be a third verbatim-copied module, for the same reason as the worker.
+
 ### Two files are copied verbatim, and neither can be bundled
 
 - **The worker.** pdf.js constructs it with `new Worker(src, { type: "module" })` - a hard-coded
@@ -136,7 +151,7 @@ to open a document. A reload does not reliably fix it either: a hard reload bypa
 what the page fetches, not for a worker a script creates later.
 
 So `bundle-pdfjs.mjs` stamps the bundled version onto the default `workerSrc`
-(`pdf.worker.min.mjs?v=6.3.289`), which makes the URL change whenever the pin does. A query is safe on
+(`pdf.worker.min.mjs?v=6.5.438`), which makes the URL change whenever the pin does. A query is safe on
 all three paths pdf.js puts that value through - `new Worker(src, { type: "module" })`, the
 cross-origin `new URL(src, location)` blob wrapper, and the fake-worker `import(src)` - and a host
 overriding `PdfJs.WorkerSrc` should keep one. The failure is also classified now rather than reported
@@ -184,7 +199,7 @@ Two Bridge-era settings are **gone and must not come back**: the four self-JS `r
 (every variant of the compiled output — the formatted bundle, the minified bundle, the module entry
 and its chunks — is embedded automatically for a packable project) and `"outputFormatting"`, which no
 longer exists and is silently ignored. Module output needs `Transpose.BCL >= 26.8.4102`; this project
-pins 26.8.4619 to match the applications consuming it.
+pins 26.11.7972 to match the applications consuming it.
 
 Two gotchas in the targets file, both inherited from tesserae-monaco's: `$(OutDir)` is empty at
 import time, so the destination is computed **inside** the target; and a `ProjectReference` does not
