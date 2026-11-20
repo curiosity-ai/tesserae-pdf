@@ -41,6 +41,7 @@ namespace Tesserae.Pdf
         internal const string NO_MATCHES = "tsspdf-nomatches";
         internal const string SECTION    = "tsspdf-section";
         internal const string CURRENT    = "tsspdf-current";
+        internal const string COLORED    = "tsspdf-colored";
 
         private const string STYLE_ELEMENT_ID = "tsspdf-chrome-styles";
 
@@ -142,16 +143,39 @@ namespace Tesserae.Pdf
 .tsspdf-chrome .tsspdf-iconbtn.tss-btn.tsspdf-on{background:var(--tsspdf-accent-soft);
   color:var(--tsspdf-accent)}
 .tsspdf-chrome .tsspdf-iconbtn.tss-btn i{font-size:16px;line-height:1}
+/* An icon's glyph is its ::before, in the icon font; the <i> keeps the text font, whose line box
+   (with the descender room under its baseline) is what the button centres. The glyph then sits at
+   the top of a box 2-4px taller than itself (1.5-2px high in the default theme and RetroOS), or, under a
+   face with a tall ascent, below the middle (the search box magnifier, 2-5px low in Blaupause and Graustufe).
+   As a flex box the <i> has no line box of its own, so the glyph is what gets centred. */
+.tsspdf-chrome .tss-btn > i,
+.tsspdf-chrome .tss-searchbox-container [class*=fi-]{display:inline-flex;align-items:center;justify-content:center}
+.tsspdf-chrome .tss-btn > i::before,
+.tsspdf-chrome .tss-searchbox-container [class*=fi-]::before{display:block;line-height:1}
 
 /* The zoom value and its chevron: a field-shaped button rather than an icon-shaped one. */
 .tsspdf-chrome .tsspdf-zoom.tss-btn{height:28px;min-height:28px;min-width:70px;padding:0 8px;
   border-radius:6px;font-size:12px;color:var(--tsspdf-fg);background:var(--tsspdf-surface);
   border:1px solid var(--tsspdf-border);box-shadow:var(--tsspdf-shadow-sm);flex-shrink:0;gap:6px}
 .tsspdf-chrome .tsspdf-zoom.tss-btn:hover{background:var(--tsspdf-hover)}
-.tsspdf-chrome .tsspdf-zoom.tss-btn{flex-direction:row-reverse;justify-content:flex-end}
+/* The chevron goes after the value by order, not by row-reverse: reversing the row also swaps the
+   button's own ::before and ::after, which a theme may draw (Phosphor brackets a label as [ 114% ]). */
+.tsspdf-chrome .tsspdf-zoom.tss-btn{justify-content:flex-start}
+.tsspdf-chrome .tsspdf-zoom.tss-btn > i{order:1}
+.tsspdf-chrome .tsspdf-zoom.tss-btn::after{order:2}
+/* The value is a reading, like the page total beside it, so it takes the text font rather than the
+   button's. A theme may give buttons a display face sized for it (RetroOS: a pixel font at 16px),
+   and the 12px above would keep that face and shrink it below legibility. */
+.tsspdf-chrome .tsspdf-zoom.tss-btn{font-family:inherit}
 .tsspdf-chrome .tsspdf-zoom.tss-btn i{font-size:12px;color:var(--tsspdf-fg-faint)}
 /* A fixed width for the value, so 96% and 140% do not move the buttons either side of it. */
 .tsspdf-chrome .tsspdf-zoom.tss-btn span{min-width:34px;text-align:left}
+/* One-line labels are centred on their letters, not on the font's line box: how much room a face
+   leaves above its capitals and below its baseline differs per theme (RetroOS's pixel faces put the
+   text 1-1.5px low). A browser without text-box ignores it and keeps the line box. */
+.tsspdf-chrome .tsspdf-zoom.tss-btn span,
+.tsspdf-chrome .tsspdf-seg-item.tss-btn span,
+.tsspdf-chrome .tsspdf-pagetotal{text-box:trim-both cap alphabetic}
 
 /* -- coupling: the page box. Tesserae's text field is 36px tall and padded for a form. */
 .tsspdf-chrome .tsspdf-pagebox.tss-textbox-container{width:38px;min-width:38px;flex-shrink:0}
@@ -177,8 +201,10 @@ namespace Tesserae.Pdf
 .tsspdf-chrome .tsspdf-seg-item.tss-btn.tsspdf-on{background:var(--tsspdf-surface);
   color:var(--tsspdf-accent);box-shadow:var(--tsspdf-shadow-sm)}
 .tsspdf-chrome .tsspdf-seg-item.tss-btn i{font-size:14px}
+/* In dark mode the chip is a white wash over whatever track the theme draws, so the accent is no
+   longer on the background it was chosen for (Kristall: 2.8:1). The theme foreground is. */
 .tss-dark-mode .tsspdf-chrome .tsspdf-seg-item.tss-btn.tsspdf-on{background:rgba(255,255,255,.14);
-  box-shadow:none}
+  color:var(--tsspdf-fg);box-shadow:none}
 .tsspdf-seg-sm{margin:0 3px 0 2px}
 .tsspdf-chrome .tsspdf-seg-sm .tsspdf-seg-item.tss-btn{height:22px;padding:0 8px;font-size:11px}
 
@@ -319,17 +345,35 @@ namespace Tesserae.Pdf
 .tsspdf-chrome .tsspdf-outline .tss-tree-chevron{font-size:11px;width:14px;height:16px;flex-shrink:0;
   line-height:16px}
 .tsspdf-chrome .tsspdf-outline .tss-tree-commands{margin-left:auto;flex-shrink:0;line-height:16px}
-.tsspdf-chrome .tsspdf-outline .tss-tree-item-content:hover{background:var(--tsspdf-hover)}
+/* No hover rule of our own: the Tree's (and each theme's) is the one to keep. A theme can pair its
+   hover fill with a hover text colour (RetroOS inverts the row), and a fill from here would keep the
+   theme's text colour on a background it was not chosen for. */
 /* No line-height here on purpose. Tesserae sets 22px on this element, which makes an outline row
    32px rather than the design's 27.5 - and that is the component's density, the same as every other
    tree in the host application. Overriding it would make this one panel the odd one out, which is the
    opposite of why the tree is a Tesserae Tree. */
 .tsspdf-chrome .tsspdf-outline .tss-tree-text{flex:1;min-width:0;overflow:hidden;
   text-overflow:ellipsis;white-space:nowrap}
+/* The active fill always goes with its own foreground: a theme may make the fill ink (RetroOS), and
+   the default text colour on it is then invisible. For the same reason the accent text of the
+   current entry is only used off the fill - on a top-level entry, which is its own section, the
+   accent border is what marks it. */
 .tsspdf-chrome .tsspdf-outline .tsspdf-section > .tss-tree-item-content{background:var(--tss-default-background-active-color);
-  border-left-color:var(--tsspdf-accent);font-weight:600}
-.tsspdf-chrome .tsspdf-outline .tsspdf-current > .tss-tree-item-content .tss-tree-text{
-  color:var(--tsspdf-accent);font-weight:600}
+  color:var(--tss-default-foreground-active-color);border-left-color:var(--tsspdf-accent);font-weight:600}
+/* An entry's own colour (PdfOutlineItem.Color) arrives as --tsspdf-outline-color. The document chose
+   it for a white page, so a dark theme mixes it toward its own foreground: the hue stays, and the
+   contrast is the theme's. On the marked rows below the theme's colours win, as they do on a theme's
+   own hover - the document's colour was not chosen for any of those fills. */
+.tsspdf-chrome .tsspdf-outline .tsspdf-colored{color:var(--tsspdf-outline-color)}
+.tss-dark-mode .tsspdf-chrome .tsspdf-outline .tsspdf-colored{
+  color:color-mix(in oklab,var(--tsspdf-outline-color) 45%,var(--tss-default-foreground-color))}
+.tsspdf-chrome .tsspdf-outline .tsspdf-section > .tss-tree-item-content .tss-tree-text{color:inherit}
+.tsspdf-chrome .tsspdf-outline .tsspdf-section > .tss-tree-item-content > i,
+.tsspdf-chrome .tsspdf-outline .tsspdf-section > .tss-tree-item-content .tss-tree-chevron{color:inherit}
+.tsspdf-chrome .tsspdf-outline .tsspdf-section > .tss-tree-item-content .tsspdf-outline-page{color:inherit;opacity:.7}
+.tsspdf-chrome .tsspdf-outline .tsspdf-current:not(.tsspdf-section) > .tss-tree-item-content .tss-tree-text{
+  color:var(--tsspdf-accent)}
+.tsspdf-chrome .tsspdf-outline .tsspdf-current > .tss-tree-item-content .tss-tree-text{font-weight:600}
 .tsspdf-outline-page{font-family:var(--tss-monospace-font-family);font-size:11px;
   color:var(--tsspdf-fg-faint);flex-shrink:0}
 

@@ -577,6 +577,44 @@ There are 22 pages in three groups: **Viewer** (the component and everything it 
 headless half - render, thumbnails, text, metadata, character maps) and **Runtime and hosting**
 (loading, modals, remount, several documents, save, scripting, localization and the translation pipeline).
 
+**The gallery carries every Tesserae custom theme** (`SampleThemes.cs`, the Theme nav at the foot of the
+sidebar): the fourteen `Tesserae.Themes.*` packages plus the default look. The choice is kept in
+`localStorage["tss-pdf-sample-theme"]` under the ids Tesserae's own gallery uses (`default`, `curiosity`,
+`stratus`, `retroos`, `rechenwerk`, `weniger`, `zeitung`, `blaupause`, `phosphor`, `glas`, `kristall`,
+`kontrast`, `memphis`, `washi`, `graustufe`), so a browser check sets it before load. Dark mode is the
+sun/moon command beside it. Keep the theme package versions in step with `Tesserae`.
+
+## Themes: what the chrome must not assume
+
+The chrome is built from Tesserae components and tokens, so every theme restyles it - which is the
+point, and also how it breaks. Each rule below cost a defect in at least one theme:
+
+- **A fill always comes with its own foreground.** `--tss-default-background-active-color` goes with
+  `--tss-default-foreground-active-color`. RetroOS makes the active fill ink, and the default text colour
+  on it was invisible.
+- **Do not add a hover fill to a Tesserae component that already has one.** A theme pairs its hover fill
+  with a hover text colour (RetroOS inverts a tree row); a fill from here keeps the theme's text colour on
+  a background it was not chosen for.
+- **Do not reverse a flex row to reorder a button's parts.** `row-reverse` also swaps the button's own
+  `::before` and `::after`, which a theme may draw (Phosphor brackets a label: `[ 114% ]`). Use `order`.
+- **Do not size text set in a theme's button face.** A theme may give buttons a display face with a size
+  to match (RetroOS: a pixel font at 16px); 12px of it is illegible. A reading such as the zoom value
+  takes the text font (`font-family:inherit`).
+- **A document's colours are for a white page.** An outline entry's colour arrives as
+  `--tsspdf-outline-color`, a dark theme mixes it toward its foreground, and on a marked or hovered row the
+  theme's colours win. An inline `color` would beat all three.
+- **Centre a glyph, not a line box.** An icon's glyph is its `::before` in the icon font, but the `<i>`
+  (or `<span>`) keeps the text font, whose line box is what flexbox centres. The glyph lands 1.5-2px high
+  in the default theme and 2-5px low under a face with a tall ascent (Blaupause, Graustufe). The chrome's
+  button and search box icons are flex boxes for that reason, and its one-line labels use
+  `text-box: trim-both cap alphabetic`. Tesserae's own components have the same line box issue.
+
+How to check: screenshot each control at `deviceScaleFactor: 2` in all 30 theme and mode pairs, find the
+ink (pixels that differ from the edge colour) and compare its centre to the control's. Exclude a field's
+border or bottom rule from the crop, and remember a word with a descender ("Fuzzy") has its ink centre
+below the middle even when its capitals are centred. For contrast, resolve each computed colour through a
+1px canvas: Chromium reports a `color-mix()` result as `oklab()`, not `rgb()`.
+
 ## Verifying changes
 
 `dotnet build` proves it compiles, not that it works. Nearly every pdf.js failure is a runtime one -

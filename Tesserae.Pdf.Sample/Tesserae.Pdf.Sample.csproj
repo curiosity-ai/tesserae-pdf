@@ -11,6 +11,20 @@
     <PackageReference Include="Transpose.BCL" Version="26.11.7972" />
     <PackageReference Include="Transpose.Core" Version="26.10.7420" />
     <PackageReference Include="Tesserae" Version="2026.11.73848" />
+    <PackageReference Include="Tesserae.Themes.Blaupause" Version="26.11.73848" />
+    <PackageReference Include="Tesserae.Themes.Curiosity" Version="26.11.73848" />
+    <PackageReference Include="Tesserae.Themes.Glas" Version="26.11.73848" />
+    <PackageReference Include="Tesserae.Themes.Graustufe" Version="26.11.73848" />
+    <PackageReference Include="Tesserae.Themes.Kontrast" Version="26.11.73848" />
+    <PackageReference Include="Tesserae.Themes.Kristall" Version="26.11.73848" />
+    <PackageReference Include="Tesserae.Themes.Memphis" Version="26.11.73848" />
+    <PackageReference Include="Tesserae.Themes.Phosphor" Version="26.11.73848" />
+    <PackageReference Include="Tesserae.Themes.Rechenwerk" Version="26.11.73848" />
+    <PackageReference Include="Tesserae.Themes.RetroOS" Version="26.11.73848" />
+    <PackageReference Include="Tesserae.Themes.Stratus" Version="26.11.73848" />
+    <PackageReference Include="Tesserae.Themes.Washi" Version="26.11.73848" />
+    <PackageReference Include="Tesserae.Themes.Weniger" Version="26.11.73848" />
+    <PackageReference Include="Tesserae.Themes.Zeitung" Version="26.11.73848" />
   </ItemGroup>
 
   <ItemGroup>
